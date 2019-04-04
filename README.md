@@ -13,6 +13,8 @@ npm start
 
 ### Available commands
 
+``` bash
+
 !join: Joins your channel
 !leave: Leaves your channel
 !ping: Types a reply "pong"
@@ -21,5 +23,7 @@ npm start
 !resume: Resumes playing video
 !end: Ends playing video
 !help: Get help
+
+```
 
 ### LICENSE MIT

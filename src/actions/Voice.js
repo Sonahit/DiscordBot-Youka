@@ -1,6 +1,6 @@
 //const ytdlVideo = require('ytdl-core');
 const ytdl = require('ytdl-core-discord');
-const streamOptions = { volume: 0.15, passes: 3 };
+const streamOptions = { volume: 0.03, passes: 3 };
 let dispatcher = false;
 class Voice {
         Join (message) {

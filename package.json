@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "discord.js": "^11.4.2",
+    "discord.js-commando": "^0.10.0",
     "ytdl-core-discord": "^1.0.3"
   }
 }

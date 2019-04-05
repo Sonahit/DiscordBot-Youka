@@ -30,12 +30,6 @@ client.on('message', msg => {
     if (msg.content === '!time') {
       Replies.prototype.Time(msg);
     }
-    if(msg.content === "!join"){
-      Voice.prototype.Join(msg);
-    }
-    if(msg.content === "!leave"){
-      Voice.prototype.Disconnect(msg);
-    }
     if (msg.content === 'AYAYA' && msg.author.bot === false) {
       Replies.prototype.AYAYA(msg);
     }
@@ -55,21 +49,40 @@ client.on('message', msg => {
           Voice.prototype.Play(msg);
         }
     }
-    if (msg.content.substring(0,5) === '!play' ) {
-      Voice.prototype.Play(msg);
-    }
-    if (msg.content === '!pause') {
-      Voice.prototype.Pause(msg);
-    }
-    if (msg.content === '!end') {
-      Voice.prototype.End(msg);
-    }
-    if (msg.content === '!resume') {
-      Voice.prototype.Resume(msg);
+    if(isDj(msg)){
+      if (msg.content.substring(0,5) === '!play' ) {
+        Voice.prototype.Play(msg);
+      }
+      if (msg.content.substring(0,7) === '!stream' ) {
+        Voice.prototype.Play(msg);
+      }
+      if (msg.content === '!pause') {
+        Voice.prototype.Pause(msg);
+      }
+      if (msg.content === '!end') {
+        Voice.prototype.End(msg);
+      }
+      if (msg.content === '!resume') {
+        Voice.prototype.Resume(msg);
+      }
+      if(msg.content === "!join"){
+        Voice.prototype.Join(msg);
+      }
+      if(msg.content === "!leave"){
+        Voice.prototype.Disconnect(msg);
+      }
+      if(msg.content.includes("!volume")){
+        Voice.prototype.changeVolume(msg);
+      }
     }
 });
 
 function isAuthor(msg){
   return msg.author.client.user.username.indexOf(config.owners) 
   && msg.author.client.user.discriminator.indexOf(config.owners)
+}
+
+function isDj(msg){
+  return msg.author.client.user.username.indexOf(config.djs) 
+  && msg.author.client.user.discriminator.indexOf(config.djs)
 }

@@ -14,11 +14,13 @@ npm start
 ### Available commands
 
 ``` bash
+STREAMABLE
+NO QUEUE
 
 !join: Joins your channel
 !leave: Leaves your channel
 !ping: Types a reply "pong"
-!play https://[url]: Plays a video
+!play https://[url]: Plays a video 
 !pause: Pause playing video
 !resume: Resumes playing video
 !end: Ends playing video

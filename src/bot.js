@@ -4,6 +4,7 @@ const logger = require('winston');
 const config = require('../config/config');
 const Voice = require("./actions/Voice.js");
 const Replies = require("./actions/Replies");
+require("opusscript");
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console, {
@@ -54,7 +55,7 @@ client.on('message', msg => {
           Voice.prototype.Play(msg);
         }
     }
-    if (msg.content.includes('!play')) {
+    if (msg.content.substring(0,5) === '!play' ) {
       Voice.prototype.Play(msg);
     }
     if (msg.content === '!pause') {

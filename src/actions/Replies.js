@@ -30,14 +30,15 @@ class Replies{
         current.send('You said you need ?HELP?');
         current.send(emoji);
         current.send('Available commands:');
-        current.send('!join: Joins your channel');
-        current.send('!leave: Leaves your channel');
-        current.send('!ping: Types a reply "pong"');
-        current.send('!play https://[url]: Plays a video');
-        current.send('!pause: Pause playing video');
-        current.send('!resume: Resumes playing video');
-        current.send('!end: Ends playing video');
-        current.send('!help: Get help');
+        current.send('"!join": Joins your channel');
+        current.send('"!leave": Leaves your channel');
+        current.send('"!ping": Types a reply "pong"');
+        current.send('"!play" https://[url]: Plays a video');
+        current.send('"!stream" https://[url]: Plays a youtube stream');
+        current.send('"!pause": Pause playing video');
+        current.send('"!resume": Resumes playing video');
+        current.send('"!end": Ends playing video');
+        current.send('"!help": Get help');
     }
     AYAYA(msg){
         const current =  msg.channel;

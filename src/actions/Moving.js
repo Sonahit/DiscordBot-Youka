@@ -9,9 +9,10 @@ module.exports = class Moving {
     this.ids = [];
   }
   Move(msg, client) {
-    if (msg.content === "!moveTo") {
+    if (msg.content === `${config.prefix}moveTo` ||
+        msg.content === `${config.prefix}move` ) {
         embed.setColor("0xff8040");
-        embed.setDescription(`Type !move(To) [name] (number) to move a bot or {name}`)
+        embed.setDescription(`Type !move[To] [name] (number) to move a bot or {name}`)
         embed.fields.push({
             name: "Avaiable rooms:",
             value: `${getRooms(msg.guild.channels)}`

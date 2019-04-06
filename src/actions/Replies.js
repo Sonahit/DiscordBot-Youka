@@ -74,9 +74,9 @@ class Replies {
                                  **!resume**:\tResumes playing video 
                                  **!end**:\tEnds playing video 
                                  **!move to me**:\tMoves bot to you
-                                 **!move(To)**:\tGet all channels and their ids
-                                 **!move(To) #**:\tMoving bot to # Channel
-                                 **!move(To) name #**:\tMoving {name} to # Channel`
+                                 **!move[To]**:\tGet all channels and their ids
+                                 **!move[To] #**:\tMoving bot to # Channel
+                                 **!move[To] name #**:\tMoving {name} to # Channel`
       });
       embed.fields.push({
         name: `For Admins:`,
@@ -110,9 +110,9 @@ class Replies {
                                  **!resume**:\tResumes playing video 
                                  **!end**:\tEnds playing video 
                                  **!move to me**:\tMoves bot to you
-                                 **!move(To)**:\tGet all channels and their ids
-                                 **!move(To) #**:\tMoving bot to # Channel
-                                 **!move(To) name #**:\tMoving {name} to # Channel`
+                                 **!move[To]**:\tGet all channels and their ids
+                                 **!move[To] #**:\tMoving bot to # Channel
+                                 **!move[To] name #**:\tMoving {name} to # Channel`
       });
       embed.setColor("0xff8040");
       current.send(embed);

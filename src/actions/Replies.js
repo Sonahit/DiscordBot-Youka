@@ -2,24 +2,35 @@ const { client, Attachment } = require("discord.js");
 const config = require("../../config/config");
 const Discord = require("discord.js");
 const embed = new Discord.RichEmbed();
+const Validation = require("../Validation");
+const validation = new Validation();
 
 class Replies {
-  Greet(msg, client){
+  Greet(msg, client) {
     embed.setColor("0xfafa33");
     embed.setAuthor(`${client.user.username}`);
-    embed.setThumbnail(`https://pbs.twimg.com/profile_images/1040094061057650688/wNO6rNzn_400x400.jpg`);
-    embed.setDescription(`Hello! If you need any help type !help`)
+    embed.setThumbnail(
+      `https://pbs.twimg.com/profile_images/1040094061057650688/wNO6rNzn_400x400.jpg`
+    );
+    embed.setDescription(`Hello! If you need any help type !help`);
     msg.reply(embed);
   }
-  Credits(msg,client){
+  Credits(msg, client) {
     embed.setColor("0xffffff");
     embed.setAuthor(`@IvanSadykov`);
-    embed.setThumbnail(`https://pmcvariety.files.wordpress.com/2018/05/discord-logo.jpg?w=1000&h=563&crop=1`);
-    embed.setDescription('Hello! I am author of this bot! If you have any suggestions please contact me at github or via email.');
-    embed.addField('GitHub',"https://github.com/Sonahit/");
-    embed.addField('Gmail','grandpajok@gmail.com');
+    embed.setThumbnail(
+      `https://pmcvariety.files.wordpress.com/2018/05/discord-logo.jpg?w=1000&h=563&crop=1`
+    );
+    embed.setDescription(
+      "Hello! I am author of this bot! If you have any suggestions please contact me at github or via email."
+    );
+    embed.addField("GitHub", "https://github.com/Sonahit/");
+    embed.addField("Gmail", "grandpajok@gmail.com");
     embed.addBlankField();
-    embed.setFooter('Sincerely @IvanSadykov', `https://media.discordapp.net/attachments/563442639265988641/563908892262662144/AYAYA.png`);
+    embed.setFooter(
+      "Sincerely @IvanSadykov",
+      `https://media.discordapp.net/attachments/563442639265988641/563908892262662144/AYAYA.png`
+    );
     msg.author.send(embed);
   }
   Start(msg) {
@@ -50,7 +61,7 @@ class Replies {
     const current = msg.author;
     const cry = ":cry:";
     await current.send(attachment);
-    if (isAuthor(msg) > 0) {
+    if (validation.isAuthor(msg) > 0) {
       embed.setTitle("Help");
       embed.fields.push(
         {
@@ -87,7 +98,44 @@ class Replies {
       current.send(embed);
       return;
     }
-    if (isDj(msg)) {
+    if (validation.isRole(msg, "Модератор")) {
+      embed.fields.push(
+        {
+          name: ` You said you need ?HELP?`,
+          value: `${cry.repeat(8)}`
+        },
+        {
+          name: `Available commands:`,
+          value: ` AYAYA:\tAYAYA                         
+                                         **!ping**:\tTypes a reply pong 
+                                         **!help**:\tGet help`
+        }
+      );
+      embed.fields.push({
+        name: `For DJs:`,
+        value: ` **!play https://[url]**:\tPlays a video 
+                                 **!join**:\tJoins your channel 
+                                 **!leave**:\tLeaves your channel 
+                                 **!stream https://[url]**:\tPlays a youtube stream   
+                                 **!pause**:\tPause playing video 
+                                 **!resume**:\tResumes playing video 
+                                 **!end**:\tEnds playing video 
+                                 **!move to me**:\tMoves bot to you
+                                 **!move[To]**:\tGet all channels and their ids
+                                 **!move[To] #**:\tMoving bot to # Channel`
+      });
+      embed.fields.push({
+        name: `For Moderators:`,
+        value: ` ** !kick @(Name) [reason] **:\t Kick (Mentioned player) with a [reason]
+                ** !mute @(Name) [reason] **:\t Mute (Mentioned player) with a [reason]
+                ** !unmute @(Name) **:\t Unmute (Mentioned player)
+                **!move[To] name #**:\tMoving {name} to # Channel`
+      });
+      embed.setColor("0xff8040");
+      current.send(embed);
+      return;
+    }
+    if (validation.isRole(msg, "DJ")) {
       embed.fields.push(
         {
           name: ` You said you need ?HELP?`,
@@ -196,26 +244,6 @@ class Replies {
       case 11:
         return "December";
     }
-  }
-}
-function isAuthor(msg) {
-  let check =  msg.author.username.indexOf(config.owners) && msg.author.discriminator.indexOf(config.owners)
-  return check;
-}
-
-function isDj(msg) {
-  let check = false;
-  let typingCheck = msg.member;
-  if (typingCheck != null) {
-    for (value of msg.member.roles.values()) {
-      if (value.name === "DJ") {
-        check = true;
-        break;
-      }
-    }
-    return check;
-  } else {
-    msg.author.send("Try to type from channel");
   }
 }
 

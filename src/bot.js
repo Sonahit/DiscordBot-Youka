@@ -20,19 +20,21 @@ client.on("ready", () => {
 });
 
 client.login(config.token);
-
+const Replies = require("./actions/Replies");
 const Voice = require("./actions/Voice.js");
 const Moves = require("./actions/Moving");
+const Admin = require("./actions/AdminRights");
 const moving = new Moves();
 const voice = new Voice();
-const Replies = require("./actions/Replies");
 const replies = new Replies();
-
+const admin = new Admin();
+const Validation = require("./Validation")
+const validation = new Validation();
 client.on("message", async msg => {
   logger.info(
     `"${msg.content}" sent by ${msg.author.username} at ${Date.now()}`
-  ); 
-  if(msg.isMentioned(client.user)){
+  );
+  if (msg.isMentioned(client.user)) {
     replies.Greet(msg, client);
   }
   if (msg.content.startsWith(config.prefix) && msg.author.bot === false) {
@@ -51,7 +53,7 @@ client.on("message", async msg => {
     if (msg.content === `${config.prefix}help`) {
       replies.Help(msg);
     }
-    if (isAuthor(msg) > 0) {
+    if (validation.isAuthor(msg) > 0) {
       if (msg.content === `${config.prefix}disconnect`) {
         client.destroy();
       } else if (msg.content === `${config.prefix}restart`) {
@@ -64,7 +66,7 @@ client.on("message", async msg => {
         voice.Play(msg);
       }
     }
-    if (isDj(msg) || isAuthor(msg) > 0) {
+    if (validation.isRole(msg, "DJ") || isAuthor(msg) > 0) {
       if (msg.content.includes(`${config.prefix}radio`)) {
         voice.Radio(msg);
       }
@@ -80,7 +82,10 @@ client.on("message", async msg => {
         voice.Stream(msg);
       } else if (msg.content === `${config.prefix}pause`) {
         voice.Pause(msg);
-      } else if (msg.content === `${config.prefix}end` || msg.content === `${config.prefix}stop` ) {
+      } else if (
+        msg.content === `${config.prefix}end` ||
+        msg.content === `${config.prefix}stop`
+      ) {
         voice.End(msg);
       } else if (msg.content === `${config.prefix}resume`) {
         voice.Resume(msg);
@@ -97,35 +102,34 @@ client.on("message", async msg => {
         moving.Move(msg, client);
       }
     }
-  }
-});
-
-function isAuthor(msg) {
-  return (
-    msg.author.username.indexOf(config.owners) &&
-    msg.author.discriminator.indexOf(config.owners)
-  );
-}
-
-function isDj(msg) {
-  let check = false;
-  let typingCheck = msg.member;
-  if (typingCheck != null) {
-    for (value of msg.member.roles.values()) {
-      if (value.name === "DJ") {
-        check = true;
-        break;
+    if (validation.isRole(msg, "Модератор") || isAuthor(msg) > 0) {
+      if (
+        msg.content.includes(`${config.prefix}kick`) &&
+        admin.getMode() === "admin"
+      ) {
+        admin.Kick(msg);
+      } else if (msg.content.includes(`${config.prefix}goAdmin`)) {
+        admin.setMode("admin");
+        msg.author.send(
+          `I have entered into moderation mode be careful! ${
+          msg.author.username
+          }`
+        );
+      } else if (msg.content.includes(`${config.prefix}goUser`)) {
+        admin.setMode("user");
+        msg.author.send(`Exited moderation mode`);
+      } else if (
+        msg.content.includes(`${config.prefix}moveTo`) ||
+        msg.content.includes(`${config.prefix}move`)
+      ) {
+        admin.Move(msg, client);
+      }
+      else if (msg.content.includes(`${config.prefix}mute`)){
+        admin.Mute(msg);
+      }
+      else if (msg.content.includes(`${config.prefix}unmute`)){
+        admin.unMute(msg);
       }
     }
-    return check;
-  } else {
-    msg.author.send("Try to type from channel");
   }
-}
-
-function validateURL(msg) {
-  let pattern = new RegExp(`${config.prefix}(play|stream) http.:[//]+www[.]youtube[.]com[/]watch.+`,"g");
-  let check = pattern.test(msg);
-  return check;
-}
-module.exports = { isAuthor, isDj, validateURL };
+});

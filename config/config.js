@@ -1,5 +1,5 @@
 module.exports = {
-    "token": "NTYzNDQxNjAwNDcxMTA1NTQ2.XKZX8g.Kbc4GFvNdMawLx_x_YMJiSNmEK0",
+    "token": "<YOUR_TOKEN>",
     "owners":{
         "VanyaSkatilsya":{
             username:"VanyaSkatilsya",

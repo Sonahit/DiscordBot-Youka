@@ -5,11 +5,5 @@ module.exports = {
             username:"VanyaSkatilsya",
             id:"6312"
         }
-    },
-    "djs":{
-        "VanyaSkatilsya":{
-            username:"VanyaSkatilsya",
-            id:"6312"
-        }
     }
 }

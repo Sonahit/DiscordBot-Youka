@@ -1,4 +1,8 @@
 this.voiceChannels = [];
+const Discord = require("discord.js");
+const embed = new Discord.RichEmbed();
+const config = require("../../config/config");
+
 module.exports = class Moving {
   cunstructor() {
     this.currentChannel = "";
@@ -6,10 +10,13 @@ module.exports = class Moving {
   }
   Move(msg, client) {
     if (msg.content === "!moveTo") {
-      msg.reply(` 
-                Type !move(To) [name] (number) to move a bot or {name}
-                Avaiable rooms: \n ${getRooms(msg.guild.channels)}
-                `);
+        embed.setColor("0xff8040");
+        embed.setDescription(`Type !move(To) [name] (number) to move a bot or {name}`)
+        embed.fields.push({
+            name: "Avaiable rooms:",
+            value: `${getRooms(msg.guild.channels)}`
+        })
+      msg.reply(embed);
     }
     if (msg.content === "!move to me") {
       msg.member.voiceChannel.join().then(connection => {
@@ -70,7 +77,7 @@ function getRooms(channels = []) {
   let i = 0;
   for (channel of channels) {
     if (channel[1].type == "voice" && channel[1].joinable === true) {
-      voiceChannels.push(`Channel number ->\t${++i}\t::${channel[1].name}\n`);
+      voiceChannels.push(`Channel number ->\t${++i}\t->\t\t${channel[1].name}\n`);
       this.ids.push(channel[1].id);
     }
   }
@@ -78,7 +85,7 @@ function getRooms(channels = []) {
 }
 
 function checkBotMove(msg = "") {
-  let pattern = /!(move|moveTo)\s\d+/g;
+  let pattern = new RegExp(`${config.prefix}(move|moveTo)\s\d+`,"g");
   let check = pattern.test(msg);
   return check;
 }
@@ -92,7 +99,7 @@ function getChannel(id, client) {
 }
 
 function checkMoveUser(msg = "") {
-  let pattern = /!(move|moveTo)\s\w+\s\d/g;
+  let pattern = new RegExp(`${config.prefix}(move|moveTo)\s\w+\s\d`,"g");
   let check = pattern.test(msg);
   return check;
 }

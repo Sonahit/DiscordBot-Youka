@@ -193,10 +193,4 @@ function isDj(msg) {
     msg.author.client.user.discriminator.indexOf(config.djs)
   );
 }
-
-function validateURL(msg) {
-  let pattern = /!(play|stream)\s*http.:[//]+www[.]youtube[.]com[/]watch.+/gi;
-  let check = pattern.test(msg);
-  return check;
-}
 module.exports = Replies;

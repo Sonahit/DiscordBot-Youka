@@ -4,14 +4,17 @@ const streamOptions = { volume: 0.03, passes: 3 };
 const fileOptions = { volume: 0.15, passes: 3 };
 const Discord = require("discord.js");
 const embed = new Discord.RichEmbed();
+const config = require("../../config/config");
 
 function Play(connection, data, message) {
   embed.setColor("#b92727");
-  embed.setDescription(`Now playing ${data.info.title} 
-                        ${Math.floor(
-                          data.info.length_seconds / 60
-                        )}  ${Math.ceil(data.info.length_seconds % 60)} long 
-                        by ${data.info.author.name}`);
+  embed.setAuthor(`${data.info.author.name}`,`${data.info.author.avatar}`,`${data.info.author.user_url}`)
+  embed.setThumbnail(`${data.info.thumbnail_url}`);
+  embed.setDescription(`Now playing ${data.info.title}`);
+  embed.fields.push({
+    name:"Duration",
+    value:`${Math.floor(data.info.length_seconds / 60)} min ${Math.ceil(data.info.length_seconds % 60)} seconds`
+  });
   message.channel.send({ embed });
   data.dispatcher = connection.playStream(
     ytdlVideo(data.queue[0], { filter: "audioonly" }),
@@ -81,7 +84,7 @@ class Voice {
   }
   Play(message) {
     if (message.member != null && this.data.streaming == false) {
-      if (message.content === "!playtest") {
+      if (message.content === `${config.prefix}playtest`) {
         if (message.member.voiceChannel) {
           message.member.voiceChannel
             .join()
@@ -98,7 +101,7 @@ class Voice {
           message.reply(embed);
         }
       } else {
-        let url = message.content.substring(6, message.content.length);
+        let url = message.content.split(" ")[1];
         if (this.data.playing || this.data.queue > 0) {
           //this.data.queue.push(url);
           embed.setColor("0x004444");
@@ -132,7 +135,7 @@ class Voice {
   Stream(message) {
     if (message.member != null) {
       if (message.member.voiceChannel) {
-        let url = message.content.substring(8, message.content.length);
+        let url = message.content.split(" ")[1];
         message.member.voiceChannel
           .join()
           .then(connection => {

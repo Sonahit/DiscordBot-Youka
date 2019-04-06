@@ -32,9 +32,15 @@ client.on("message", async msg => {
   logger.info(
     `"${msg.content}" sent by ${msg.author.username} at ${Date.now()}`
   ); 
+  if(msg.isMentioned(client.user)){
+    replies.Greet(msg, client);
+  }
   if (msg.content.startsWith(config.prefix) && msg.author.bot === false) {
     if (msg.content === `${config.prefix}ping`) {
       replies.Pong(msg);
+    }
+    if (msg.content === `${config.prefix}author`) {
+      replies.Credits(msg);
     }
     if (msg.content === `${config.prefix}time`) {
       replies.Time(msg);

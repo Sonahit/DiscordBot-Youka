@@ -4,6 +4,24 @@ const Discord = require("discord.js");
 const embed = new Discord.RichEmbed();
 
 class Replies {
+  Greet(msg, client){
+    embed.setColor("0xfafa33");
+    embed.setAuthor(`${client.user.username}`);
+    embed.setThumbnail(`https://pbs.twimg.com/profile_images/1040094061057650688/wNO6rNzn_400x400.jpg`);
+    embed.setDescription(`Hello! If you need any help type !help`)
+    msg.reply(embed);
+  }
+  Credits(msg,client){
+    embed.setColor("0xffffff");
+    embed.setAuthor(`@IvanSadykov`);
+    embed.setThumbnail(`https://pmcvariety.files.wordpress.com/2018/05/discord-logo.jpg?w=1000&h=563&crop=1`);
+    embed.setDescription('Hello! I am author of this bot! If you have any suggestions please contact me at github or via email.');
+    embed.addField('GitHub',"https://github.com/Sonahit/");
+    embed.addField('Gmail','grandpajok@gmail.com');
+    embed.addBlankField();
+    embed.setFooter('Sincerely @IvanSadykov', `https://media.discordapp.net/attachments/563442639265988641/563908892262662144/AYAYA.png`);
+    msg.author.send(embed);
+  }
   Start(msg) {
     const current = msg.author;
     current.send(`...Started!`);

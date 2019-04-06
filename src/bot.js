@@ -20,6 +20,7 @@ client.on("ready", () => {
 });
 
 client.login(config.token);
+
 const Replies = require("./actions/Replies");
 const Voice = require("./actions/Voice.js");
 const Moves = require("./actions/Moving");
@@ -28,8 +29,9 @@ const moving = new Moves();
 const voice = new Voice();
 const replies = new Replies();
 const admin = new Admin();
-const Validation = require("./Validation")
+const Validation = require("./Validation");
 const validation = new Validation();
+
 client.on("message", async msg => {
   logger.info(
     `"${msg.content}" sent by ${msg.author.username} at ${Date.now()}`
@@ -66,7 +68,13 @@ client.on("message", async msg => {
         voice.Play(msg);
       }
     }
-    if (validation.isRole(msg, "DJ") || isAuthor(msg) > 0) {
+    if (validation.isRole(msg, "DJ") || validation.isAuthor(msg) > 0) {
+      if (
+        msg.content === `${config.prefix}follow me` ||
+        msg.content === `${config.prefix}stop follow`
+      ) {
+        moving.Follow(msg);
+      }
       if (msg.content.includes(`${config.prefix}radio`)) {
         voice.Radio(msg);
       }
@@ -102,7 +110,7 @@ client.on("message", async msg => {
         moving.Move(msg, client);
       }
     }
-    if (validation.isRole(msg, "Модератор") || isAuthor(msg) > 0) {
+    if (validation.isRole(msg, "Модератор") || validation.isAuthor(msg) > 0) {
       if (
         msg.content.includes(`${config.prefix}kick`) &&
         admin.getMode() === "admin"
@@ -112,7 +120,7 @@ client.on("message", async msg => {
         admin.setMode("admin");
         msg.author.send(
           `I have entered into moderation mode be careful! ${
-          msg.author.username
+            msg.author.username
           }`
         );
       } else if (msg.content.includes(`${config.prefix}goUser`)) {
@@ -120,14 +128,14 @@ client.on("message", async msg => {
         msg.author.send(`Exited moderation mode`);
       } else if (
         msg.content.includes(`${config.prefix}moveTo`) ||
-        msg.content.includes(`${config.prefix}move`)
+        msg.content.includes(
+          `${config.prefix}move` && msg.content !== `${config.prefix}move to me`
+        )
       ) {
         admin.Move(msg, client);
-      }
-      else if (msg.content.includes(`${config.prefix}mute`)){
+      } else if (msg.content.includes(`${config.prefix}mute`)) {
         admin.Mute(msg);
-      }
-      else if (msg.content.includes(`${config.prefix}unmute`)){
+      } else if (msg.content.includes(`${config.prefix}unmute`)) {
         admin.unMute(msg);
       }
     }

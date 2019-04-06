@@ -1,10 +1,11 @@
 module.exports = {
-    "token": "<YOUR_TOKEN>",
-    "owners":{
-        "VanyaSkatilsya":{
-            username:"VanyaSkatilsya",
-            id:"6312"
-        }
-    },
-    prefix: "!"
-}
+  token: "NTYzNDQxNjAwNDcxMTA1NTQ2.XKjVmA.X6WhztiJyFUHmJ90O7CrmhpW6EM",
+  owners: {
+    VanyaSkatilsya: {
+      username: "VanyaSkatilsya",
+      id: "6312"
+    }
+  },
+  Priority: ["Админ", "Модератор"],
+  prefix: "!"
+};

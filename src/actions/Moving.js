@@ -3,12 +3,16 @@ const embed = new Discord.RichEmbed();
 const config = require("../../config/config");
 const Validation = require("../Validation");
 const validation = new Validation();
-
-module.exports = class Moving {
-  cunstructor() {
+class Moving {
+  constructor() {
     this.currentChannel = "";
     this.ids = [];
     this.voiceChannels = [];
+    this.idInterval;
+    this.follows = {
+      follow: false,
+      user: "no one"
+    };
   }
   Move(msg, client) {
     if (
@@ -25,10 +29,10 @@ module.exports = class Moving {
       });
       msg.reply(embed);
     }
-    if (msg.content === "!move to me") {
+    if (msg.content === `${config.prefix}move to me`) {
       msg.member.voiceChannel.join().then(connection => {
         msg.reply(`Successfully connected to ${msg.member.voiceChannel.name}`);
-        this.currentChannel = channel.id;
+        this.currentChannel = msg.channel.id;
       });
     }
     if (validation.checkBotMove(msg.content)) {
@@ -40,7 +44,7 @@ module.exports = class Moving {
         .join()
         .then(connection => {
           msg.reply(`Successfully connected to ${channel.name}`);
-          this.currentChannel = channel.id;
+          this.currentChannel = msg.channel.id;
           console.log(`Successfully connected to ${channel.name}`);
         })
         .catch(e => {
@@ -49,6 +53,33 @@ module.exports = class Moving {
         });
     }
   }
+  Follow(msg) {
+    if (msg.content === `${config.prefix}follow me`) {
+      if (msg.member.voiceChannel && this.follows.follow === false) {
+        this.idInterval = setInterval(function() {
+          follow(msg);
+        }, 1000);
+        this.currentChannel = msg.channel.id;
+        this.follows.follow = true;
+        this.follows.user = msg.author;
+      } else {
+        msg.author.send(
+          `Join to voice channel first or I am following ${
+            this.follows.user.username
+          }`
+        );
+      }
+    } else if (
+      (msg.content === `${config.prefix}stop follow` &&
+        this.follows.user.username === msg.author.username) ||
+      validation.isAuthor(msg)
+    ) {
+      clearInterval(this.idInterval);
+      this.follows.follow = false;
+      this.follows.user = "no one";
+    }
+  }
+
   getRooms(channels = []) {
     this.voiceChannels = [];
     this.ids = [];
@@ -70,4 +101,10 @@ module.exports = class Moving {
       }
     }
   }
-};
+}
+
+function follow(msg) {
+  msg.member.voiceChannel.join();
+}
+
+module.exports = Moving;

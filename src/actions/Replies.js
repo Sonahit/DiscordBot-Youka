@@ -50,7 +50,7 @@ class Replies {
     const current = msg.author;
     const cry = ":cry:";
     await current.send(attachment);
-    if (isAuthor(msg)) {
+    if (isAuthor(msg) > 0) {
       embed.setTitle("Help");
       embed.fields.push(
         {
@@ -199,16 +199,24 @@ class Replies {
   }
 }
 function isAuthor(msg) {
-  return (
-    msg.author.client.user.username.indexOf(config.owners) &&
-    msg.author.client.user.discriminator.indexOf(config.owners)
-  );
+  let check =  msg.author.username.indexOf(config.owners) && msg.author.discriminator.indexOf(config.owners)
+  return check;
 }
 
 function isDj(msg) {
-  return (
-    msg.author.client.user.username.indexOf(config.djs) &&
-    msg.author.client.user.discriminator.indexOf(config.djs)
-  );
+  let check = false;
+  let typingCheck = msg.member;
+  if (typingCheck != null) {
+    for (value of msg.member.roles.values()) {
+      if (value.name === "DJ") {
+        check = true;
+        break;
+      }
+    }
+    return check;
+  } else {
+    msg.author.send("Try to type from channel");
+  }
 }
+
 module.exports = Replies;

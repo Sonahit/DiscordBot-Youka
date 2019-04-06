@@ -86,7 +86,8 @@ function getRooms(channels = []) {
 }
 
 function checkBotMove(msg = "") {
-  let pattern = new RegExp(`${config.prefix}(move|moveTo)\s\d+`,"g");
+ // let pattern = /!(move|moveTo)\s\d+/g
+  let pattern = new RegExp(`${config.prefix}(move|moveTo) *[0-9]+`,'g');
   let check = pattern.test(msg);
   return check;
 }
@@ -100,7 +101,8 @@ function getChannel(id, client) {
 }
 
 function checkMoveUser(msg = "") {
-  let pattern = new RegExp(`${config.prefix}(move|moveTo)\s\w+\s\d`,"g");
+  //let pattern = /!(move|moveTo)(\s*(\w|[А-Яа-я])+\s[0-9]*)/g;
+  let pattern = new RegExp(`${config.prefix}(move|moveTo) *(\w|[А-Яа-я])+ [0-9]+`,'g')
   let check = pattern.test(msg);
   return check;
 }

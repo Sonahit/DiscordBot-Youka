@@ -51,7 +51,7 @@ client.on("message", async msg => {
     if (msg.content === `${config.prefix}help`) {
       replies.Help(msg);
     }
-    if (isAuthor(msg)) {
+    if (isAuthor(msg) > 0) {
       if (msg.content === `${config.prefix}disconnect`) {
         client.destroy();
       } else if (msg.content === `${config.prefix}restart`) {
@@ -64,7 +64,7 @@ client.on("message", async msg => {
         voice.Play(msg);
       }
     }
-    if (isDj(msg) || isAuthor(msg)) {
+    if (isDj(msg) || isAuthor(msg) > 0) {
       if (msg.content.includes(`${config.prefix}radio`)) {
         voice.Radio(msg);
       }
@@ -102,8 +102,8 @@ client.on("message", async msg => {
 
 function isAuthor(msg) {
   return (
-    msg.author.client.user.username.indexOf(config.owners) &&
-    msg.author.client.user.discriminator.indexOf(config.owners)
+    msg.author.username.indexOf(config.owners) &&
+    msg.author.discriminator.indexOf(config.owners)
   );
 }
 

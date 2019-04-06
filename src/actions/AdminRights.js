@@ -1,26 +1,30 @@
 module.exports = class AdminRights {
-        constructor( mode="user"){
-            this.mode = mode;
-        }
-        Kick(msg) {
-            if (this.mode === "admin"){
+  constructor(mode = "user") {
+    this.mode = mode;
+  }
+  getMode() {
+    return this.mode;
+  }
 
-            } else {
-                
-            }
-        };
-        Ban(msg){
-            if (this.mode === "admin"){
+  setMode(mode) {
+    this.mode = mode;
+  }
 
-            } else {
-                
-            }
-        };
-        Mute(msg){
-            if (this.mode === "admin"){
+  Kick(msg) {
+    if (this.mode === "admin") {
+    } else {
+    }
+  }
 
-            } else {
+  Ban(msg) {
+    if (this.mode === "admin") {
+    } else {
+    }
+  }
 
-            }
-        }; 
-}
+  Mute(msg) {
+    if (this.mode === "admin") {
+    } else {
+    }
+  }
+};

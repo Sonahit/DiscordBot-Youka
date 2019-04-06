@@ -5,5 +5,6 @@ module.exports = {
             username:"VanyaSkatilsya",
             id:"6312"
         }
-    }
+    },
+    prefix: "!"
 }

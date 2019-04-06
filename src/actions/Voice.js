@@ -38,6 +38,11 @@ function finish(connection, data, reason) {
 
 async function Stream(connection, data, url) {
   data.dispatcher = connection.playOpusStream(await ytdl(url), streamOptions);
+  embed.setColor("0x9f930f")
+  embed.setAuthor(`${data.info.author.name}`,`${data.info.author.avatar}`,`${data.info.author.user_url}`)
+  embed.setThumbnail(`${data.info.thumbnail_url}`);
+  embed.setDescription(`Now streaming ${data.info.title}`);
+  message.channel.send({ embed });
   data.dispatcher.on("debug", info => {
     console.log("debug");
     console.log(info);
@@ -138,7 +143,8 @@ class Voice {
         let url = message.content.split(" ")[1];
         message.member.voiceChannel
           .join()
-          .then(connection => {
+          .then(async connection => {
+            this.data.info = await ytdlVideo.getInfo(url);
             Stream(connection, this.data, url);
           })
           .catch(console.error);
@@ -166,7 +172,9 @@ class Voice {
                 connection.playStream(res, streamOptions);
                 embed.setColor("#b92727");
                 embed.setDescription("Playing radio!");
-                message.channel.send({ embed });
+                embed.setAuthor(`${message.member.user.username}`,`${message.member.user.avatarURL || "https://pmcvariety.files.wordpress.com/2018/05/discord-logo.jpg?w=1000&h=563&crop=1" }`,`http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p`)
+                embed.setThumbnail("http://www.modelradiolive.net/wp-content/uploads/2017/06/radio_mike.jpg");
+                message.channel.send( embed );
               }
             );
           })

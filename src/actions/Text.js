@@ -11,29 +11,37 @@ module.exports = class Text extends AdminRights {
 
   flush(message, client) {
     this.setMuteRole(message);
-    if (
-      classes.Admin.getMode() === "admin" &&
-      message.content === `${config.prefix}flush`
-    ) {
-      message.channel
-        .fetchMessages()
-        .then(messages =>
-          messages
-            .array()
-            .forEach(
-              message => message.author.equals(client.user) && message.delete()
-            )
-        );
-    } else if (
-      classes.Admin.getMode() === "admin" &&
-      message.content === `${config.prefix}flush me`
-    ) {
-      this["flush me"](message, client);
-    } else if (
-      classes.Admin.getMode() === "admin" &&
-      message.content === `${config.prefix}flush all`
-    ) {
-      this["flush all"](message, client);
+    if (classes.Admin.getMode() === "admin") {
+      let thisChannel;
+      if (message.content === `${config.prefix}flush`) {
+        message.channel
+          .fetchMessages()
+          .then(messages =>
+            messages
+              .forEach(
+                message =>
+                  message.author.equals(client.user) && message.delete()
+              )
+          );
+      } else if (
+        new RegExp(`${config.prefix}flush .*`, "gi").test(message.content) &&
+        (thisChannel = message.guild.channels.find((channel, index) => {
+          return channel.name === message.content.split(" ")[1] && channel.type === "text";
+        }))
+      ) {
+        thisChannel.fetchMessages().then(messages => {
+          messages.forEach(
+            message =>
+              message.delete()
+          )
+        })
+      } else if (message.content === `${config.prefix}flush me`) {
+        this["flush me"](message, client);
+      } else if (message.content === `${config.prefix}flush all`) {
+        this["flush all"](message, client);
+      } else {
+        message.reply(`${message.content} this command doesnt exist or channel's type is voice`);
+      }
     } else {
       message.reply(`You have to enter admin mode`);
     }
@@ -44,9 +52,7 @@ module.exports = class Text extends AdminRights {
     if (classes.Admin.getMode() === "admin") {
       message.channel
         .fetchMessages()
-        .then(messages =>
-          messages.array().forEach(message => message.delete())
-        );
+        .then(messages => messages.forEach(message => message.delete()));
     } else {
       message.reply(`You have to enter admin mode`);
     }
@@ -74,7 +80,7 @@ module.exports = class Text extends AdminRights {
         const member = message.guild.member(user);
         let reason =
           message.content.split(` <@${member.user.id}> `)[1] || "no reason";
-        if (member) {    
+        if (member) {
           this.users.set(member, member.roles);
           member.roles.forEach((role, index) => {
             member.removeRole(role);
@@ -102,11 +108,11 @@ module.exports = class Text extends AdminRights {
         if (member) {
           member.removeRole(this.mutedRole);
           this.users.forEach((roles, thisUser) => {
-            roles.forEach((role, index) =>{
-              if(role.name !== "@everyone"){
+            roles.forEach((role, index) => {
+              if (role.name !== "@everyone") {
                 thisUser.addRole(role, reason);
               }
-            })
+            });
           });
           message.channel.send(`<@${member.user.id}> good boy!`);
           this.users.delete(member);

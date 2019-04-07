@@ -7,7 +7,7 @@ module.exports = {
     }
   ],
   Priority: ["Админ", "Модератор"],
-  prefix: "!",
+  prefix: ">>",
   Commands: [
         Admins = [
             "kick",

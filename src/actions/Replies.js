@@ -15,7 +15,9 @@ class Replies {
     embed.setDescription(`Hello${config.prefix} If you need any help type ${config.prefix}help`);
     msg.reply(embed);
   }
-
+  onHello(msg, client){
+      msg.channel.send(`Rise and shine <@${msg.author.id}>`);
+  }
   author(msg, client) {
     embed = validation.clearEmbed(embed);
     embed.setColor("0xffffff");

@@ -29,21 +29,31 @@ client.login(config.token);
 
 /*
  * Handling incoming messages
- * If started with command prefix 
+ * If started with command prefix
  * if exists and valid make an execution of command
  */
 client.on("message", async msg => {
-  try{
+  try {
     logger.info(
       `"${msg.content}" sent by ${msg.author.username} at ${Date.now()}`
     );
-    if (msg.isMentioned(client.user) && msg.author.bot === false && msg.content === `<@${client.user.id}>`) {
+    if (
+      msg.isMentioned(client.user) &&
+      msg.author.bot === false &&
+      msg.content === `<@${client.user.id}>`
+    ) {
       replies.Greet(msg, client);
     }
     if (msg.content === "AYAYA" && msg.author.bot === false) {
       replies.AYAYA(msg);
     }
-    if (msg.content.startsWith(`${config.prefix}`) && msg.author.bot === false) {
+    if (greetMessage(msg.content) && msg.author.bot === false) {
+      replies.onHello(msg, client);
+    }
+    if (
+      msg.content.startsWith(`${config.prefix}`) &&
+      msg.author.bot === false
+    ) {
       let keyWord = msg.content.split(`${config.prefix}`)[1].split(" ")[0];
       let executor;
       commands.forEach((item, index) => {
@@ -63,26 +73,33 @@ client.on("message", async msg => {
           executor[keyWord](msg, client);
         } else if (
           executor.constructor.name === "Voice" &&
+          (validation.isRole(msg, "DJ") || validation.isAuthor(msg))
+        ) {
+          executor[keyWord](msg, client);
+        } else if (
+          executor.constructor.name === "Text" &&
           (validation.isRole(msg, "Модератор") || validation.isAuthor(msg))
         ) {
           executor[keyWord](msg, client);
         } else if (
-          executor.constructor.name === "Moving" &&
-          validation.isRole(msg, "DJ") || validation.isAuthor(msg)
+          (executor.constructor.name === "Moving" &&
+            validation.isRole(msg, "DJ")) ||
+          validation.isAuthor(msg)
         ) {
           executor[keyWord](msg, client);
         } else if (executor.constructor.name === "Replies") {
-          executor[keyWord](msg, client);
-        } else if ( executor.constructor.name === "Text" &&
-          (validation.isRole(msg, "Модератор") || validation.isAuthor(msg))
-        ) {
           executor[keyWord](msg, client);
         }
       } else {
         msg.reply(`${msg.content} command not found. Try to use !help`);
       }
     }
-  } catch (err){
+  } catch (err) {
     console.log(err);
   }
 });
+
+function greetMessage(msg){
+  let check = new RegExp("(g?h?w?)(i|reetings|hat's up|ello|ola|ey|azzup)|((п?х?з?)(ривет|ай|дарова|драсти|дароу|еллоу))(!?)","gi").test(msg);
+  return check;
+}

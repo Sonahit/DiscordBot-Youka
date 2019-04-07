@@ -3,7 +3,7 @@ const Discord = require("discord.js");
 let embed = new Discord.RichEmbed();
 const Validation = require("../Validation");
 const validation = new Validation();
-
+const config = validation.config;
 class Replies {
   Greet(msg, client) {
     embed = validation.clearEmbed(embed);
@@ -12,7 +12,7 @@ class Replies {
     embed.setThumbnail(
       `https://pbs.twimg.com/profile_images/1040094061057650688/wNO6rNzn_400x400.jpg`
     );
-    embed.setDescription(`Hello! If you need any help type !help`);
+    embed.setDescription(`Hello${config.prefix} If you need any help type ${config.prefix}help`);
     msg.reply(embed);
   }
 
@@ -24,7 +24,7 @@ class Replies {
       `https://pmcvariety.files.wordpress.com/2018/05/discord-logo.jpg?w=1000&h=563&crop=1`
     );
     embed.setDescription(
-      "Hello! I am author of this bot! If you have any suggestions please contact me at github or via email."
+      "Hello${config.prefix} I am author of this bot${config.prefix} If you have any suggestions please contact me at github or via email."
     );
     embed.addField("GitHub", "https://github.com/Sonahit/");
     embed.addField("Gmail", "grandpajok@gmail.com");
@@ -36,13 +36,13 @@ class Replies {
     msg.author.send(embed);
   }
   ping(msg) {
-    msg.reply("Pong! :D");
+    msg.reply("Pong${config.prefix} :D");
   }
   //#TODO IMPLEMENT THIS
   Error(msg) {
     const current = msg.author;
-    current.send(`You are not owner of this bot!`);
-    current.send(`Stop trying to destroy not your stuff!`);
+    current.send(`You are not owner of this bot${config.prefix}`);
+    current.send(`Stop trying to destroy not your stuff${config.prefix}`);
     current.send(":japanese_goblin:");
   }
 
@@ -54,111 +54,7 @@ class Replies {
     const current = msg.author;
     const cry = ":cry:";
     await current.send(attachment);
-    if (validation.isAuthor(msg) > 0) {
-      embed.setTitle("Help");
-      embed.fields.push(
-        {
-          name: ` You said you need ?HELP?`,
-          value: `${cry.repeat(8)}`
-        },
-        {
-          name: `Available commands:`,
-          value: ` AYAYA:\tAYAYA                         
-                                 **!ping**:\tTypes a reply pong 
-                                 **!help**:\tGet help`
-        }
-      );
-      embed.fields.push({
-        name: `For DJs:`,
-        value: ` **!play https://[url]**:\tPlays a video 
-                                 **!join**:\tJoins your channel 
-                                 **!leave**:\tLeaves your channel 
-                                 **!stream https://[url]**:\tPlays a youtube stream   
-                                 **!pause**:\tPause playing video 
-                                 **!resume**:\tResumes playing video 
-                                 **!end**:\tEnds playing video 
-                                 **!move to me**:\tMoves bot to you
-                                 **!move[To]**:\tGet all channels and their ids
-                                 **!move[To] #**:\tMoving bot to # Channel
-                                 **!move[To] name #**:\tMoving {name} to # Channel`
-      });
-      embed.fields.push({
-        name: `For Admins:`,
-        value: ` **!disconnect**:\tShutdowns bot  
-                                **!restart**:\tRestarts bot`
-      });
-      embed.setColor("0xff8040");
-      current.send(embed);
-      return;
-    }
-    if (validation.isRole(msg, "Модератор")) {
-      embed.fields.push(
-        {
-          name: ` You said you need ?HELP?`,
-          value: `${cry.repeat(8)}`
-        },
-        {
-          name: `Available commands:`,
-          value: ` AYAYA:\tAYAYA                         
-                                         **!ping**:\tTypes a reply pong 
-                                         **!help**:\tGet help`
-        }
-      );
-      embed.fields.push({
-        name: `For DJs:`,
-        value: ` **!play https://[url]**:\tPlays a video 
-                                 **!join**:\tJoins your channel 
-                                 **!leave**:\tLeaves your channel 
-                                 **!stream https://[url]**:\tPlays a youtube stream   
-                                 **!pause**:\tPause playing video 
-                                 **!resume**:\tResumes playing video 
-                                 **!end**:\tEnds playing video 
-                                 **!move to me**:\tMoves bot to you
-                                 **!move[To]**:\tGet all channels and their ids
-                                 **!move[To] #**:\tMoving bot to # Channel`
-      });
-      embed.fields.push({
-        name: `For Moderators:`,
-        value: ` ** !kick @(Name) [reason] **:\t Kick (Mentioned player) with a [reason]
-                ** !mute @(Name) [reason] **:\t Mute (Mentioned player) with a [reason]
-                ** !unmute @(Name) **:\t Unmute (Mentioned player)
-                **!move[To] name #**:\tMoving {name} to # Channel`
-      });
-      embed.setColor("0xff8040");
-      current.send(embed);
-      return;
-    }
-    if (validation.isRole(msg, "DJ")) {
-      embed.fields.push(
-        {
-          name: ` You said you need ?HELP?`,
-          value: `${cry.repeat(8)}`
-        },
-        {
-          name: `Available commands:`,
-          value: ` AYAYA:\tAYAYA                         
-                                         **!ping**:\tTypes a reply pong 
-                                         **!help**:\tGet help`
-        }
-      );
-      embed.fields.push({
-        name: `For DJs:`,
-        value: ` **!play https://[url]**:\tPlays a video 
-                                 **!join**:\tJoins your channel 
-                                 **!leave**:\tLeaves your channel 
-                                 **!stream https://[url]**:\tPlays a youtube stream   
-                                 **!pause**:\tPause playing video 
-                                 **!resume**:\tResumes playing video 
-                                 **!end**:\tEnds playing video 
-                                 **!move to me**:\tMoves bot to you
-                                 **!move[To]**:\tGet all channels and their ids
-                                 **!move[To] #**:\tMoving bot to # Channel
-                                 **!move[To] name #**:\tMoving {name} to # Channel`
-      });
-      embed.setColor("0xff8040");
-      current.send(embed);
-      return;
-    }
+    embed.setTitle("Help");
     embed.fields.push(
       {
         name: ` You said you need ?HELP?`,
@@ -167,14 +63,103 @@ class Replies {
       {
         name: `Available commands:`,
         value: ` AYAYA:\tAYAYA                         
-                                 **!ping**:\tTypes a reply pong 
-                                 **!help**:\tGet help`
+                **${config.prefix}ping**:\tTypes a reply pong 
+                **${config.prefix}time**:\tShows local time of bot
+                **${config.prefix}help**:\tGet help`
       }
     );
+    if (validation.isAuthor(msg) > 0) {
+      embed.fields.push({
+        name: `For DJs:`,
+        value: `**${config.prefix}play https://[url]**:\tPlays a video 
+                **${config.prefix}join**:\tJoins your channel 
+                **${config.prefix}leave**:\tLeaves your channel 
+                **${config.prefix}stream https://[url]**:\tPlays a youtube stream  
+                **${config.prefix}radio**:\tPlays a radio  
+                **${config.prefix}pause**:\tPause playing video 
+                **${config.prefix}resume**:\tResumes playing video 
+                **${config.prefix}end**:\tEnds playing video 
+                **${config.prefix}moveTo **:\tGet all channels and their ids
+                **${config.prefix}moveTo #**:\tMoving bot to # Channel
+                **${config.prefix}moveTo me**:\tMoves bot to you
+                **${config.prefix}follow me**:\tFollows you 
+                **${config.prefix}follow stop**:\tStop following you `
+      });
+      embed.fields.push({
+        name: `For Admins:`,
+        value: ` 
+                **${config.prefix}IAdmin**:\tSet admin mode 
+                **${config.prefix}IUser**:\tSet user mode 
+                **${config.prefix}disconnect**:\tShutdowns bot  
+                **${config.prefix}restart**:\tRestarts bot
+                **${config.prefix}move name #**:\tMoving {name} to # Channel
+                **${config.prefix}flush all**:\tDeletes all in bot's sights  messages
+                **${config.prefix}flush me**:\tDeletes your in bot's sights messages
+                **${config.prefix}[un]mute (name) [reason]**:\t[un]Mute voice of (name) with a [reason]
+                **${config.prefix}[un]Tmute (name) [reason]**:\t[un]Mute text of (name) with a [reason]`
+      });
+      embed.setColor("0xff8040");
+      current.send(embed);
+      return;
+    }
+    if (validation.isRole(msg, "Модератор")) {
+      embed.fields.push({
+        name: `For DJs:`,
+        value: `**${config.prefix}play https://[url]**:\tPlays a video 
+                **${config.prefix}join**:\tJoins your channel 
+                **${config.prefix}leave**:\tLeaves your channel 
+                **${config.prefix}stream https://[url]**:\tPlays a youtube stream  
+                **${config.prefix}radio**:\tPlays a radio  
+                **${config.prefix}pause**:\tPause playing video 
+                **${config.prefix}resume**:\tResumes playing video 
+                **${config.prefix}end**:\tEnds playing video 
+                **${config.prefix}moveTo **:\tGet all channels and their ids
+                **${config.prefix}moveTo #**:\tMoving bot to # Channel
+                **${config.prefix}moveTo me**:\tMoves bot to you
+                **${config.prefix}follow me**:\tFollows you 
+                **${config.prefix}follow stop**:\tStop following you `
+      });
+      embed.fields.push({
+        name: `For Admins:`,
+        value: ` 
+                **${config.prefix}IAdmin**:\tSet admin mode 
+                **${config.prefix}IUser**:\tSet user mode 
+                **${config.prefix}disconnect**:\tShutdowns bot  
+                **${config.prefix}restart**:\tRestarts bot
+                **${config.prefix}move name #**:\tMoving {name} to # Channel
+                **${config.prefix}flush all**:\tDeletes all in bot's sights  messages
+                **${config.prefix}flush me**:\tDeletes your in bot's sights messages
+                **${config.prefix}[un]mute (name) [reason]**:\t[un]Mute voice of (name) with a [reason]
+                **${config.prefix}[un]Tmute (name) [reason]**:\t[un]Mute text of (name) with a [reason]`
+      });
+      embed.setColor("0xff8040");
+      current.send(embed);
+      return;
+    }
+    if (validation.isRole(msg, "DJ")) {
+      embed.fields.push({
+        name: `For DJs:`,
+        value: `**${config.prefix}play https://[url]**:\tPlays a video 
+                **${config.prefix}join**:\tJoins your channel 
+                **${config.prefix}leave**:\tLeaves your channel 
+                **${config.prefix}stream https://[url]**:\tPlays a youtube stream  
+                **${config.prefix}radio**:\tPlays a radio  
+                **${config.prefix}pause**:\tPause playing video 
+                **${config.prefix}resume**:\tResumes playing video 
+                **${config.prefix}end**:\tEnds playing video 
+                **${config.prefix}moveTo **:\tGet all channels and their ids
+                **${config.prefix}moveTo #**:\tMoving bot to # Channel
+                **${config.prefix}moveTo me**:\tMoves bot to you
+                **${config.prefix}follow me**:\tFollows you 
+                **${config.prefix}follow stop**:\tStop following you `
+      });
+      embed.setColor("0xff8040");
+      current.send(embed);
+      return;
+    }
     current.send(embed);
     return;
   }
-
   AYAYA(msg) {
     const current = msg.channel;
     current.send("AYAYA");

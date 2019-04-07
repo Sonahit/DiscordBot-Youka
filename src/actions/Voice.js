@@ -5,6 +5,7 @@ const Discord = require("discord.js");
 let embed = new Discord.RichEmbed();
 const Validation = require("../Validation");
 const validation = new Validation();
+const config = validation.config;
 const http = require("http");
 
 class Voice {
@@ -136,18 +137,22 @@ class Voice {
     }
   }
   stop(message) {
-    if (
-      message.member.voiceChannel &&
-      this.data.dispatcher != false &&
-      !this.data.onAir
-    ) {
-      this.data.dispatcher.end();
-      this.data.playing = false;
-      message.reply(`Stopped playing a song`);
+    if(message.content === `${config.prefix}stop`){
+      if (
+        message.member.voiceChannel &&
+        this.data.dispatcher != false &&
+        !this.data.onAir
+      ) {
+        this.data.dispatcher.end();
+        this.data.playing = false;
+        message.reply(`Stopped playing a song`);
+      } else {
+        this.data.onAir = false;
+        message.reply(`Shutting down radio...`);
+        http.globalAgent.destroy();
+      }
     } else {
-      this.data.onAir = false;
-      message.reply(`Shutting down radio...`);
-      http.globalAgent.destroy();
+      message.reply(`Wrong command`);
     }
   }
   volume(message) {

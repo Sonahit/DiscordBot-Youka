@@ -23,6 +23,11 @@ client.on("ready", () => {
   logger.info("Logged in as: ");
   logger.info(client.user.username + " - (" + client.user.id + ")");
   console.log(`Connected via ${client.user.username}`);
+  client.user.setActivity(name = "with pleasure",{
+    url: "https://www.twitch.tv/monstercat",
+    type: "STREAMING"
+  });
+  client.user.setStatus("online");
 });
 
 client.login(config.token);
@@ -100,6 +105,6 @@ client.on("message", async msg => {
 });
 
 function greetMessage(msg){
-  let check = new RegExp("(g?h?w?)(i|reetings|hat's up|ello|ola|ey|azzup)|((п?х?з?)(ривет|ай|дарова|драсти|дароу|еллоу))(!?)","gi").test(msg);
+  let check = /^(?!\W.*$).*(g?h?w?)(reetings|hat's up|ello|ola|ey|azzup|hi)(!?)/gi.test(msg) || /^(?![><!"№;%:?*()@#$^&?/.'"\]}{,|`~\+\-[].*$).*(привет)|(^[з]|дравствуй[те]?|драсти$)|^(дар(ова|оу))|([х](ай|еллоу))(!?)/gi.test(msg);
   return check;
 }

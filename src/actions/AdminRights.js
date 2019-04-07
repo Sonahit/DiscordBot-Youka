@@ -162,6 +162,10 @@ module.exports = class AdminRights {
     await this.Start(msg.author);
     current.send(`...Restarting`);
   }
+  disconnect(msg, client) {
+    msg.channel.send(`...Disconnecting`);
+    client.destroy();
+  }
 };
 
 function getUser(name = "", client) {

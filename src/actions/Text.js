@@ -74,13 +74,11 @@ module.exports = class Text extends AdminRights {
         const member = message.guild.member(user);
         let reason =
           message.content.split(` <@${member.user.id}> `)[1] || "no reason";
-        if (member) {
+        if (member) {    
           this.users.set(member, member.roles);
-          let roles = [];
           member.roles.forEach((role, index) => {
-            roles.push(role);
+            member.removeRole(role);
           });
-          member.removeRoles(roles);
           member.addRole(this.mutedRole, reason);
           message.channel.send(`<@${member.user.id}> be a good boy next time`);
         } else {
@@ -103,14 +101,12 @@ module.exports = class Text extends AdminRights {
           message.content.split(` <@${member.user.id}> `)[1] || "no reason";
         if (member) {
           member.removeRole(this.mutedRole);
-          this.users.forEach((roles, user) => {
-            if (roles) {
-              roles.forEach((role, index) => {
-                if (role.name !== "@everyone") {
-                  member.addRole(role, reason);
-                }
-              });
-            }
+          this.users.forEach((roles, thisUser) => {
+            roles.forEach((role, index) =>{
+              if(role.name !== "@everyone"){
+                thisUser.addRole(role, reason);
+              }
+            })
           });
           message.channel.send(`<@${member.user.id}> good boy!`);
           this.users.delete(member);
@@ -128,7 +124,7 @@ module.exports = class Text extends AdminRights {
     const serverRoles = message.guild.roles;
     serverRoles.forEach((item, index) => {
       if (item.name === "Muted") {
-        this.mutedRole = item;
+        this.mutedRole = item.id;
       }
     });
   }

@@ -20,16 +20,12 @@ module.exports = class Validation {
   isRole(msg, role) {
     let typingCheck = msg.member;
     if (typingCheck != null) {
-      if (this.config.Priority.includes(role) && msg.member.roles.forEach((item, index)=> {
-        return role === item.name;
-      })) {
-        return true;
-      }
-      msg.member.roles.some(function(item, i, array) {
-        if (item.name === role) {
+      let check = msg.member.roles.some((item, index)=> {
+        if(role === item.name){
           return true;
         }
-      });
+      })
+      return check;
     } else {
       msg.author.send("Try to type from channel");
     }

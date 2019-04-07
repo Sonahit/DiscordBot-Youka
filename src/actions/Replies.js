@@ -84,7 +84,8 @@ class Replies {
                 **${config.prefix}moveTo **:\tGet all channels and their ids
                 **${config.prefix}moveTo #**:\tMoving bot to # Channel
                 **${config.prefix}moveTo me**:\tMoves bot to you
-                **${config.prefix}follow me**:\tFollows you 
+                **${config.prefix}follow me**:\tBot is following you 
+                **${config.prefix}follow (@username)**:\tBot is following (@username) 
                 **${config.prefix}follow stop**:\tStop following you `
       });
       embed.fields.push({
@@ -119,6 +120,8 @@ class Replies {
                 **${config.prefix}moveTo #**:\tMoving bot to # Channel
                 **${config.prefix}moveTo me**:\tMoves bot to you
                 **${config.prefix}follow me**:\tFollows you 
+                **${config.prefix}follow me**:\tBot is following you 
+                **${config.prefix}follow (@username)**:\tBot is following (@username) 
                 **${config.prefix}follow stop**:\tStop following you `
       });
       embed.fields.push({
@@ -153,6 +156,8 @@ class Replies {
                 **${config.prefix}moveTo #**:\tMoving bot to # Channel
                 **${config.prefix}moveTo me**:\tMoves bot to you
                 **${config.prefix}follow me**:\tFollows you 
+                **${config.prefix}follow me**:\tBot is following you 
+                **${config.prefix}follow (@username)**:\tBot is following (@username) 
                 **${config.prefix}follow stop**:\tStop following you `
       });
       embed.setColor("0xff8040");

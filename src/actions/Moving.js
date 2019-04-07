@@ -55,28 +55,41 @@ class Moving {
     }
   }
   follow(msg, client) {
+    let user;
+    if((user = msg.guild.member(msg.mentions.users.first()))){
+      this["follow user"](msg,client, user);
+    }
     if (msg.content.includes("follow me")) {
       this["follow me"](msg, client);
-      msg.channel.send(`Following <@${msg.author.id}>`);
     } else if (msg.content.includes("follow stop")) {
       this["follow stop"](msg, client);
-      msg.channel.send(`Stopped following <@${msg.author.id}>`);
     }
   }
-
+  "follow user"(msg, client, user){
+    if (user.voiceChannel && this.follows.follow === false) {
+      this.idInterval = setInterval(function() {
+        followUser(msg, user, this);
+      }, 1000);
+      this.follows.follow = true;
+      this.follows.user = user.user;
+      msg.channel.send(`Following <@${this.follows.user.id}>`);
+    } else {
+      user.send(
+        `Join to voice channel first or I am following <@${this.follows.id}>`
+      );
+    }
+  }
   "follow me"(msg, client) {
     if (msg.member.voiceChannel && this.follows.follow === false) {
       this.idInterval = setInterval(function() {
-        follow(msg, client);
+        follow(msg, client, this);
       }, 1000);
-      this.currentChannel = msg.channel.id;
       this.follows.follow = true;
       this.follows.user = msg.author;
+      msg.channel.send(`Following <@${msg.author.id}>`);
     } else {
       msg.author.send(
-        `Join to voice channel first or I am following ${
-          this.follows.user.username
-        }`
+        `Join to voice channel first or I am following <@${this.follows.id}>`
       );
     }
   }
@@ -84,18 +97,26 @@ class Moving {
   "follow stop"(msg) {
     if (
       (msg.content === `${config.prefix}follow stop` &&
-        this.follows.user.username === msg.author.username) ||
-      validation.isAuthor(msg) ||
-      this.follows.follow
+        this.follows.user.username === msg.author.username) 
+        || (validation.isAuthor(msg) 
+        || validation.isRole(msg, "Модератор")
+        || validation.isRole(msg, "DJ"))
     ) {
+     if( this.follows.follow ){
       clearInterval(this.idInterval);
-      this.follows.follow = false;
+      msg.channel.send(`Stopped following <@${this.follows.user.id}>`);
       this.follows.user = "no one";
+      this.follows.follow = false;
+     } else {
+       if(this.follows.user !== "no one"){
+        msg.reply(`I am following <@${this.follows.user.id}>`);
+       } else {
+        msg.reply(`I am not following anyone`);
+       }
+     }
     } else {
       msg.author.send(
-        `I am not following you >:C ${
-          this.msg.author.username
-        } or I am already following someone :D`
+        `I am not following you >:C`
       );
     }
   }
@@ -124,9 +145,16 @@ class Moving {
   }
 }
 
-function follow(msg, client) {
+function follow(msg, client, object) {
   // if(msg.member.voiceChannel != )
   msg.member.voiceChannel.join();
+  object.currentChannel = msg.member.voiceChannel.name;
+}
+
+function followUser(msg, user, object) {
+  // if(msg.member.voiceChannel != )
+  user.voiceChannel.join();
+  object.currentChannel = user.voiceChannel.name;
 }
 
 module.exports = Moving;

@@ -35,6 +35,11 @@ module.exports = {
             "leave",
             "volume"
         ],
+        Text = [
+          "flush",
+          "Tmute",
+          "Tunmute"
+        ],
         Default = [
             "AYAYA",
             "help",

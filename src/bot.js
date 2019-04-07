@@ -55,18 +55,17 @@ client.on("message", async msg => {
     if (executor) {
       if (
         executor.constructor.name === "AdminRights" &&
-        (validation.isRole(msg, "Модератор") | validation.isAuthor(msg))
+        (validation.isRole(msg, "Модератор") || validation.isAuthor(msg))
       ) {
         executor[keyWord](msg, client);
       } else if (
         executor.constructor.name === "Voice" &&
-        (validation.isRole(msg, "Модератор") | validation.isAuthor(msg))
+        (validation.isRole(msg, "Модератор") || validation.isAuthor(msg))
       ) {
         executor[keyWord](msg, client);
       } else if (
         executor.constructor.name === "Moving" &&
-        validation.isRole(msg, "DJ") |
-          validation.isRole(msg, "Модератор") |
+        validation.isRole(msg, "DJ") ||
           validation.isAuthor(msg)
       ) {
         executor[keyWord](msg, client);

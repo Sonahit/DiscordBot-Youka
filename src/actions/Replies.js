@@ -1,5 +1,4 @@
-const { client, Attachment } = require("discord.js");
-const config = require("../../config/config");
+const {Attachment} = require("discord.js");
 const Discord = require("discord.js");
 let embed = new Discord.RichEmbed();
 const Validation = require("../Validation");
@@ -16,6 +15,7 @@ class Replies {
     embed.setDescription(`Hello! If you need any help type !help`);
     msg.reply(embed);
   }
+
   author(msg, client) {
     embed = validation.clearEmbed(embed);
     embed.setColor("0xffffff");
@@ -45,6 +45,7 @@ class Replies {
     current.send(`Stop trying to destroy not your stuff!`);
     current.send(":japanese_goblin:");
   }
+
   async help(msg) {
     embed = validation.clearEmbed(embed);
     const attachment = new Attachment(
@@ -173,11 +174,13 @@ class Replies {
     current.send(embed);
     return;
   }
+
   AYAYA(msg) {
     const current = msg.channel;
     current.send("AYAYA");
     current.send("https://discordemoji.com/assets/emoji/AYAYA.png");
   }
+  
   time(msg) {
     const current = msg.channel;
     current.send(

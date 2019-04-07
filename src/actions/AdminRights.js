@@ -1,6 +1,3 @@
-const config = require("../../config/config");
-const Discord = require("discord.js");
-let embed = new Discord.RichEmbed();
 const Moving = require("./Moving");
 const Validation = require("../Validation");
 const validation = new Validation();
@@ -11,6 +8,7 @@ module.exports = class AdminRights {
     this.mode = mode;
     this.ids = [];
   }
+  
   getMode() {
     return this.mode;
   }
@@ -18,16 +16,19 @@ module.exports = class AdminRights {
   setMode(mode) {
     this.mode = mode;
   }
+
   IAdmin(msg) {
     this.setMode("admin");
     msg.author.send(
       `<@${msg.author.id}>, you set bot to admin mode be careful!`
     );
   }
+
   IUser(msg) {
     this.setMode("user");
     msg.author.send(`I am ordinary user :slight_smile:`);
   }
+
   kick(message) {
     if (isAdmin(this.getMode())) {
       const user = message.mentions.users.first();
@@ -63,6 +64,7 @@ module.exports = class AdminRights {
       msg.reply(`You have to enter admin mode`);
     }
   }
+
   unban(msg) {
     if (isAdmin(this.getMode())) {
     } else {
@@ -151,9 +153,11 @@ module.exports = class AdminRights {
       msg.reply(`You have to enter admin mode`);
     }
   }
+
   Start(msg) {
     msg.author.send(`...Started!`);
   }
+
   async restart(msg) {
     await this.Start(msg.author);
     current.send(`...Restarting`);

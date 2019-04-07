@@ -1,19 +1,20 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const logger = require("winston");
-const config = require("../config/config");
 require("opusscript");
 const Replies = require("./actions/Replies");
 const replies = new Replies();
 const Validation = require("./Validation");
 const validation = new Validation();
-// #TODO Make a map of commands
+const config = validation.config;
+
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console(), {
   colorize: true
 });
 logger.level = "debug";
+
 // Initialize Discord Bot
 const commands = require("./utils/commands");
 client.on("ready", () => {
@@ -24,7 +25,11 @@ client.on("ready", () => {
 });
 
 client.login(config.token);
-
+/*
+ * Handling incoming messages
+ * If started with command prefix 
+ * if exists and valid make an execution of command
+ */
 client.on("message", async msg => {
   logger.info(
     `"${msg.content}" sent by ${msg.author.username} at ${Date.now()}`

@@ -1,8 +1,9 @@
 const Discord = require("discord.js");
 let embed = new Discord.RichEmbed();
-const config = require("../../config/config");
 const Validation = require("../Validation");
 const validation = new Validation();
+const config = validation.config;
+
 class Moving {
   constructor() {
     this.currentChannel = "";
@@ -14,6 +15,7 @@ class Moving {
       user: "no one"
     };
   }
+
   moveTo(msg, client) {
     if (
       msg.content === `${config.prefix}moveTo` ||
@@ -52,6 +54,7 @@ class Moving {
         });
     }
   }
+
   follow(msg, client) {
     if (msg.content === `${config.prefix}follow me`) {
       if (msg.member.voiceChannel && this.follows.follow === false) {
@@ -93,6 +96,7 @@ class Moving {
     });
     return this.voiceChannels;
   }
+  
   getChannel(id, client) {
     for (let i = 0; i < this.ids.length; i++) {
       if (i === parseInt(id) - 1) {

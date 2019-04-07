@@ -1,14 +1,11 @@
 const ytdlVideo = require("ytdl-core");
 const ytdl = require("ytdl-core-discord");
 const streamOptions = { volume: 0.03, passes: 3 };
-const fileOptions = { volume: 0.15, passes: 3 };
 const Discord = require("discord.js");
 let embed = new Discord.RichEmbed();
 const Validation = require("../Validation");
 const validation = new Validation();
-const config = require("../../config/config");
 const http = require("http");
-const agent = new http.Agent({ keepAlive: true });
 
 class Voice {
   constructor() {

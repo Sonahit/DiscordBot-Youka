@@ -147,14 +147,26 @@ class Moving {
 
 function follow(msg, client, object) {
   // if(msg.member.voiceChannel != )
-  msg.member.voiceChannel.join();
-  object.currentChannel = msg.member.voiceChannel.name;
+  if(msg.member != null){
+    msg.member.voiceChannel.join();
+    object.currentChannel = msg.member.voiceChannel.name;
+  } else {
+    clearInterval(object.idInterval);
+    object.follows.follow = false;
+    object.follows.user = "no one";
+  }
 }
 
 function followUser(msg, user, object) {
   // if(msg.member.voiceChannel != )
-  user.voiceChannel.join();
-  object.currentChannel = user.voiceChannel.name;
+  if(user != null){
+    user.voiceChannel.join();
+    object.currentChannel = user.voiceChannel.name;
+  } else {
+    clearInterval(object.idInterval);
+    object.follows.follow = false;
+    object.follows.user = "no one";
+  }
 }
 
 module.exports = Moving;

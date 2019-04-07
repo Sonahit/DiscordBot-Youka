@@ -4,6 +4,7 @@ let embed = new Discord.RichEmbed();
 const Validation = require("../Validation");
 const validation = new Validation();
 const config = validation.config;
+
 class Replies {
   Greet(msg, client) {
     embed = validation.clearEmbed(embed);
@@ -40,14 +41,17 @@ class Replies {
   ping(msg) {
     msg.reply("Pong${config.prefix} :D");
   }
-  //#TODO IMPLEMENT THIS
   Error(msg) {
-    const current = msg.author;
-    current.send(`You are not owner of this bot${config.prefix}`);
-    current.send(`Stop trying to destroy not your stuff${config.prefix}`);
-    current.send(":japanese_goblin:");
-  }
-
+    embed.setAuthor("Validator","https://cdn.pixabay.com/photo/2012/04/15/19/12/cross-34976_960_720.png");
+    embed.setTitle("Error 403")
+    embed.setDescription(`You don't have any right <@${msg.author.id}>`);
+    embed.addField("What to do?", "PM any online moderators and ask for role Krabik");
+    embed.addField("What next?","Just wait for their response");
+    embed.addBlankField();
+    embed.addField("What can i do right now?",`You can join any voice channels but your microphone will be switched to "onPush"`);
+    embed.setFooter("Sincerely your validator!", "http://i0.kym-cdn.com/photos/images/facebook/001/290/938/4a7.jpg");
+    msg.author.send(embed);
+  };
   async help(msg) {
     embed = validation.clearEmbed(embed);
     const attachment = new Attachment(

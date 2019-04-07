@@ -46,5 +46,17 @@ module.exports = {
             "author",
             "time"
         ],
+    ],
+    RadioList : [ 
+      BBC1 = {
+          name: "BBC radio one",
+          URL: "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p",
+          Jenre: "POP | ROCK | LIVE"
+        },
+      StrictlyHouse = {
+        name: "Strictly House",
+        URL: "http://247house.fm:9500/stream#.mp3",
+        Jenre: "SOULFUL HOUSE | DEEP HOUSE | TECH HOUSE | STRICTLY HOUSE"
+      }
     ]
 };

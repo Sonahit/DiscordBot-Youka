@@ -31,7 +31,7 @@ config.Commands.forEach((item, index) => {
     case 3:
       commands.set(classes.Text, item);
     case 4:
-      commands.set(replies, item);
+      commands.set(classes.Replies, item);
   }
 });
 

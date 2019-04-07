@@ -7,7 +7,7 @@ const Validation = require("../Validation");
 const validation = new Validation();
 const config = validation.config;
 const http = require("http");
-
+const {awaitRadioChoose} = require("../utils/Await");
 class Voice {
   constructor() {
     this.data = {
@@ -81,7 +81,7 @@ class Voice {
           .join()
           .then(async connection => {
             this.data.info = await ytdlVideo.getInfo(url);
-            Stream(connection, this.data, url);
+            Stream(message, connection, this.data, url);
           })
           .catch(console.error);
       } else {
@@ -99,21 +99,16 @@ class Voice {
   radio(message) {
     if (message.member != null) {
       if (message.member.voiceChannel) {
+        validation.clearEmbed(embed);
         message.member.voiceChannel
           .join()
-          .then(connection => {
+          .then(async connection => {
             embed = validation.clearEmbed(embed);
             http.get(
-              "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p",
+              await awaitRadioChoose(message, message.author, embed),
               res => {
                 this.data.onAir = true;
                 connection.playStream(res, streamOptions);
-                embed.setColor("#b92727");
-                embed.setDescription("Starting radio...");
-                embed.setThumbnail(
-                  "http://www.modelradiolive.net/wp-content/uploads/2017/06/radio_mike.jpg"
-                );
-                message.channel.send(embed);
               }
             );
           })
@@ -158,7 +153,7 @@ class Voice {
   volume(message) {
     if (message.member.voiceChannel && this.data.dispatcher != false) {
       var volume = message.content.substring(8, message.content.length);
-      this.data.dispatcher.setVolume(parseFloat(volume / 100));
+      this.data.dispatcher.setVolume(parseFloat(volume / 1000));
     }
   }
 }
@@ -199,7 +194,7 @@ function finish(connection, data, reason) {
   }
 }
 
-async function Stream(connection, data, url) {
+async function Stream(message, connection, data, url) {
   data.dispatcher = connection.playOpusStream(await ytdl(url), streamOptions);
   embed.setColor("0x9f930f");
   embed.setAuthor(
@@ -209,7 +204,7 @@ async function Stream(connection, data, url) {
   );
   embed.setThumbnail(`${data.info.thumbnail_url}`);
   embed.setDescription(`Now streaming ${data.info.title}`);
-  message.channel.send({ embed });
+  message.channel.send(embed);
   data.dispatcher.on("debug", info => {
     console.log("debug");
     console.log(info);
@@ -225,4 +220,7 @@ async function Stream(connection, data, url) {
     console.log(reason);
   });
 }
+
+
+
 module.exports = Voice;

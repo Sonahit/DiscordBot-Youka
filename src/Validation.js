@@ -20,7 +20,9 @@ module.exports = class Validation {
   isRole(msg, role) {
     let typingCheck = msg.member;
     if (typingCheck != null) {
-      if (this.config.Priority.includes(role)) {
+      if (this.config.Priority.includes(role) && msg.member.roles.forEach((item, index)=> {
+        return role === item.name;
+      })) {
         return true;
       }
       msg.member.roles.some(function(item, i, array) {

@@ -1,11 +1,12 @@
-const Discord = require("discord.js");
-const client = new Discord.Client();
+const client = require("./utils/Client");
 const logger = require("winston");
 require("opusscript");
+
 const Replies = require("./actions/Replies");
 const replies = new Replies();
 const Validation = require("./Validation");
 const validation = new Validation();
+
 const config = validation.config;
 
 // Configure logger settings

@@ -22,8 +22,7 @@ module.exports = {
         ],
         Moving = [
             "moveTo",
-            "follow me",
-            "follow stop"
+            "follow"
         ],
         Voice = [
             "radio",

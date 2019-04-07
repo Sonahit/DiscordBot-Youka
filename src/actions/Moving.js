@@ -54,9 +54,15 @@ class Moving {
         });
     }
   }
-
   follow(msg, client) {
-    if (msg.content === `${config.prefix}follow me`) {
+    if(msg.content.includes("follow me")){
+      this["follow me"](msg,client);
+    } else if (msg.content.includes("follow stop")){
+      this["follow stop"](msg,client);
+    }
+  }
+
+  "follow me"(msg, client) {
       if (msg.member.voiceChannel && this.follows.follow === false) {
         this.idInterval = setInterval(function() {
           follow(msg, client);
@@ -71,14 +77,23 @@ class Moving {
           }`
         );
       }
-    } else if (
+  }
+
+  "follow stop"(msg){
+    if (
       (msg.content === `${config.prefix}follow stop` &&
         this.follows.user.username === msg.author.username) ||
-      validation.isAuthor(msg)
+      validation.isAuthor(msg) || this.follows.follow
     ) {
       clearInterval(this.idInterval);
       this.follows.follow = false;
-      this.follows.user = "no one";
+      this.follows.user = "no one"; 
+    } else {
+      msg.author.send(
+        `I am not following you >:C ${
+          this.msg.author.username
+        } or I am already following someone :D`
+      );
     }
   }
 

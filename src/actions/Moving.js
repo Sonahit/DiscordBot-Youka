@@ -55,39 +55,42 @@ class Moving {
     }
   }
   follow(msg, client) {
-    if(msg.content.includes("follow me")){
-      this["follow me"](msg,client);
-    } else if (msg.content.includes("follow stop")){
-      this["follow stop"](msg,client);
+    if (msg.content.includes("follow me")) {
+      this["follow me"](msg, client);
+      msg.channel.send(`Following <@${msg.author.id}>`);
+    } else if (msg.content.includes("follow stop")) {
+      this["follow stop"](msg, client);
+      msg.channel.send(`Stopped following <@${msg.author.id}>`);
     }
   }
 
   "follow me"(msg, client) {
-      if (msg.member.voiceChannel && this.follows.follow === false) {
-        this.idInterval = setInterval(function() {
-          follow(msg, client);
-        }, 1000);
-        this.currentChannel = msg.channel.id;
-        this.follows.follow = true;
-        this.follows.user = msg.author;
-      } else {
-        msg.author.send(
-          `Join to voice channel first or I am following ${
-            this.follows.user.username
-          }`
-        );
-      }
+    if (msg.member.voiceChannel && this.follows.follow === false) {
+      this.idInterval = setInterval(function() {
+        follow(msg, client);
+      }, 1000);
+      this.currentChannel = msg.channel.id;
+      this.follows.follow = true;
+      this.follows.user = msg.author;
+    } else {
+      msg.author.send(
+        `Join to voice channel first or I am following ${
+          this.follows.user.username
+        }`
+      );
+    }
   }
 
-  "follow stop"(msg){
+  "follow stop"(msg) {
     if (
       (msg.content === `${config.prefix}follow stop` &&
         this.follows.user.username === msg.author.username) ||
-      validation.isAuthor(msg) || this.follows.follow
+      validation.isAuthor(msg) ||
+      this.follows.follow
     ) {
       clearInterval(this.idInterval);
       this.follows.follow = false;
-      this.follows.user = "no one"; 
+      this.follows.user = "no one";
     } else {
       msg.author.send(
         `I am not following you >:C ${
@@ -111,7 +114,7 @@ class Moving {
     });
     return this.voiceChannels;
   }
-  
+
   getChannel(id, client) {
     for (let i = 0; i < this.ids.length; i++) {
       if (i === parseInt(id) - 1) {

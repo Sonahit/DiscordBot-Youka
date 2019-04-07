@@ -8,7 +8,7 @@ module.exports = class AdminRights {
     this.mode = mode;
     this.ids = [];
   }
-  
+
   getMode() {
     return this.mode;
   }

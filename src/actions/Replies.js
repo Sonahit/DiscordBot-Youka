@@ -7,7 +7,7 @@ const validation = new Validation();
 
 class Replies {
   Greet(msg, client) {
-     embed = validation.clearEmbed(embed);
+    embed = validation.clearEmbed(embed);
     embed.setColor("0xfafa33");
     embed.setAuthor(`${client.user.username}`);
     embed.setThumbnail(
@@ -16,8 +16,8 @@ class Replies {
     embed.setDescription(`Hello! If you need any help type !help`);
     msg.reply(embed);
   }
-  "author"(msg, client) {
-     embed = validation.clearEmbed(embed);
+  author(msg, client) {
+    embed = validation.clearEmbed(embed);
     embed.setColor("0xffffff");
     embed.setAuthor(`@IvanSadykov`);
     embed.setThumbnail(
@@ -35,17 +35,17 @@ class Replies {
     );
     msg.author.send(embed);
   }
-  "ping"(msg) {
+  ping(msg) {
     msg.reply("Pong! :D");
   }
-  //#TODO IMPLEMENT THIS 
+  //#TODO IMPLEMENT THIS
   Error(msg) {
     const current = msg.author;
     current.send(`You are not owner of this bot!`);
     current.send(`Stop trying to destroy not your stuff!`);
     current.send(":japanese_goblin:");
   }
-  async "help"(msg) {
+  async help(msg) {
     embed = validation.clearEmbed(embed);
     const attachment = new Attachment(
       "https://discordemoji.com/assets/emoji/AYAYA.png"
@@ -173,12 +173,12 @@ class Replies {
     current.send(embed);
     return;
   }
-  "AYAYA"(msg) {
+  AYAYA(msg) {
     const current = msg.channel;
     current.send("AYAYA");
     current.send("https://discordemoji.com/assets/emoji/AYAYA.png");
   }
-  "time"(msg) {
+  time(msg) {
     const current = msg.channel;
     current.send(
       "Current time:\n" +

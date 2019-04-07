@@ -4,9 +4,11 @@ module.exports = class Validation {
   }
   isAuthor(msg) {
     return this.config.owners.some((item, index) => {
-      return msg.author.username === item.username &&
-              msg.author.discriminator === item.id
-    })
+      return (
+        msg.author.username === item.username &&
+        msg.author.discriminator === item.id
+      );
+    });
   }
 
   isRole(msg, role) {
@@ -16,8 +18,8 @@ module.exports = class Validation {
         return true;
       }
       msg.member.roles.some(function(item, i, array) {
-        if(item.name === role){
-          return true
+        if (item.name === role) {
+          return true;
         }
       });
     } else {
@@ -48,7 +50,7 @@ module.exports = class Validation {
     let check = pattern.test(msg);
     return check;
   }
-  clearEmbed(embed){
+  clearEmbed(embed) {
     embed.setAuthor("");
     embed.setColor("");
     embed.setDescription("");
@@ -58,7 +60,7 @@ module.exports = class Validation {
     embed.setTimestamp("");
     embed.setTitle("");
     embed.setURL("");
-    while (embed.fields.length > 0){
+    while (embed.fields.length > 0) {
       embed.fields.shift();
     }
     return embed;

@@ -14,16 +14,14 @@ class Moving {
       user: "no one"
     };
   }
-  "moveTo"(msg, client) {
+  moveTo(msg, client) {
     if (
       msg.content === `${config.prefix}moveTo` ||
       msg.content === `${config.prefix}move`
     ) {
-       embed = validation.clearEmbed(embed);
+      embed = validation.clearEmbed(embed);
       embed.setColor("0xff8040");
-      embed.setDescription(
-        `Type !moveTo (number) to move a bot`
-      );
+      embed.setDescription(`Type !moveTo (number) to move a bot`);
       embed.fields.push({
         name: "Avaiable rooms:",
         value: `${this.getRooms(msg.guild.channels)}`
@@ -54,7 +52,7 @@ class Moving {
         });
     }
   }
-  "follow"(msg, client) {
+  follow(msg, client) {
     if (msg.content === `${config.prefix}follow me`) {
       if (msg.member.voiceChannel && this.follows.follow === false) {
         this.idInterval = setInterval(function() {
@@ -105,7 +103,7 @@ class Moving {
 }
 
 function follow(msg, client) {
- // if(msg.member.voiceChannel != )
+  // if(msg.member.voiceChannel != )
   msg.member.voiceChannel.join();
 }
 

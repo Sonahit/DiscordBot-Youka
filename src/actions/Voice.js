@@ -4,7 +4,7 @@ const streamOptions = { volume: 0.03, passes: 3 };
 const fileOptions = { volume: 0.15, passes: 3 };
 const Discord = require("discord.js");
 let embed = new Discord.RichEmbed();
-const Validation = require('../Validation');
+const Validation = require("../Validation");
 const validation = new Validation();
 const config = require("../../config/config");
 const http = require("http");
@@ -18,10 +18,10 @@ class Voice {
       queue: [],
       playing: false,
       streaming: false,
-      onAir : false
+      onAir: false
     };
   }
-  "join"(message) {
+  join(message) {
     if (message.member != null) {
       if (message.member.voiceChannel) {
         message.member.voiceChannel.join();
@@ -37,47 +37,47 @@ class Voice {
       current.send(embed);
     }
   }
-  "leave"(message) {
+  leave(message) {
     message.member.voiceChannel.leave();
   }
-  "play"(message) {
+  play(message) {
     if (message.member != null && this.data.streaming == false) {
-         embed = validation.clearEmbed(embed);
-        let url = message.content.split(" ")[1];
-        if (this.data.playing || this.data.queue > 0) {
-          //this.data.queue.push(url);
-          embed.setColor("0x004444");
-          embed.setDescription("Music still playing. WAIT!");
-          message.reply(embed);
+      embed = validation.clearEmbed(embed);
+      let url = message.content.split(" ")[1];
+      if (this.data.playing || this.data.queue > 0) {
+        //this.data.queue.push(url);
+        embed.setColor("0x004444");
+        embed.setDescription("Music still playing. WAIT!");
+        message.reply(embed);
+      } else {
+        if (message.member.voiceChannel) {
+          this.data.playing = true;
+          this.data.queue.push(url);
+          message.member.voiceChannel
+            .join()
+            .then(async connection => {
+              this.data.info = await ytdlVideo.getInfo(url);
+              Play(connection, this.data, message);
+            })
+            .catch(console.error);
         } else {
-          if (message.member.voiceChannel) {
-            this.data.playing = true;
-            this.data.queue.push(url);
-            message.member.voiceChannel
-              .join()
-              .then(async connection => {
-                this.data.info = await ytdlVideo.getInfo(url);
-                Play(connection, this.data, message);
-              })
-              .catch(console.error);
-          } else {
-            embed.setColor("0xff0000");
-            embed.setDescription("You need to join a voice channel first!");
-            message.reply(embed);
-          }
+          embed.setColor("0xff0000");
+          embed.setDescription("You need to join a voice channel first!");
+          message.reply(embed);
+        }
       }
     } else {
-       embed = validation.clearEmbed(embed);
+      embed = validation.clearEmbed(embed);
       const current = message.author;
       embed.setColor("0x004444");
       embed.setDescription(`I am streaming! `);
       current.send(embed);
     }
   }
-  "stream"(message) {
+  stream(message) {
     if (message.member != null) {
       if (message.member.voiceChannel) {
-         embed = validation.clearEmbed(embed);
+        embed = validation.clearEmbed(embed);
         let url = message.content.split(" ")[1];
         message.member.voiceChannel
           .join()
@@ -98,14 +98,14 @@ class Voice {
       current.send(embed);
     }
   }
-  "radio"(message) {
+  radio(message) {
     if (message.member != null) {
       if (message.member.voiceChannel) {
         message.member.voiceChannel
           .join()
           .then(connection => {
-             embed = validation.clearEmbed(embed);
-             http.get(
+            embed = validation.clearEmbed(embed);
+            http.get(
               "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p",
               res => {
                 this.data.onAir = true;
@@ -128,19 +128,23 @@ class Voice {
       current.send(`Stop typying me in pm :angry: `);
     }
   }
-  "pause"(message) {
+  pause(message) {
     if (message.member.voiceChannel && this.data.dispatcher != false) {
       this.data.dispatcher.pause();
     }
   }
-  "resume"(message) {
+  resume(message) {
     if (message.member.voiceChannel && this.data.dispatcher != false) {
       this.data.dispatcher.resume();
     }
   }
-  "stop"(message) {
-    if (message.member.voiceChannel && this.data.dispatcher != false && !this.data.onAir) {
-      this.data.dispatcher.end();     
+  stop(message) {
+    if (
+      message.member.voiceChannel &&
+      this.data.dispatcher != false &&
+      !this.data.onAir
+    ) {
+      this.data.dispatcher.end();
       this.data.playing = false;
       message.reply(`Stopped playing a song`);
     } else {
@@ -149,7 +153,7 @@ class Voice {
       http.globalAgent.destroy();
     }
   }
-  "volume"(message) {
+  volume(message) {
     if (message.member.voiceChannel && this.data.dispatcher != false) {
       var volume = message.content.substring(8, message.content.length);
       this.data.dispatcher.setVolume(parseFloat(volume / 100));

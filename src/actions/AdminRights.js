@@ -11,22 +11,24 @@ module.exports = class AdminRights {
     this.mode = mode;
     this.ids = [];
   }
-  "getMode"() {
+  getMode() {
     return this.mode;
   }
 
-  "setMode"(mode) {
+  setMode(mode) {
     this.mode = mode;
   }
-  "IAdmin"(msg){
+  IAdmin(msg) {
     this.setMode("admin");
-    msg.author.send(`<@${msg.author.id}>, you set bot to admin mode be careful!`)
+    msg.author.send(
+      `<@${msg.author.id}>, you set bot to admin mode be careful!`
+    );
   }
-  "IUser"(msg){
-    this.setMode("user");  
-    msg.author.send(`I am ordinary user :slight_smile:`)
+  IUser(msg) {
+    this.setMode("user");
+    msg.author.send(`I am ordinary user :slight_smile:`);
   }
-  "kick"(message) {
+  kick(message) {
     if (isAdmin(this.getMode())) {
       const user = message.mentions.users.first();
       if (user) {
@@ -55,32 +57,31 @@ module.exports = class AdminRights {
     }
   }
 
-  "ban"(msg) {
+  ban(msg) {
     if (isAdmin(this.getMode())) {
     } else {
       msg.reply(`You have to enter admin mode`);
     }
   }
-  "unban"(msg) {
+  unban(msg) {
     if (isAdmin(this.getMode())) {
     } else {
       msg.reply(`You have to enter admin mode`);
     }
   }
 
-  "mute"(message) {
+  mute(message) {
     if (isAdmin(this.getMode())) {
       const user = message.mentions.users.first();
       if (user) {
         const member = message.guild.member(user);
-        let reason = message.content.split(` <@${member.user.id}> `)[1] || "no reason";
+        let reason =
+          message.content.split(` <@${member.user.id}> `)[1] || "no reason";
         if (member) {
           member
             .setMute(true, reason)
             .then(() => {
-              message.reply(
-                `Successfully muted ${user.tag} because ${reason}`
-              );
+              message.reply(`Successfully muted ${user.tag} because ${reason}`);
             })
             .catch(err => {
               message.reply("I was unable to mute the member");
@@ -97,25 +98,26 @@ module.exports = class AdminRights {
     }
   }
 
-  "unmute"(message) {
+  unmute(message) {
     if (isAdmin(this.getMode())) {
       const user = message.mentions.users.first();
-        if (user) {
-          const member = message.guild.member(user);
-          let reason = message.content.split(` <@${member.user.id}> `)[1] || "no reason"; 
-          if (member) {
-            member
-              .setMute(false, reason)
-              .then(() => {
-                message.reply(`Successfully unmuted ${user.tag}`);
-              })
-              .catch(err => {
-                message.reply("I was unable to unmute the member");
-                console.error(err);
-              });
-          } else {
-            message.reply("That user isn't in this guild!");
-          }
+      if (user) {
+        const member = message.guild.member(user);
+        let reason =
+          message.content.split(` <@${member.user.id}> `)[1] || "no reason";
+        if (member) {
+          member
+            .setMute(false, reason)
+            .then(() => {
+              message.reply(`Successfully unmuted ${user.tag}`);
+            })
+            .catch(err => {
+              message.reply("I was unable to unmute the member");
+              console.error(err);
+            });
+        } else {
+          message.reply("That user isn't in this guild!");
+        }
       } else {
         message.reply("You didn't mention the user to unmute!");
       }
@@ -124,7 +126,7 @@ module.exports = class AdminRights {
     }
   }
 
-  "move"(msg, client) {
+  move(msg, client) {
     if (isAdmin(this.getMode())) {
       if (validation.checkMoveUser(msg.content)) {
         moving.getRooms(msg.guild.channels);
@@ -152,7 +154,7 @@ module.exports = class AdminRights {
   Start(msg) {
     msg.author.send(`...Started!`);
   }
-  async "restart"(msg) {
+  async restart(msg) {
     await this.Start(msg.author);
     current.send(`...Restarting`);
   }

@@ -17,15 +17,26 @@ module.exports = class Validation {
    * @param {*} msg 
    * @param {*} role 
    */
-  isRole(msg, role) {
+  isRole(msg, roles = this.config.ValidRoles) {
     let typingCheck = msg.member;
     if (typingCheck != null) {
-      let check = msg.member.roles.some((item, index)=> {
-        if(role === item.name){
-          return true;
-        }
-      })
-      return check;
+      if(!Array.isArray(roles)){
+        let check = msg.member.roles.some((item, index)=> {
+          if(roles === item.name){
+            return true;
+          }
+        })
+        return check;
+      } else {
+        let check = msg.member.roles.some((item, index)=> {
+          return roles.some((role, index)=> {
+            if(role === item.name){
+              return true;
+            }
+          })
+        })
+        return check;
+      }
     } else {
       msg.author.send("Try to type from channel");
     }
@@ -53,7 +64,7 @@ module.exports = class Validation {
     let check = pattern.test(msg);
     return check;
   }
-  
+
   greetMessage(msg){
     let check = /^(?!\W.*$).*(g?h?w?)(reetings|hat's up|ello|ola|ey|azzup|hi)(!?)/gi.test(msg) || /^(?![><!"№;%:?*()@#$^&?/.'"\]}{,|`~\+\-[].*$).*(привет)|(^[з]|дравствуй[те]?|драсти$)|^(дар(ова|оу))|([х](ай|еллоу))(!?)/gi.test(msg);
     return check;

@@ -58,5 +58,17 @@ module.exports = {
         URL: "http://247house.fm:9500/stream#.mp3",
         Jenre: "SOULFUL HOUSE | DEEP HOUSE | TECH HOUSE | STRICTLY HOUSE"
       }
+    ],
+    ValidRoles: [
+      "Krabik",
+      "Undertale",
+      "BOT",
+      "BOT_ADMIN",
+      "Модератор",
+      "DJ",
+      "Админ",
+      "Уточка",
+      "Рабы",
+      "Вальхалла"
     ]
 };

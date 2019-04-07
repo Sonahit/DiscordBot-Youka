@@ -49,54 +49,58 @@ client.on("message", async msg => {
     ) {
       replies.Greet(msg, client);
     }
-    if (msg.content === "AYAYA" && msg.author.bot === false) {
+    if (msg.content === "AYAYA" && validation.isRole(msg)   && msg.author.bot === false) {
       replies.AYAYA(msg);
     }
-    if (validation.greetMessage(msg.content) && msg.author.bot === false) {
+    if (validation.greetMessage(msg.content) && validation.isRole(msg) && msg.author.bot === false) {
       replies.onHello(msg, client);
     }
     if (
       msg.content.startsWith(`${config.prefix}`) &&
       msg.author.bot === false
-    ) {
-      let keyWord = msg.content.split(`${config.prefix}`)[1].split(" ")[0];
-      let executor;
-      commands.forEach((item, index) => {
-        if (
-          item.some((item, index) => {
-            return item === keyWord;
-          }) === true
-        ) {
-          executor = index;
-        }
-      });
-      if (executor) {
-        if (
-          executor.constructor.name === "AdminRights" &&
-          (validation.isRole(msg, "Модератор") || validation.isAuthor(msg))
-        ) {
-          executor[keyWord](msg, client);
-        } else if (
-          executor.constructor.name === "Voice" &&
-          (validation.isRole(msg, "DJ") || validation.isAuthor(msg))
-        ) {
-          executor[keyWord](msg, client);
-        } else if (
-          executor.constructor.name === "Text" &&
-          (validation.isRole(msg, "Модератор") || validation.isAuthor(msg))
-        ) {
-          executor[keyWord](msg, client);
-        } else if (
-          (executor.constructor.name === "Moving" &&
-            validation.isRole(msg, "DJ")) ||
-          validation.isAuthor(msg)
-        ) {
-          executor[keyWord](msg, client);
-        } else if (executor.constructor.name === "Replies") {
-          executor[keyWord](msg, client);
-        }
+    ) { 
+      if( validation.isRole(msg) ){
+            let keyWord = msg.content.split(`${config.prefix}`)[1].split(" ")[0];
+            let executor;
+            commands.forEach((item, index) => {
+              if (
+                item.some((item, index) => {
+                  return item === keyWord;
+                }) === true
+              ) {
+                executor = index;
+              }
+            });
+            if (executor) {
+              if (
+                executor.constructor.name === "AdminRights" &&
+                (validation.isRole(msg, "Модератор") || validation.isAuthor(msg))
+              ) {
+                executor[keyWord](msg, client);
+              } else if (
+                executor.constructor.name === "Voice" &&
+                (validation.isRole(msg, "DJ") || validation.isAuthor(msg))
+              ) {
+                executor[keyWord](msg, client);
+              } else if (
+                executor.constructor.name === "Text" &&
+                (validation.isRole(msg, "Модератор") || validation.isAuthor(msg))
+              ) {
+                executor[keyWord](msg, client);
+              } else if (
+                (executor.constructor.name === "Moving" &&
+                  validation.isRole(msg, "DJ")) ||
+                validation.isAuthor(msg)
+              ) {
+                executor[keyWord](msg, client);
+              } else if (executor.constructor.name === "Replies") {
+                executor[keyWord](msg, client);
+              }
+            } else {
+              msg.reply(`${msg.content} command not found. Try to use !help`);
+            }
       } else {
-        msg.reply(`${msg.content} command not found. Try to use !help`);
+        replies.Error(msg);
       }
     }
   } catch (err) {

@@ -1,12 +1,13 @@
 const { client, Attachment } = require("discord.js");
 const config = require("../../config/config");
 const Discord = require("discord.js");
-const embed = new Discord.RichEmbed();
+let embed = new Discord.RichEmbed();
 const Validation = require("../Validation");
 const validation = new Validation();
 
 class Replies {
   Greet(msg, client) {
+     embed = validation.clearEmbed(embed);
     embed.setColor("0xfafa33");
     embed.setAuthor(`${client.user.username}`);
     embed.setThumbnail(
@@ -15,7 +16,8 @@ class Replies {
     embed.setDescription(`Hello! If you need any help type !help`);
     msg.reply(embed);
   }
-  Credits(msg, client) {
+  "author"(msg, client) {
+     embed = validation.clearEmbed(embed);
     embed.setColor("0xffffff");
     embed.setAuthor(`@IvanSadykov`);
     embed.setThumbnail(
@@ -33,28 +35,18 @@ class Replies {
     );
     msg.author.send(embed);
   }
-  Start(msg) {
-    const current = msg.author;
-    current.send(`...Started!`);
-  }
-  Pong(msg) {
+  "ping"(msg) {
     msg.reply("Pong! :D");
   }
-  Relog(msg) {
-    const current = msg.author;
-    current.send(`You need to restart bot!`);
-  }
-  Restart(msg) {
-    const current = msg.author;
-    current.send(`...Restarting`);
-  }
+  //#TODO IMPLEMENT THIS 
   Error(msg) {
     const current = msg.author;
     current.send(`You are not owner of this bot!`);
     current.send(`Stop trying to destroy not your stuff!`);
     current.send(":japanese_goblin:");
   }
-  async Help(msg) {
+  async "help"(msg) {
+    embed = validation.clearEmbed(embed);
     const attachment = new Attachment(
       "https://discordemoji.com/assets/emoji/AYAYA.png"
     );
@@ -181,12 +173,12 @@ class Replies {
     current.send(embed);
     return;
   }
-  AYAYA(msg) {
+  "AYAYA"(msg) {
     const current = msg.channel;
     current.send("AYAYA");
     current.send("https://discordemoji.com/assets/emoji/AYAYA.png");
   }
-  Time(msg) {
+  "time"(msg) {
     const current = msg.channel;
     current.send(
       "Current time:\n" +

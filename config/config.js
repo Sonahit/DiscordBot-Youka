@@ -1,11 +1,46 @@
 module.exports = {
   token: "NTYzNDQxNjAwNDcxMTA1NTQ2.XKjVmA.X6WhztiJyFUHmJ90O7CrmhpW6EM",
-  owners: {
-    VanyaSkatilsya: {
+  owners: [
+    VanyaSkatilsya = {
       username: "VanyaSkatilsya",
       id: "6312"
     }
-  },
+  ],
   Priority: ["Админ", "Модератор"],
-  prefix: "!"
+  prefix: "!",
+  Commands: [
+        Admins = [
+            "kick",
+            "mute",
+            "unmute",
+            "move",
+            "disconnect",
+            "restart",
+            "playtest",
+            "IAdmin",
+            "IUser"
+        ],
+        Moving = [
+            "moveTo",
+            "follow me",
+            "follow stop"
+        ],
+        Voice = [
+            "radio",
+            "play",
+            "stream",
+            "stop",
+            "resume",
+            "join",
+            "leave",
+            "volume"
+        ],
+        Default = [
+            "AYAYA",
+            "help",
+            "ping",
+            "author",
+            "time"
+        ],
+    ]
 };

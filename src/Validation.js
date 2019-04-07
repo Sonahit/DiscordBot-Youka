@@ -3,23 +3,23 @@ module.exports = class Validation {
     this.config = require("../config/config.js");
   }
   isAuthor(msg) {
-    return (
-      msg.author.username.indexOf(this.config.owners) &&
-      msg.author.discriminator.indexOf(this.config.owners)
-    );
+    return this.config.owners.some((item, index) => {
+      return msg.author.username === item.username &&
+              msg.author.discriminator === item.id
+    })
   }
 
   isRole(msg, role) {
-    let check = false;
     let typingCheck = msg.member;
     if (typingCheck != null) {
       if (this.config.Priority.includes(role)) {
         return true;
       }
-      check = msg.member.roles.some(function(item, i, array) {
-        return item.name === role;
+      msg.member.roles.some(function(item, i, array) {
+        if(item.name === role){
+          return true
+        }
       });
-      return check;
     } else {
       msg.author.send("Try to type from channel");
     }
@@ -47,5 +47,20 @@ module.exports = class Validation {
     //let pattern = new RegExp(`${config.prefix}(move|moveTo) *(\w|[А-Яа-я])+ [0-9]+`,'g')
     let check = pattern.test(msg);
     return check;
+  }
+  clearEmbed(embed){
+    embed.setAuthor("");
+    embed.setColor("");
+    embed.setDescription("");
+    embed.setFooter("");
+    embed.setImage("");
+    embed.setThumbnail("");
+    embed.setTimestamp("");
+    embed.setTitle("");
+    embed.setURL("");
+    while (embed.fields.length > 0){
+      embed.fields.shift();
+    }
+    return embed;
   }
 };

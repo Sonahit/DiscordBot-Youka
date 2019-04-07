@@ -3,7 +3,11 @@ const client = new Discord.Client();
 const logger = require("winston");
 const config = require("../config/config");
 require("opusscript");
-
+const Replies = require("./actions/Replies");
+const replies = new Replies();
+const Validation = require("./Validation");
+const validation = new Validation();
+// #TODO Make a map of commands
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console(), {
@@ -11,7 +15,7 @@ logger.add(new logger.transports.Console(), {
 });
 logger.level = "debug";
 // Initialize Discord Bot
-
+const commands = require("./utils/commands");
 client.on("ready", () => {
   logger.info("Connected");
   logger.info("Logged in as: ");
@@ -21,6 +25,45 @@ client.on("ready", () => {
 
 client.login(config.token);
 
+client.on("message", async msg => {
+  logger.info(
+    `"${msg.content}" sent by ${msg.author.username} at ${Date.now()}`
+  );
+  if (msg.isMentioned(client.user) && msg.author.bot === false) {
+    replies.Greet(msg, client);
+  }
+  if (msg.content === "AYAYA" && msg.author.bot === false) {
+    replies.AYAYA(msg);
+  }
+  if(msg.content.startsWith(`${config.prefix}`) && msg.author.bot === false ){
+    let keyWord = msg.content.split(`${config.prefix}`)[1].split(' ')[0];
+    let executor;
+    commands.forEach((item, index) => {
+      if(item.some((item,index )=> {
+        return item === keyWord;
+      }) === true) {
+        executor = index;     
+      }
+    })
+    if(executor){
+      if( executor.constructor.name === 'AdminRights' && (validation.isRole(msg,'Модератор') || validation.isAuthor(msg))){
+          executor[keyWord](msg, client);
+        }
+      else if (executor.constructor.name === 'Voice' && (validation.isRole(msg,'Модератор') || validation.isAuthor(msg))){
+          executor[keyWord](msg, client);
+        }
+      else if (executor.constructor.name === 'Moving' && (validation.isRole(msg,'DJ') | validation.isRole(msg,'Модератор') | validation.isAuthor(msg))){
+          executor[keyWord](msg, client);
+        }
+      else if (executor.constructor.name === 'Replies'){
+          executor[keyWord](msg, client);
+        }  
+    } else {
+      msg.reply(`${msg.content} command not found. Try to use !help`);
+    }
+  }
+});
+/*
 const Replies = require("./actions/Replies");
 const Voice = require("./actions/Voice.js");
 const Moves = require("./actions/Moving");
@@ -29,8 +72,9 @@ const moving = new Moves();
 const voice = new Voice();
 const replies = new Replies();
 const admin = new Admin();
-const Validation = require("./Validation");
-const validation = new Validation();
+
+
+console.log(config);
 
 client.on("message", async msg => {
   logger.info(
@@ -39,32 +83,38 @@ client.on("message", async msg => {
   if (msg.isMentioned(client.user)) {
     replies.Greet(msg, client);
   }
+  if (msg.content === "AYAYA" && msg.author.bot === false) {
+    replies.AYAYA(msg);
+  }
   if (msg.content.startsWith(config.prefix) && msg.author.bot === false) {
     if (msg.content === `${config.prefix}ping`) {
       replies.Pong(msg);
     }
+    
     if (msg.content === `${config.prefix}author`) {
       replies.Credits(msg);
     }
+    
     if (msg.content === `${config.prefix}time`) {
       replies.Time(msg);
     }
-    if (msg.content === "AYAYA") {
-      replies.AYAYA(msg);
-    }
+   
     if (msg.content === `${config.prefix}help`) {
       replies.Help(msg);
     }
+    
     if (validation.isAuthor(msg) > 0) {
       if (msg.content === `${config.prefix}disconnect`) {
         client.destroy();
-      } else if (msg.content === `${config.prefix}restart`) {
+      } 
+      if (msg.content === `${config.prefix}restart`) {
         replies.Restart(msg);
         client.destroy();
         client.login(config.token).then(() => {
           replies.Start(msg);
         });
-      } else if (msg.content === `${config.prefix}playtest`) {
+      } 
+      if (msg.content === `${config.prefix}playtest`) {
         voice.Play(msg);
       }
     }
@@ -80,30 +130,38 @@ client.on("message", async msg => {
       }
       if (
         msg.content.includes(`${config.prefix}play`) &&
-        validateURL(msg.content.toLowerCase())
+        validateURL(msg.content.toLowerelse if())
       ) {
         voice.Play(msg);
-      } else if (
+      } 
+      if (
         msg.content.includes(`${config.prefix}stream`) &&
-        validateURL(msg.content.toLowerCase())
+        validateURL(msg.content.toLowerelse if())
       ) {
         voice.Stream(msg);
-      } else if (msg.content === `${config.prefix}pause`) {
+      } 
+      if (msg.content === `${config.prefix}pause`) {
         voice.Pause(msg);
-      } else if (
+      } 
+      if (
         msg.content === `${config.prefix}end` ||
         msg.content === `${config.prefix}stop`
       ) {
         voice.End(msg);
-      } else if (msg.content === `${config.prefix}resume`) {
+      } 
+      if (msg.content === `${config.prefix}resume`) {
         voice.Resume(msg);
-      } else if (msg.content === `${config.prefix}join`) {
+      } 
+      if (msg.content === `${config.prefix}join`) {
         voice.Join(msg);
-      } else if (msg.content === `${config.prefix}leave`) {
+      } 
+      if (msg.content === `${config.prefix}leave`) {
         voice.Disconnect(msg);
-      } else if (msg.content.includes(`${config.prefix}volume`)) {
+      } 
+      if (msg.content.includes(`${config.prefix}volume`)) {
         voice.changeVolume(msg);
-      } else if (
+      } 
+      if (
         msg.content.includes(`${config.prefix}moveTo`) ||
         msg.content.includes(`${config.prefix}move`)
       ) {
@@ -116,28 +174,33 @@ client.on("message", async msg => {
         admin.getMode() === "admin"
       ) {
         admin.Kick(msg);
-      } else if (msg.content.includes(`${config.prefix}goAdmin`)) {
+      } 
+      if (msg.content.includes(`${config.prefix}goAdmin`)) {
         admin.setMode("admin");
         msg.author.send(
           `I have entered into moderation mode be careful! ${
             msg.author.username
           }`
         );
-      } else if (msg.content.includes(`${config.prefix}goUser`)) {
+      } 
+      if (msg.content.includes(`${config.prefix}goUser`)) {
         admin.setMode("user");
         msg.author.send(`Exited moderation mode`);
-      } else if (
+      } 
+      if (
         msg.content.includes(`${config.prefix}moveTo`) ||
         msg.content.includes(
           `${config.prefix}move` && msg.content !== `${config.prefix}move to me`
         )
       ) {
         admin.Move(msg, client);
-      } else if (msg.content.includes(`${config.prefix}mute`)) {
+      } 
+      if (msg.content.includes(`${config.prefix}mute`)) {
         admin.Mute(msg);
-      } else if (msg.content.includes(`${config.prefix}unmute`)) {
+      } 
+      if (msg.content.includes(`${config.prefix}unmute`)) {
         admin.unMute(msg);
       }
     }
   }
-});
+});*/

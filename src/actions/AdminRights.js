@@ -1,25 +1,32 @@
 const config = require("../../config/config");
 const Discord = require("discord.js");
-const embed = new Discord.RichEmbed();
+let embed = new Discord.RichEmbed();
 const Moving = require("./Moving");
-const moving = new Moving();
 const Validation = require("../Validation");
 const validation = new Validation();
+const moving = new Moving();
 
 module.exports = class AdminRights {
   constructor(mode = "user") {
     this.mode = mode;
     this.ids = [];
   }
-  getMode() {
+  "getMode"() {
     return this.mode;
   }
 
-  setMode(mode) {
+  "setMode"(mode) {
     this.mode = mode;
   }
-
-  Kick(message) {
+  "IAdmin"(msg){
+    this.setMode("admin");
+    msg.author.send(`<@${msg.author.id}>, you set bot to admin mode be careful!`)
+  }
+  "IUser"(msg){
+    this.setMode("user");  
+    msg.author.send(`I am ordinary user :slight_smile:`)
+  }
+  "kick"(message) {
     if (isAdmin(this.getMode())) {
       const user = message.mentions.users.first();
       if (user) {
@@ -29,94 +36,95 @@ module.exports = class AdminRights {
           member
             .kick()
             .then(() => {
-              message.author.send(
+              message.reply(
                 `Successfully kicked ${user.tag} because ${reason}`
               );
             })
             .catch(err => {
-              message.author.send("I was unable to kick the member");
+              message.reply("I was unable to kick the member");
               console.error(err);
             });
         } else {
-          message.author.send("You didn't mention the user to kick!");
-        }
-      } else {
-        message.author.send("That user isn't in this guild!");
-      }
-    } else {
-      message.author.send(`You have to enter admin mode`);
-    }
-  }
-
-  Ban(msg) {
-    if (isAdmin(this.getMode())) {
-    } else {
-      msg.author.send(`You have to enter admin mode`);
-    }
-  }
-  unBan(msg) {
-    if (isAdmin(this.getMode())) {
-    } else {
-      msg.author.send(`You have to enter admin mode`);
-    }
-  }
-
-  Mute(message) {
-    if (isAdmin(this.getMode())) {
-      const user = message.mentions.users.first();
-      if (user) {
-        const member = message.guild.member(user);
-        let reason = message.content.split(` <@${member.user.id}> `)[1];
-        if (member) {
-          member
-            .setMute(true, reason)
-            .then(() => {
-              message.author.send(
-                `Successfully muted ${user.tag} because ${reason}`
-              );
-            })
-            .catch(err => {
-              message.author.send("I was unable to mute the member");
-              console.error(err);
-            });
-        } else {
-          message.author.send("You didn't mention the user to mute!");
-        }
-      } else {
-        message.author.send("That user isn't in this guild!");
-      }
-    } else {
-      message.author.send(`You have to enter admin mode`);
-    }
-  }
-
-  unMute(message) {
-    if (isAdmin(this.getMode())) {
-      const user = message.mentions.users.first();
-      if (user) {
-        const member = message.guild.member(user);
-        if (member) {
-          member
-            .setMute(false, reason)
-            .then(() => {
-              message.author.send(`Successfully unmuted ${user.tag}`);
-            })
-            .catch(err => {
-              message.author.send("I was unable to unmute the member");
-              console.error(err);
-            });
-        } else {
-          message.author.send("You didn't mention the user to unmute!");
+          message.reply("You didn't mention the user to kick!");
         }
       } else {
         message.reply("That user isn't in this guild!");
       }
     } else {
-      message.author.send(`You have to enter admin mode`);
+      message.reply(`You have to enter admin mode`);
     }
   }
 
-  Move(msg, client) {
+  "ban"(msg) {
+    if (isAdmin(this.getMode())) {
+    } else {
+      msg.reply(`You have to enter admin mode`);
+    }
+  }
+  "unban"(msg) {
+    if (isAdmin(this.getMode())) {
+    } else {
+      msg.reply(`You have to enter admin mode`);
+    }
+  }
+
+  "mute"(message) {
+    if (isAdmin(this.getMode())) {
+      const user = message.mentions.users.first();
+      if (user) {
+        const member = message.guild.member(user);
+        let reason = message.content.split(` <@${member.user.id}> `)[1] || "no reason";
+        if (member) {
+          member
+            .setMute(true, reason)
+            .then(() => {
+              message.reply(
+                `Successfully muted ${user.tag} because ${reason}`
+              );
+            })
+            .catch(err => {
+              message.reply("I was unable to mute the member");
+              console.error(err);
+            });
+        } else {
+          message.reply("You didn't mention the user to mute!");
+        }
+      } else {
+        message.reply("That user isn't in this guild!");
+      }
+    } else {
+      message.reply(`You have to enter admin mode`);
+    }
+  }
+
+  "unmute"(message) {
+    if (isAdmin(this.getMode())) {
+      const user = message.mentions.users.first();
+        if (user) {
+          const member = message.guild.member(user);
+          let reason = message.content.split(` <@${member.user.id}> `)[1] || "no reason"; 
+          if (member) {
+            member
+              .setMute(false, reason)
+              .then(() => {
+                message.reply(`Successfully unmuted ${user.tag}`);
+              })
+              .catch(err => {
+                message.reply("I was unable to unmute the member");
+                console.error(err);
+              });
+          } else {
+            message.reply("That user isn't in this guild!");
+          }
+      } else {
+        message.reply("You didn't mention the user to unmute!");
+      }
+    } else {
+      message.reply(`You have to enter admin mode`);
+    }
+  }
+
+  "move"(msg, client) {
     if (isAdmin(this.getMode())) {
       if (validation.checkMoveUser(msg.content)) {
         moving.getRooms(msg.guild.channels);
@@ -138,8 +146,15 @@ module.exports = class AdminRights {
         msg.reply(`Cannot move `);
       }
     } else {
-      msg.author.send(`You have to enter admin mode`);
+      msg.reply(`You have to enter admin mode`);
     }
+  }
+  Start(msg) {
+    msg.author.send(`...Started!`);
+  }
+  async "restart"(msg) {
+    await this.Start(msg.author);
+    current.send(`...Restarting`);
   }
 };
 

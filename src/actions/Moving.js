@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const embed = new Discord.RichEmbed();
+let embed = new Discord.RichEmbed();
 const config = require("../../config/config");
 const Validation = require("../Validation");
 const validation = new Validation();
@@ -14,14 +14,15 @@ class Moving {
       user: "no one"
     };
   }
-  Move(msg, client) {
+  "moveTo"(msg, client) {
     if (
       msg.content === `${config.prefix}moveTo` ||
       msg.content === `${config.prefix}move`
     ) {
+       embed = validation.clearEmbed(embed);
       embed.setColor("0xff8040");
       embed.setDescription(
-        `Type !move[To] [name] (number) to move a bot or {name}`
+        `Type !moveTo (number) to move a bot`
       );
       embed.fields.push({
         name: "Avaiable rooms:",
@@ -29,7 +30,7 @@ class Moving {
       });
       msg.reply(embed);
     }
-    if (msg.content === `${config.prefix}move to me`) {
+    if (msg.content === `${config.prefix}moveTo me`) {
       msg.member.voiceChannel.join().then(connection => {
         msg.reply(`Successfully connected to ${msg.member.voiceChannel.name}`);
         this.currentChannel = msg.channel.id;
@@ -53,11 +54,11 @@ class Moving {
         });
     }
   }
-  Follow(msg) {
+  "follow"(msg, client) {
     if (msg.content === `${config.prefix}follow me`) {
       if (msg.member.voiceChannel && this.follows.follow === false) {
         this.idInterval = setInterval(function() {
-          follow(msg);
+          follow(msg, client);
         }, 1000);
         this.currentChannel = msg.channel.id;
         this.follows.follow = true;
@@ -70,7 +71,7 @@ class Moving {
         );
       }
     } else if (
-      (msg.content === `${config.prefix}stop follow` &&
+      (msg.content === `${config.prefix}follow stop` &&
         this.follows.user.username === msg.author.username) ||
       validation.isAuthor(msg)
     ) {
@@ -103,7 +104,8 @@ class Moving {
   }
 }
 
-function follow(msg) {
+function follow(msg, client) {
+ // if(msg.member.voiceChannel != )
   msg.member.voiceChannel.join();
 }
 

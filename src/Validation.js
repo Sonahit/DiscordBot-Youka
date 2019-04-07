@@ -53,7 +53,11 @@ module.exports = class Validation {
     let check = pattern.test(msg);
     return check;
   }
-
+  
+  greetMessage(msg){
+    let check = /^(?!\W.*$).*(g?h?w?)(reetings|hat's up|ello|ola|ey|azzup|hi)(!?)/gi.test(msg) || /^(?![><!"№;%:?*()@#$^&?/.'"\]}{,|`~\+\-[].*$).*(привет)|(^[з]|дравствуй[те]?|драсти$)|^(дар(ова|оу))|([х](ай|еллоу))(!?)/gi.test(msg);
+    return check;
+  }
   /**
    * Checking if command is valid to move a user
    * check ${this.config.prefix}help on running bot

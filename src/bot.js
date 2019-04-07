@@ -52,7 +52,7 @@ client.on("message", async msg => {
     if (msg.content === "AYAYA" && msg.author.bot === false) {
       replies.AYAYA(msg);
     }
-    if (greetMessage(msg.content) && msg.author.bot === false) {
+    if (validation.greetMessage(msg.content) && msg.author.bot === false) {
       replies.onHello(msg, client);
     }
     if (
@@ -103,8 +103,3 @@ client.on("message", async msg => {
     console.log(err);
   }
 });
-
-function greetMessage(msg){
-  let check = /^(?!\W.*$).*(g?h?w?)(reetings|hat's up|ello|ola|ey|azzup|hi)(!?)/gi.test(msg) || /^(?![><!"№;%:?*()@#$^&?/.'"\]}{,|`~\+\-[].*$).*(привет)|(^[з]|дравствуй[те]?|драсти$)|^(дар(ова|оу))|([х](ай|еллоу))(!?)/gi.test(msg);
-  return check;
-}

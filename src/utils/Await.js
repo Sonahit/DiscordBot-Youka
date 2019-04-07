@@ -15,33 +15,35 @@ module.exports.awaitRadioChoose = async function awaitRadioChoose(message,author
     let sent = false;
     let url = "";
     const filter = msg => msg.author.bot === false && msg.author.id === author.id && sent === false
-    await message.channel.awaitMessages( filter, {max: 1, time: 2000, errors: ['time']})
-    .then((msgs) => {
+    await message.channel.awaitMessages( filter, {max: 2, time: 10000, errors: ['time']})
+    .then(async (msgs) => {
         validation.clearEmbed(embed);
             try{
-                let msg = msgs.values().next().value();
+                let msg = msgs.values().next().value;
                 embed.addField('Now starting...', `${config.RadioList[parseInt(msg.content.split("#")[1])-1].name}`);
             
                 embed.setThumbnail(
                     "http://www.modelradiolive.net/wp-content/uploads/2017/06/radio_mike.jpg"
                 );
-                msg.reply(embed);
+                await message.reply(embed);
                 sent = true;
                 url = config.RadioList[parseInt(msg.content.split("#")[1])-1].URL;
             } catch (err){
-                msg.reply(`${msg.content} is wrong pattern try using #1, #2 and etc.\n Type ${config.prefix}radio again`)
+                message.reply(`${msg.content} is wrong pattern try using #1, #2 and etc.\n Type ${config.prefix}radio again`)
+                console.log(err);
             }
         
     }).catch(() => {
-        if(!sent){
+        if(!sent){  
             validation.clearEmbed(embed);
             embed.setTitle("Due to inactivity");
-            embed.addField('Now starting...', `${config.RadioList[Math.floor(Math.random() * config.RadioList.length)].name}`);
+            let number = Math.floor(Math.random() * config.RadioList.length)
+            embed.addField('Now starting...', `${config.RadioList[number].name}`);
             embed.setThumbnail(
                 "http://www.modelradiolive.net/wp-content/uploads/2017/06/radio_mike.jpg"
             );
             message.reply(embed);
-            url = config.RadioList[0].URL;
+            url = config.RadioList[number].URL;
         }
     });
     return url;

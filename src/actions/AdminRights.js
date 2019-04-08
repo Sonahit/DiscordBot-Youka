@@ -2,7 +2,7 @@ const Moving = require("./Moving");
 const Validation = require("../Validation");
 const validation = new Validation();
 const moving = new Moving();
-
+const config = validation.config;
 class AdminRights {
   constructor(mode = "user") {
     this._mode = mode;
@@ -13,11 +13,11 @@ class AdminRights {
     return this._mode;
   }
 
-  get ids(){
-    return this._ids
+  get ids() {
+    return this._ids;
   }
 
-  set ids(ids){
+  set ids(ids) {
     this._ids = ids;
   }
   set mode(mode) {
@@ -25,14 +25,14 @@ class AdminRights {
   }
 
   IAdmin(msg) {
-    this.setMode("admin");
+    this.mode = "admin";
     msg.author.send(
       `<@${msg.author.id}>, you set bot to admin mode be careful!`
     );
   }
 
   IUser(msg) {
-    this.setMode("user");
+    this.mode = "user";
     msg.author.send(`I am ordinary user :slight_smile:`);
   }
 
@@ -162,18 +162,20 @@ class AdminRights {
   }
 
   Start(msg) {
-    msg.author.send(`...Started!`);
+    msg.send(`...Started!`);
   }
 
-  async restart(msg) {
+  async restart(msg, client) {
+    msg.author.send(`...Restarting`);
+    await this.disconnect(msg, client);
+    client.login(config.token);
     await this.Start(msg.author);
-    current.send(`...Restarting`);
   }
-  disconnect(msg, client) {
-    msg.channel.send(`...Disconnecting`);
+  async disconnect(msg, client) {
+    msg.author.send(`...Disconnected`);
     client.destroy();
   }
-};
+}
 
 function getUser(name = "", client) {
   for (let guild of client.guilds) {

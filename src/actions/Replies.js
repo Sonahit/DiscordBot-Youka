@@ -84,7 +84,9 @@ class Replies {
                 **${config.prefix}radio**:\tPlays a radio  
                 **${config.prefix}pause**:\tPause playing video 
                 **${config.prefix}resume**:\tResumes playing video 
-                **${config.prefix}end**:\tEnds playing video 
+                **${config.prefix}stop**:\tStops playing video 
+                **${config.prefix}skip**:\tSkips current video
+                **${config.prefix}queue**:\tShows current queue
                 **${config.prefix}moveTo **:\tGet all channels and their ids
                 **${config.prefix}moveTo #**:\tMoving bot to # Channel
                 **${config.prefix}moveTo me**:\tMoves bot to you

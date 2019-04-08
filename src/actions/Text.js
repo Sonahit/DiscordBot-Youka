@@ -10,54 +10,56 @@ class Text extends AdminRights {
     this._mutedRole = "";
   }
 
-  get mutedRole(){
+  get mutedRole() {
     return this._mutedRole;
   }
 
-  get users(){
+  get users() {
     return this._users;
   }
 
-  set mutedRole(mutedRole){
+  set mutedRole(mutedRole) {
     this._mutedRole = mutedRole;
   }
 
-  set users(users){
+  set users(users) {
     this._users = users;
   }
 
   flush(message, client) {
     this.setMuteRole(message);
-    if (classes.Admin.getMode() === "admin") {
+    if (classes.Admin.mode === "admin") {
       let thisChannel;
       if (message.content === `${config.prefix}flush`) {
         message.channel
           .fetchMessages()
           .then(messages =>
-            messages
-              .forEach(
-                message =>
-                  message.author.equals(client.user) && message.delete()
-              )
+            messages.forEach(
+              message => message.author.equals(client.user) && message.delete()
+            )
           );
       } else if (
         new RegExp(`${config.prefix}flush .*`, "gi").test(message.content) &&
         (thisChannel = message.guild.channels.find((channel, index) => {
-          return channel.name === message.content.split(" ")[1] && channel.type === "text";
+          return (
+            channel.name === message.content.split(" ")[1] &&
+            channel.type === "text"
+          );
         }))
       ) {
         thisChannel.fetchMessages().then(messages => {
-          messages.forEach(
-            message =>
-              message.delete()
-          )
-        })
+          messages.forEach(message => message.delete());
+        });
       } else if (message.content === `${config.prefix}flush me`) {
         this["flush me"](message, client);
       } else if (message.content === `${config.prefix}flush all`) {
         this["flush all"](message, client);
       } else {
-        message.reply(`${message.content} this command doesnt exist or channel's type is voice`);
+        message.reply(
+          `${
+            message.content
+          } this command doesnt exist or channel's type is voice`
+        );
       }
     } else {
       message.reply(`You have to enter admin mode`);
@@ -66,7 +68,7 @@ class Text extends AdminRights {
 
   "flush all"(message, client) {
     this.setMuteRole(message);
-    if (classes.Admin.getMode() === "admin") {
+    if (classes.Admin.mode === "admin") {
       message.channel
         .fetchMessages()
         .then(messages => messages.forEach(message => message.delete()));
@@ -77,7 +79,7 @@ class Text extends AdminRights {
 
   "flush me"(message, client) {
     this.setMuteRole(message);
-    if (classes.Admin.getMode() === "admin") {
+    if (classes.Admin.mode === "admin") {
       message.channel
         .fetchMessages()
         .then(messages =>
@@ -91,7 +93,7 @@ class Text extends AdminRights {
   }
   Tmute(message, client) {
     this.setMuteRole(message);
-    if (classes.Admin.getMode() === "admin") {
+    if (classes.Admin.mode === "admin") {
       const user = message.mentions.users.first();
       if (user) {
         const member = message.guild.member(user);
@@ -116,7 +118,7 @@ class Text extends AdminRights {
   }
   Tunmute(message, client) {
     this.setMuteRole(message);
-    if (classes.Admin.getMode() === "admin") {
+    if (classes.Admin.mode === "admin") {
       const user = message.mentions.users.first();
       if (user) {
         const member = message.guild.member(user);
@@ -151,6 +153,6 @@ class Text extends AdminRights {
       }
     });
   }
-};
+}
 
 module.exports = Text;

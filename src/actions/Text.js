@@ -2,11 +2,28 @@ const Validation = require("../Validation");
 const validation = new Validation();
 const config = validation.config;
 const AdminRights = require("../actions/AdminRights");
-module.exports = class Text extends AdminRights {
+
+class Text extends AdminRights {
   constructor() {
     super();
-    this.users = new Map();
-    this.mutedRole = "";
+    this._users = new Map();
+    this._mutedRole = "";
+  }
+
+  get mutedRole(){
+    return this._mutedRole;
+  }
+
+  get users(){
+    return this._users;
+  }
+
+  set mutedRole(mutedRole){
+    this._mutedRole = mutedRole;
+  }
+
+  set users(users){
+    this._users = users;
   }
 
   flush(message, client) {
@@ -135,3 +152,5 @@ module.exports = class Text extends AdminRights {
     });
   }
 };
+
+module.exports = Text;

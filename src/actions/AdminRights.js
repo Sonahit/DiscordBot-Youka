@@ -3,18 +3,25 @@ const Validation = require("../Validation");
 const validation = new Validation();
 const moving = new Moving();
 
-module.exports = class AdminRights {
+class AdminRights {
   constructor(mode = "user") {
-    this.mode = mode;
-    this.ids = [];
+    this._mode = mode;
+    this._ids = [];
   }
 
-  getMode() {
-    return this.mode;
+  get mode() {
+    return this._mode;
   }
 
-  setMode(mode) {
-    this.mode = mode;
+  get ids(){
+    return this._ids
+  }
+
+  set ids(ids){
+    this._ids = ids;
+  }
+  set mode(mode) {
+    this._mode = mode;
   }
 
   IAdmin(msg) {
@@ -169,18 +176,17 @@ module.exports = class AdminRights {
 };
 
 function getUser(name = "", client) {
-  let obtained;
   for (let guild of client.guilds) {
-    obtained = guild[1].members.find(user => {
+    return guild[1].members.find(user => {
       if (name === user.user.username) {
         return user;
       }
     });
   }
-  console.log(obtained);
-  return obtained;
 }
 
 function isAdmin(mode) {
   return mode == "admin";
 }
+
+module.exports = AdminRights;

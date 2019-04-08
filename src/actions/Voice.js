@@ -8,16 +8,25 @@ const validation = new Validation();
 const config = validation.config;
 const http = require("http");
 const {awaitRadioChoose} = require("../utils/Await");
+
 class Voice {
   constructor() {
-    this.data = {
+    this._data = {
       dispatcher: false,
-      info: "",
+      videoData: "",
       queue: [],
       playing: false,
       streaming: false,
       onAir: false
     };
+  }
+  
+  get data(){
+    return this._data;
+  }
+
+  set data(data){
+    this._data = data;
   }
   join(message) {
     if (message.member != null) {
@@ -54,7 +63,7 @@ class Voice {
           message.member.voiceChannel
             .join()
             .then(async connection => {
-              this.data.info = await ytdlVideo.getInfo(url);
+              this.data.videoData = await ytdlVideo.getInfo(url);
               Play(connection, this.data, message);
             })
             .catch(console.error);
@@ -80,7 +89,7 @@ class Voice {
         message.member.voiceChannel
           .join()
           .then(async connection => {
-            this.data.info = await ytdlVideo.getInfo(url);
+            this.data.videoData = await ytdlVideo.getInfo(url);
             Stream(message, connection, this.data, url);
           })
           .catch(console.error);

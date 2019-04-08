@@ -6,15 +6,47 @@ const config = validation.config;
 
 class Moving {
   constructor() {
-    this.currentChannel = "";
-    this.ids = [];
-    this.voiceChannels = [];
-    this.idInterval;
-    this.follows = {
+    this._currentChannel = "";
+    this._channelIds = [];
+    this._idInterval;
+    this._follows = {
       follow: false,
       user: "no one"
     };
   }
+
+  get currentChannel(){
+    return this._currentChannel;
+  }
+
+  get channelIds(){
+    return this._channelIds;
+  }
+
+  get idInterval(){
+    return this._idInterval;
+  }
+
+  get follows(){
+    return this._follows;
+  }
+
+  set currentChannel(currentChannel){
+    this._currentChannel = currentChannel;
+  }
+
+  set channelIds(channelIds){
+    this._channelIds = channelIds;
+  }
+
+  set idInterval(idInterval){
+    this._idInterval = idInterval;
+  }
+
+  set follows(follows){
+    this._follows = follows;
+  }
+  
 
   moveTo(msg, client) {
     if (
@@ -122,24 +154,24 @@ class Moving {
   }
 
   getRooms(channels = []) {
-    this.voiceChannels = [];
-    this.ids = [];
+    voiceChannels = [];
+    this.channelIds = [];
     let i = 0;
     channels.forEach((item, index) => {
       if (item.type == "voice" && item.joinable === true) {
-        this.voiceChannels.push(
+        voiceChannels.push(
           `Channel number ->\t${++i}\t->\t\t${item.name}\n`
         );
-        this.ids.push(item.id);
+        this.channelIds.push(item.id);
       }
     });
-    return this.voiceChannels;
+    return voiceChannels;
   }
 
   getChannel(id, client) {
-    for (let i = 0; i < this.ids.length; i++) {
+    for (let i = 0; i < this.channelIds.length; i++) {
       if (i === parseInt(id) - 1) {
-        return client.channels.get(this.ids[i]);
+        return client.channels.get(this.channelIds[i]);
       }
     }
   }

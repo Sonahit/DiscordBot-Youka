@@ -33,7 +33,10 @@ module.exports = {
             "resume",
             "join",
             "leave",
-            "volume"
+            "volume",
+            "rerun",
+            "skip",
+            "queue"
         ],
         Text = [
           "flush",

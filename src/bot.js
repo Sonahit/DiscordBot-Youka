@@ -38,7 +38,6 @@ client.login(config.token);
  * if exists and valid make an execution of command
  */
 client.on("message", async msg => {
-  try {
     logger.info(
       `"${msg.content}" sent by ${msg.author.username} at ${Date.now()}`
     );
@@ -103,7 +102,4 @@ client.on("message", async msg => {
         replies.Error(msg);
       }
     }
-  } catch (err) {
-    console.log(err);
-  }
 });

@@ -25,6 +25,7 @@ class AdminText {
   }
 
   flush(message, client) {
+  if(false){
     this.setMuteRole(message);
     if (classes.Admin.mode === "admin") {
       let thisChannel;
@@ -61,6 +62,9 @@ class AdminText {
       }
     } else {
       message.reply(`You have to enter admin mode`);
+    }
+    } else {
+      message.reply('Deprecated');
     }
   }
 

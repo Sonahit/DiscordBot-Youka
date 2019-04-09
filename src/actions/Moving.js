@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-let embed = new Discord.RichEmbed();
+let embed = new Discord.MessageEmbed();
 const Validation = require("../Validation");
 const validation = new Validation();
 const config = validation.config;

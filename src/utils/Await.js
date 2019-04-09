@@ -22,7 +22,7 @@ module.exports.awaitRadioChoose = async function awaitRadioChoose(
   const filter = msg =>
     msg.author.bot === false && msg.author.id === author.id && sent === false;
   await message.channel
-    .awaitMessages(filter, { max: 2, time: 10000, errors: ["time"] })
+    .awaitMessages(filter, { max: 1, time: 10000, errors: ["time"] })
     .then(async msgs => {
       validation.clearEmbed(embed);
       try {

@@ -1,11 +1,9 @@
-const Validation = require("../Validation");
+const Validation = require("../../Validation");
 const validation = new Validation();
 const config = validation.config;
-const AdminRights = require("../actions/AdminRights");
 
-class Text extends AdminRights {
+class AdminText {
   constructor() {
-    super();
     this._users = new Map();
     this._mutedRole = "";
   }
@@ -31,8 +29,8 @@ class Text extends AdminRights {
     if (classes.Admin.mode === "admin") {
       let thisChannel;
       if (message.content === `${config.prefix}flush`) {
-        message.channel
-          .fetchMessages()
+        message.channel.messages
+          .fetch()
           .then(messages =>
             messages.forEach(
               message => message.author.equals(client.user) && message.delete()
@@ -47,7 +45,7 @@ class Text extends AdminRights {
           );
         }))
       ) {
-        thisChannel.fetchMessages().then(messages => {
+        thisChannel.messages.fetch().then(messages => {
           messages.forEach(message => message.delete());
         });
       } else if (message.content === `${config.prefix}flush me`) {
@@ -69,8 +67,8 @@ class Text extends AdminRights {
   "flush all"(message, client) {
     this.setMuteRole(message);
     if (classes.Admin.mode === "admin") {
-      message.channel
-        .fetchMessages()
+      message.channel.messages
+        .fetch()
         .then(messages => messages.forEach(message => message.delete()));
     } else {
       message.reply(`You have to enter admin mode`);
@@ -80,8 +78,8 @@ class Text extends AdminRights {
   "flush me"(message, client) {
     this.setMuteRole(message);
     if (classes.Admin.mode === "admin") {
-      message.channel
-        .fetchMessages()
+      message.channel.messages
+        .fetch()
         .then(messages =>
           messages
             .array()
@@ -91,7 +89,8 @@ class Text extends AdminRights {
       message.reply(`You have to enter admin mode`);
     }
   }
-  Tmute(message, client) {
+
+  async Tmute(message, client) {
     this.setMuteRole(message);
     if (classes.Admin.mode === "admin") {
       const user = message.mentions.users.first();
@@ -100,11 +99,8 @@ class Text extends AdminRights {
         let reason =
           message.content.split(` <@${member.user.id}> `)[1] || "no reason";
         if (member) {
-          this.users.set(member, member.roles);
-          member.roles.forEach((role, index) => {
-            member.removeRole(role);
-          });
-          member.addRole(this.mutedRole, reason);
+          this.users.set(member, new Map(member.roles));
+          member.roles.set([this.mutedRole], reason);
           message.channel.send(`<@${member.user.id}> be a good boy next time`);
         } else {
           message.reply("You didn't mention the user to mute at textchannels!");
@@ -116,6 +112,7 @@ class Text extends AdminRights {
       message.reply(`You have to enter admin mode`);
     }
   }
+
   Tunmute(message, client) {
     this.setMuteRole(message);
     if (classes.Admin.mode === "admin") {
@@ -125,13 +122,11 @@ class Text extends AdminRights {
         let reason =
           message.content.split(` <@${member.user.id}> `)[1] || "no reason";
         if (member) {
-          member.removeRole(this.mutedRole);
-          this.users.forEach((roles, thisUser) => {
-            roles.forEach((role, index) => {
-              if (role.name !== "@everyone") {
-                thisUser.addRole(role, reason);
-              }
-            });
+          member.roles.remove(this.mutedRole);
+          this.users.get(member).forEach((role, index) => {
+            if (role.name !== "@everyone") {
+              member.roles.add(role, reason);
+            }
           });
           message.channel.send(`<@${member.user.id}> good boy!`);
           this.users.delete(member);
@@ -149,10 +144,10 @@ class Text extends AdminRights {
     const serverRoles = message.guild.roles;
     serverRoles.forEach((item, index) => {
       if (item.name === "Muted") {
-        this.mutedRole = item.id;
+        this.mutedRole = item;
       }
     });
   }
 }
 
-module.exports = Text;
+module.exports = AdminText;

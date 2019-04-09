@@ -1,8 +1,9 @@
-const Moving = require("./Moving");
-const Validation = require("../Validation");
+const Moving = require("../Moving");
+const Validation = require("../../Validation");
 const validation = new Validation();
 const moving = new Moving();
 const config = validation.config;
+
 class AdminRights {
   constructor(mode = "user") {
     this._mode = mode;

@@ -1,6 +1,6 @@
-const {Attachment} = require("discord.js");
+const { MessageAttachment } = require("discord.js");
 const Discord = require("discord.js");
-let embed = new Discord.RichEmbed();
+let embed = new Discord.MessageEmbed();
 const Validation = require("../Validation");
 const validation = new Validation();
 const config = validation.config;
@@ -13,11 +13,13 @@ class Replies {
     embed.setThumbnail(
       `https://pbs.twimg.com/profile_images/1040094061057650688/wNO6rNzn_400x400.jpg`
     );
-    embed.setDescription(`Hello${config.prefix} If you need any help type ${config.prefix}help`);
+    embed.setDescription(
+      `Hello${config.prefix} If you need any help type ${config.prefix}help`
+    );
     msg.reply(embed);
   }
-  onHello(msg, client){
-      msg.channel.send(`Rise and shine <@${msg.author.id}>`);
+  onHello(msg, client) {
+    msg.channel.send(`Rise and shine <@${msg.author.id}>`);
   }
   author(msg, client) {
     embed = validation.clearEmbed(embed);
@@ -42,25 +44,40 @@ class Replies {
     msg.reply("Pong${config.prefix} :D");
   }
   Error(msg) {
-    embed.setAuthor("Validator","https://cdn.pixabay.com/photo/2012/04/15/19/12/cross-34976_960_720.png");
-    embed.setTitle("Error 403")
+    embed.setAuthor(
+      "Validator",
+      "https://cdn.pixabay.com/photo/2012/04/15/19/12/cross-34976_960_720.png"
+    );
+    embed.setTitle("Error 403");
     embed.setDescription(`You don't have any right <@${msg.author.id}>`);
-    embed.addField("What to do?", "PM any online moderators and ask for role Krabik");
-    embed.addField("What next?","Just wait for their response");
+    embed.addField(
+      "What to do?",
+      "PM any online moderators and ask for role Krabik"
+    );
+    embed.addField("What next?", "Just wait for their response");
     embed.addBlankField();
-    embed.addField("What can i do right now?",`You can join any voice channels but your microphone will be switched to "onPush"`);
-    embed.setFooter("Sincerely your validator!", "http://i0.kym-cdn.com/photos/images/facebook/001/290/938/4a7.jpg");
+    embed.addField(
+      "What can i do right now?",
+      `You can join any voice channels but your microphone will be switched to "onPush"`
+    );
+    embed.setFooter(
+      "Sincerely your validator!",
+      "http://i0.kym-cdn.com/photos/images/facebook/001/290/938/4a7.jpg"
+    );
     msg.author.send(embed);
-  };
+  }
   async help(msg) {
     embed = validation.clearEmbed(embed);
-    const attachment = new Attachment(
+    const attachment = new MessageAttachment(
       "https://discordemoji.com/assets/emoji/AYAYA.png"
     );
     const cry = ":cry:";
     await msg.reply(attachment);
     embed.setTitle("Help");
-    embed.setFooter(`Requested by ${msg.author.username}`,`${msg.author.avatarURL || "https://i.redd.it/1cp6bf2ahaky.jpg"} `)
+    embed.setFooter(
+      `Requested by ${msg.author.username}`,
+      `${msg.author.avatarURL() || "https://i.redd.it/1cp6bf2ahaky.jpg"} `
+    );
     embed.fields.push(
       {
         name: ` You said you need ?HELP?`,
@@ -80,18 +97,25 @@ class Replies {
         value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
                 \`${config.prefix}join\`:\tJoins your channel 
                 \`${config.prefix}leave\`:\tLeaves your channel 
-                \`${config.prefix}stream https://[url]\`:\tPlays a youtube stream  
-                \`${config.prefix}radio\`:\tPlays a radio  
+                \`${config.prefix}\`${
+          config.prefix
+        }radio\`:\tPlays a radio  
                 \`${config.prefix}pause\`:\tPause playing video 
                 \`${config.prefix}resume\`:\tResumes playing video 
-                \`${config.prefix}stop\`:\tStops playing video 
-                \`${config.prefix}skip\`:\tSkips current video
-                \`${config.prefix}queue\`:\tShows current queue
-                \`${config.prefix}moveTo \`:\tGet all channels and their ids
+                \`${config.prefix}end\`:\tEnds playing video 
+                \`${
+                  config.prefix
+                }volume 0-200\`:\tChanges volume from 0 to 200
+                \`${
+                  config.prefix
+                }moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
+                \`${config.prefix}follow me\`:\tFollows you 
                 \`${config.prefix}follow me\`:\tBot is following you 
-                \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
+                \`${
+                  config.prefix
+                }follow (@username)\`:\tBot is following (@username) 
                 \`${config.prefix}follow stop\`:\tStop following you `
       });
       embed.fields.push({
@@ -103,14 +127,24 @@ class Replies {
                 \`${config.prefix}restart\`:\tRestarts bot
                 \`${config.prefix}move {name} #\`:\tMoving {name} to # Channel
                 \`${config.prefix}flush\`:\tDeletes bot's messages in his sight
-                \`${config.prefix}flush (channel Name) \`:\tDeletes bot's (channel name) messages in his sight
-                \`${config.prefix}flush all\`:\tDeletes all messages  in bot's sight  
-                \`${config.prefix}flush me\`:\tDeletes your messages in bot's sight  
-                \`${config.prefix}[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
-                \`${config.prefix}[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
+                \`${
+                  config.prefix
+                }flush (channel Name) \`:\tDeletes bot's (channel name) messages in his sight
+                \`${
+                  config.prefix
+                }flush all\`:\tDeletes all messages  in bot's sight  
+                \`${
+                  config.prefix
+                }flush me\`:\tDeletes your messages in bot's sight  
+                \`${
+                  config.prefix
+                }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
+                \`${
+                  config.prefix
+                }[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
       });
       embed.setColor("0xff8040");
-      msg.reply(embed);
+      msg.author.send(embed);
       return;
     }
     if (validation.isRole(msg, "Модератор")) {
@@ -119,17 +153,19 @@ class Replies {
         value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
                 \`${config.prefix}join\`:\tJoins your channel 
                 \`${config.prefix}leave\`:\tLeaves your channel 
-                \`${config.prefix}stream https://[url]\`:\tPlays an youtube stream  
-                \`${config.prefix}radio\`:\tPlays a radio  
+                \`${config.prefix}\`${config.prefix}radio\`:\tPlays a radio  
                 \`${config.prefix}pause\`:\tPause playing video 
                 \`${config.prefix}resume\`:\tResumes playing video 
                 \`${config.prefix}end\`:\tEnds playing video 
+                \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
                 \`${config.prefix}moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
                 \`${config.prefix}follow me\`:\tFollows you 
                 \`${config.prefix}follow me\`:\tBot is following you 
-                \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
+                \`${
+                  config.prefix
+                }follow (@username)\`:\tBot is following (@username) 
                 \`${config.prefix}follow stop\`:\tStop following you `
       });
       embed.fields.push({
@@ -141,14 +177,24 @@ class Replies {
                 \`${config.prefix}restart\`:\tRestarts bot
                 \`${config.prefix}move name #\`:\tMoving {name} to # Channel
                 \`${config.prefix}flush\`:\tDeletes bot's messages in his sight
-                \`${config.prefix}flush (channel Name) \`:\tDeletes bot's (channel name) messages in his sight
-                \`${config.prefix}flush all\`:\tDeletes all messages  in bot's sight  
-                \`${config.prefix}flush me\`:\tDeletes your messages in bot's sight  
-                \`${config.prefix}[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
-                \`${config.prefix}[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
+                \`${
+                  config.prefix
+                }flush (channel Name) \`:\tDeletes bot's (channel name) messages in his sight
+                \`${
+                  config.prefix
+                }flush all\`:\tDeletes all messages  in bot's sight  
+                \`${
+                  config.prefix
+                }flush me\`:\tDeletes your messages in bot's sight  
+                \`${
+                  config.prefix
+                }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
+                \`${
+                  config.prefix
+                }[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
       });
       embed.setColor("0xff8040");
-      msg.reply(embed);
+      msg.author.send(embed);
       return;
     }
     if (validation.isRole(msg, "DJ")) {
@@ -157,42 +203,46 @@ class Replies {
         value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
                 \`${config.prefix}join\`:\tJoins your channel 
                 \`${config.prefix}leave\`:\tLeaves your channel 
-                \`${config.prefix}stream https://[url]\`:\tPlays an youtube stream  
                 \`${config.prefix}radio\`:\tPlays a radio  
                 \`${config.prefix}pause\`:\tPause playing video 
                 \`${config.prefix}resume\`:\tResumes playing video 
                 \`${config.prefix}end\`:\tEnds playing video 
+                \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
                 \`${config.prefix}moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
                 \`${config.prefix}follow me\`:\tFollows you 
                 \`${config.prefix}follow me\`:\tBot is following you 
-                \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
+                \`${
+                  config.prefix
+                }follow (@username)\`:\tBot is following (@username) 
                 \`${config.prefix}follow stop\`:\tStop following you `
       });
       embed.setColor("0xff8040");
-      msg.reply(embed);
+      msg.author.send(embed);
       return;
     }
-    msg.reply(embed);
+    msg.author.send(embed);
     return;
   }
   AYAYA(msg) {
     msg.channel.send("AYAYA");
     msg.channel.send("https://discordemoji.com/assets/emoji/AYAYA.png");
   }
-  
+
   time(msg) {
-    msg.channel.send(
-      "Current time:\n" +
-        this.getMonth() +
-        "\t:\t" +
-        this.getDay() +
-        "\n\t" +
-        new Date().getHours() +
-        ":" +
-        new Date().getMinutes()
+    embed = validation.clearEmbed(embed);
+    embed.setAuthor("Current time");
+    embed.addField(`Month: ${this.getMonth()}`, `Day: ${this.getDay()}`);
+    embed.addField(
+      `Time`,
+      `${new Date().getHours()} hours : ${
+        new Date().getMinutes() % 10 >= 0
+          ? new Date().getMinutes()
+          : "0" + new Date().getMinutes()
+      } minutes`
     );
+    msg.channel.send(embed);
   }
   getDay() {
     switch (new Date().getDay()) {

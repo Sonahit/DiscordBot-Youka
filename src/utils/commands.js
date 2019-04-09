@@ -2,21 +2,21 @@ const config = require("../../config/config");
 const Replies = require("../actions/Replies");
 const Voice = require("../actions/Voice.js");
 const Moves = require("../actions/Moving");
-const Admin = require("../actions/AdminRights");
-const Text = require("../actions/Text");
+const Admin = require("../actions/Admin/AdminRights");
+const AdminText = require("../actions/Admin/AdminText");
 const moving = new Moves();
 const voice = new Voice();
 const replies = new Replies();
-const text = new Text();
+const adminText = new AdminText();
 const admin = new Admin();
 
 global.classes = {
   Voice: voice,
   Replies: replies,
   Moving: moving,
-  Text: text,
+  AdminText: adminText,
   Admin: admin
-}
+};
 
 let commands = new Map();
 
@@ -29,7 +29,7 @@ config.Commands.forEach((item, index) => {
     case 2:
       commands.set(classes.Voice, item);
     case 3:
-      commands.set(classes.Text, item);
+      commands.set(classes.AdminText, item);
     case 4:
       commands.set(classes.Replies, item);
   }

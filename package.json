@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "bufferutil": "^3.0.5",
+    "discord.js": "github:discordjs/discord.js",
     "ffmpeg-binaries": "^4.0.0",
     "libsodium-wrappers": "^0.7.4",
     "opusscript": "0.0.6",
@@ -21,7 +22,6 @@
     "ytdl-core": "^0.29.1"
   },
   "devDependencies": {
-    "discord.js": "^11.4.2",
     "ytdl-core-discord": "^1.0.3"
   }
 }

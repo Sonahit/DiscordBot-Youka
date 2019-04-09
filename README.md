@@ -5,10 +5,10 @@
 ``` bash
 
 #install required dependencies and run the bot
-
+First of all you need create file named essentials.js to config folder and export token and prefix
 npm install
 
-Then add essentials.js to config folder and export token and prefix
+Then add 
 
 Now you can type npm start
 

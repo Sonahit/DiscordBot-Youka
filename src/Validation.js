@@ -64,7 +64,7 @@ module.exports = class Validation {
    */
   checkBotMove(msg = "") {
     // let pattern = /!(move|moveTo)\s\d+/g
-    let pattern = new RegExp(`${this.config.prefix}(move|moveTo) *[0-9]+`, "g");
+    let pattern = new RegExp(`${this.config.prefix}(move|moveTo)\\s*[0-9]+`, "g");
     let check = pattern.test(msg);
     return check;
   }
@@ -79,8 +79,8 @@ module.exports = class Validation {
    * @param {*} msg 
    */
   checkMoveUser(msg = "") {
-    let pattern = /!(move|moveTo)(\s*(\w|[А-Яа-я])+\s[0-9]*)/g;
-    //let pattern = new RegExp(`${config.prefix}(move|moveTo) *(\w|[А-Яа-я])+ [0-9]+`,'g')
+    //let pattern = /!(move|moveTo)(\s*(\w|[А-Яа-я])+\s[0-9]*)/g;
+    let pattern = new RegExp(`${config.prefix}(move|moveTo)\\s*(\\w|[А-Яа-я])+\\s[0-9]+`,'g')
     let check = pattern.test(msg);
     return check;
   }

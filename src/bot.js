@@ -38,6 +38,7 @@ client.on("message", async msg => {
     logger.info(
       `"${msg.content}" sent by ${msg.author.username} at ${Date.now()}`
     );
+    
     if (
       msg.mentions.has(client.user) &&
       msg.author.bot === false &&

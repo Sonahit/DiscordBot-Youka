@@ -126,6 +126,10 @@ class Voice {
           embed.setColor("0x004444").setDescription(`Radio is on air!`);
         } else if (this.data.playing) {
           embed.setColor("0x004444").setDescription(`I am playing a song!`);
+        } else {
+          embed
+            .setColor("0xff0000")
+            .setDescription("You need to join a voice channel first!");
         }
         message.channel.send(embed);
       }

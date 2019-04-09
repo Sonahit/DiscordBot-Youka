@@ -19,26 +19,30 @@ module.exports = class Validation {
    */
   isRole(msg, roles = this.config.ValidRoles) {
     let typingCheck = msg.member;
-    if (typingCheck != null) {
-      if(!Array.isArray(roles)){
-        let check = msg.member.roles.some((item, index)=> {
-          if(roles === item.name){
-            return true;
-          }
-        })
-        return check;
-      } else {
-        let check = msg.member.roles.some((item, index)=> {
-          return roles.some((role, index)=> {
-            if(role === item.name){
+    if(msg.content !== `${this.config.prefix}help`){
+      if (typingCheck != null) {
+        if(!Array.isArray(roles)){
+          let check = msg.member.roles.some((item, index)=> {
+            if(roles === item.name){
               return true;
             }
           })
-        })
-        return check;
+          return check;
+        } else {
+          let check = msg.member.roles.some((item, index)=> {
+            return roles.some((role, index)=> {
+              if(role === item.name){
+                return true;
+              }
+            })
+          })
+          return check;
+        }
+      } else {
+        msg.author.send("Try to type from channel");
       }
     } else {
-      msg.author.send("Try to type from channel");
+      return true;
     }
   }
 

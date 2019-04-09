@@ -57,10 +57,10 @@ class Replies {
     const attachment = new Attachment(
       "https://discordemoji.com/assets/emoji/AYAYA.png"
     );
-    const current = msg.author;
     const cry = ":cry:";
-    await current.send(attachment);
+    await msg.reply(attachment);
     embed.setTitle("Help");
+    embed.setFooter(`Requested by ${msg.author.username}`,`${msg.author.avatarURL || "https://i.redd.it/1cp6bf2ahaky.jpg"} `)
     embed.fields.push(
       {
         name: ` You said you need ?HELP?`,
@@ -69,123 +69,121 @@ class Replies {
       {
         name: `Available commands:`,
         value: ` AYAYA:\tAYAYA                         
-                **${config.prefix}ping**:\tTypes a reply pong 
-                **${config.prefix}time**:\tShows local time of bot
-                **${config.prefix}help**:\tGet help`
+                \`${config.prefix}ping\`:\tTypes a reply pong 
+                \`${config.prefix}time\`:\tShows local time of bot
+                \`${config.prefix}help\`:\tGet help`
       }
     );
     if (validation.isAuthor(msg) > 0) {
       embed.fields.push({
         name: `For DJs:`,
-        value: `**${config.prefix}play https://[url]**:\tPlays a video 
-                **${config.prefix}join**:\tJoins your channel 
-                **${config.prefix}leave**:\tLeaves your channel 
-                **${config.prefix}stream https://[url]**:\tPlays a youtube stream  
-                **${config.prefix}radio**:\tPlays a radio  
-                **${config.prefix}pause**:\tPause playing video 
-                **${config.prefix}resume**:\tResumes playing video 
-                **${config.prefix}stop**:\tStops playing video 
-                **${config.prefix}skip**:\tSkips current video
-                **${config.prefix}queue**:\tShows current queue
-                **${config.prefix}moveTo **:\tGet all channels and their ids
-                **${config.prefix}moveTo #**:\tMoving bot to # Channel
-                **${config.prefix}moveTo me**:\tMoves bot to you
-                **${config.prefix}follow me**:\tBot is following you 
-                **${config.prefix}follow (@username)**:\tBot is following (@username) 
-                **${config.prefix}follow stop**:\tStop following you `
+        value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
+                \`${config.prefix}join\`:\tJoins your channel 
+                \`${config.prefix}leave\`:\tLeaves your channel 
+                \`${config.prefix}stream https://[url]\`:\tPlays a youtube stream  
+                \`${config.prefix}radio\`:\tPlays a radio  
+                \`${config.prefix}pause\`:\tPause playing video 
+                \`${config.prefix}resume\`:\tResumes playing video 
+                \`${config.prefix}stop\`:\tStops playing video 
+                \`${config.prefix}skip\`:\tSkips current video
+                \`${config.prefix}queue\`:\tShows current queue
+                \`${config.prefix}moveTo \`:\tGet all channels and their ids
+                \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
+                \`${config.prefix}moveTo me\`:\tMoves bot to you
+                \`${config.prefix}follow me\`:\tBot is following you 
+                \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
+                \`${config.prefix}follow stop\`:\tStop following you `
       });
       embed.fields.push({
         name: `For Admins:`,
         value: ` 
-                **${config.prefix}IAdmin**:\tSet admin mode 
-                **${config.prefix}IUser**:\tSet user mode 
-                **${config.prefix}disconnect**:\tShutdowns bot  
-                **${config.prefix}restart**:\tRestarts bot
-                **${config.prefix}move {name} #**:\tMoving {name} to # Channel
-                **${config.prefix}flush**:\tDeletes bot's messages in his sight
-                **${config.prefix}flush (channel Name) **:\tDeletes bot's (channel name) messages in his sight
-                **${config.prefix}flush all**:\tDeletes all messages  in bot's sight  
-                **${config.prefix}flush me**:\tDeletes your messages in bot's sight  
-                **${config.prefix}[un]mute (name) [reason]**:\t[un]Mute voice of (name) with a [reason]
-                **${config.prefix}[un]Tmute (name) [reason]**:\t[un]Mute text of (name) with a [reason]`
+                \`${config.prefix}IAdmin\`:\tSet admin mode 
+                \`${config.prefix}IUser\`:\tSet user mode 
+                \`${config.prefix}disconnect\`:\tShutdowns bot  
+                \`${config.prefix}restart\`:\tRestarts bot
+                \`${config.prefix}move {name} #\`:\tMoving {name} to # Channel
+                \`${config.prefix}flush\`:\tDeletes bot's messages in his sight
+                \`${config.prefix}flush (channel Name) \`:\tDeletes bot's (channel name) messages in his sight
+                \`${config.prefix}flush all\`:\tDeletes all messages  in bot's sight  
+                \`${config.prefix}flush me\`:\tDeletes your messages in bot's sight  
+                \`${config.prefix}[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
+                \`${config.prefix}[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
       });
       embed.setColor("0xff8040");
-      current.send(embed);
+      msg.reply(embed);
       return;
     }
     if (validation.isRole(msg, "Модератор")) {
       embed.fields.push({
         name: `For DJs:`,
-        value: `**${config.prefix}play https://[url]**:\tPlays a video 
-                **${config.prefix}join**:\tJoins your channel 
-                **${config.prefix}leave**:\tLeaves your channel 
-                **${config.prefix}stream https://[url]**:\tPlays an youtube stream  
-                **${config.prefix}radio**:\tPlays a radio  
-                **${config.prefix}pause**:\tPause playing video 
-                **${config.prefix}resume**:\tResumes playing video 
-                **${config.prefix}end**:\tEnds playing video 
-                **${config.prefix}moveTo **:\tGet all channels and their ids
-                **${config.prefix}moveTo #**:\tMoving bot to # Channel
-                **${config.prefix}moveTo me**:\tMoves bot to you
-                **${config.prefix}follow me**:\tFollows you 
-                **${config.prefix}follow me**:\tBot is following you 
-                **${config.prefix}follow (@username)**:\tBot is following (@username) 
-                **${config.prefix}follow stop**:\tStop following you `
+        value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
+                \`${config.prefix}join\`:\tJoins your channel 
+                \`${config.prefix}leave\`:\tLeaves your channel 
+                \`${config.prefix}stream https://[url]\`:\tPlays an youtube stream  
+                \`${config.prefix}radio\`:\tPlays a radio  
+                \`${config.prefix}pause\`:\tPause playing video 
+                \`${config.prefix}resume\`:\tResumes playing video 
+                \`${config.prefix}end\`:\tEnds playing video 
+                \`${config.prefix}moveTo \`:\tGet all channels and their ids
+                \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
+                \`${config.prefix}moveTo me\`:\tMoves bot to you
+                \`${config.prefix}follow me\`:\tFollows you 
+                \`${config.prefix}follow me\`:\tBot is following you 
+                \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
+                \`${config.prefix}follow stop\`:\tStop following you `
       });
       embed.fields.push({
         name: `For Admins:`,
         value: ` 
-                **${config.prefix}IAdmin**:\tSet admin mode 
-                **${config.prefix}IUser**:\tSet user mode 
-                **${config.prefix}disconnect**:\tShutdowns bot  
-                **${config.prefix}restart**:\tRestarts bot
-                **${config.prefix}move name #**:\tMoving {name} to # Channel
-                **${config.prefix}flush**:\tDeletes bot's messages in his sight
-                **${config.prefix}flush (channel Name) **:\tDeletes bot's (channel name) messages in his sight
-                **${config.prefix}flush all**:\tDeletes all messages  in bot's sight  
-                **${config.prefix}flush me**:\tDeletes your messages in bot's sight  
-                **${config.prefix}[un]mute (name) [reason]**:\t[un]Mute voice of (name) with a [reason]
-                **${config.prefix}[un]Tmute (name) [reason]**:\t[un]Mute text of (name) with a [reason]`
+                \`${config.prefix}IAdmin\`:\tSet admin mode 
+                \`${config.prefix}IUser\`:\tSet user mode 
+                \`${config.prefix}disconnect\`:\tShutdowns bot  
+                \`${config.prefix}restart\`:\tRestarts bot
+                \`${config.prefix}move name #\`:\tMoving {name} to # Channel
+                \`${config.prefix}flush\`:\tDeletes bot's messages in his sight
+                \`${config.prefix}flush (channel Name) \`:\tDeletes bot's (channel name) messages in his sight
+                \`${config.prefix}flush all\`:\tDeletes all messages  in bot's sight  
+                \`${config.prefix}flush me\`:\tDeletes your messages in bot's sight  
+                \`${config.prefix}[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
+                \`${config.prefix}[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
       });
       embed.setColor("0xff8040");
-      current.send(embed);
+      msg.reply(embed);
       return;
     }
     if (validation.isRole(msg, "DJ")) {
       embed.fields.push({
         name: `For DJs:`,
-        value: `**${config.prefix}play https://[url]**:\tPlays a video 
-                **${config.prefix}join**:\tJoins your channel 
-                **${config.prefix}leave**:\tLeaves your channel 
-                **${config.prefix}stream https://[url]**:\tPlays an youtube stream  
-                **${config.prefix}radio**:\tPlays a radio  
-                **${config.prefix}pause**:\tPause playing video 
-                **${config.prefix}resume**:\tResumes playing video 
-                **${config.prefix}end**:\tEnds playing video 
-                **${config.prefix}moveTo **:\tGet all channels and their ids
-                **${config.prefix}moveTo #**:\tMoving bot to # Channel
-                **${config.prefix}moveTo me**:\tMoves bot to you
-                **${config.prefix}follow me**:\tFollows you 
-                **${config.prefix}follow me**:\tBot is following you 
-                **${config.prefix}follow (@username)**:\tBot is following (@username) 
-                **${config.prefix}follow stop**:\tStop following you `
+        value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
+                \`${config.prefix}join\`:\tJoins your channel 
+                \`${config.prefix}leave\`:\tLeaves your channel 
+                \`${config.prefix}stream https://[url]\`:\tPlays an youtube stream  
+                \`${config.prefix}radio\`:\tPlays a radio  
+                \`${config.prefix}pause\`:\tPause playing video 
+                \`${config.prefix}resume\`:\tResumes playing video 
+                \`${config.prefix}end\`:\tEnds playing video 
+                \`${config.prefix}moveTo \`:\tGet all channels and their ids
+                \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
+                \`${config.prefix}moveTo me\`:\tMoves bot to you
+                \`${config.prefix}follow me\`:\tFollows you 
+                \`${config.prefix}follow me\`:\tBot is following you 
+                \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
+                \`${config.prefix}follow stop\`:\tStop following you `
       });
       embed.setColor("0xff8040");
-      current.send(embed);
+      msg.reply(embed);
       return;
     }
-    current.send(embed);
+    msg.reply(embed);
     return;
   }
   AYAYA(msg) {
-    const current = msg.channel;
-    current.send("AYAYA");
-    current.send("https://discordemoji.com/assets/emoji/AYAYA.png");
+    msg.channel.send("AYAYA");
+    msg.channel.send("https://discordemoji.com/assets/emoji/AYAYA.png");
   }
   
   time(msg) {
-    const current = msg.channel;
-    current.send(
+    msg.channel.send(
       "Current time:\n" +
         this.getMonth() +
         "\t:\t" +

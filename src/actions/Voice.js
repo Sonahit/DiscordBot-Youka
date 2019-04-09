@@ -8,7 +8,6 @@ const validation = new Validation();
 const config = validation.config;
 const http = require("http");
 const { awaitRadioChoose, awaitEmbedReply } = require("../utils/Await");
-let skippedSong = "";
 
 class Voice {
   constructor() {
@@ -18,7 +17,8 @@ class Voice {
       queue: [],
       playing: false,
       streaming: false,
-      onAir: false
+      onAir: false,
+      skippedSong: ""
     };
   }
 
@@ -51,10 +51,13 @@ class Voice {
 
   leave(message) {
     message.member.voiceChannel.leave();
+    this.data.streaming = false;
+    this.data.playing = false;
+    this.data.onAir = false;
   }
 
   async play(message) {
-    if (message.member != null && this.data.streaming == false) {
+    if (message.member != null && !this.data.onAir && !this.data.playing && !this.data.streaming ) {
       embed = validation.clearEmbed(embed);
       let url = message.content.split(" ")[1];
       if (this.data.playing || this.data.queue > 0) {
@@ -98,15 +101,20 @@ class Voice {
       }
     } else {
       embed = validation.clearEmbed(embed);
-      const current = message.author;
-      embed.setColor("0x004444").setDescription(`I am streaming!`);
-      current.send(embed);
+        if ( this.data.streaming ){
+          embed.setColor("0x004444").setDescription(`I am streaming!`);
+        } else if (this.data.onAir){
+            embed.setColor("0x004444").setDescription(`Radio is on air!`);
+        } else if (this.data.playing){
+            embed.setColor("0x004444").setDescription(`I am playing a song!`); 
+        }
+        message.channel.send(embed);
     }
   }
 
   stream(message) {
     if (message.member != null) {
-      if (message.member.voiceChannel && !this.data.playing) {
+      if (message.member.voiceChannel && !this.data.onAir && !this.data.playing && !this.data.streaming) {
         embed = validation.clearEmbed(embed);
         let url = message.content.split(" ")[1];
         message.member.voiceChannel
@@ -117,9 +125,15 @@ class Voice {
           })
           .catch(console.error);
       } else {
-        embed.setColor("0xff0000");
-        embed.setDescription("You need to join a voice channel first!");
-        message.reply(embed);
+        embed = validation.clearEmbed(embed);
+        if ( this.data.streaming ){
+          embed.setColor("0x004444").setDescription(`I am streaming!`);
+        } else if (this.data.onAir){
+            embed.setColor("0x004444").setDescription(`Radio is on air!`);
+        } else if (this.data.playing){
+            embed.setColor("0x004444").setDescription(`I am playing a song!`); 
+        }
+        message.channel.send(embed);
       }
     } else {
       const current = message.author;
@@ -131,7 +145,7 @@ class Voice {
 
   radio(message) {
     if (message.member != null) {
-      if (message.member.voiceChannel) {
+      if (message.member.voiceChannel && !this.data.onAir && !this.data.playing && !this.data.streaming ) {
         embed = validation.clearEmbed(embed);
         message.member.voiceChannel
           .join()
@@ -147,7 +161,15 @@ class Voice {
           })
           .catch(console.error);
       } else {
-        message.reply("You need to join a voice channel first!");
+        embed = validation.clearEmbed(embed);
+        if ( this.data.streaming ){
+          embed.setColor("0x004444").setDescription(`I am streaming!`);
+        } else if (this.data.onAir){
+            embed.setColor("0x004444").setDescription(`Radio is on air!`);
+        } else if (this.data.playing){
+            embed.setColor("0x004444").setDescription(`I am playing a song!`); 
+        }
+        message.channel.send(embed);
       }
     } else {
       const current = message.author;
@@ -160,6 +182,7 @@ class Voice {
       this.data.dispatcher.pause();
     }
   }
+  
   resume(message) {
     if (message.member.voiceChannel && this.data.dispatcher != false) {
       this.data.dispatcher.resume();
@@ -182,8 +205,8 @@ class Voice {
           this.data.dispatcher.end("skip");
           message.reply(`Skipped song`);
         }
-      } else if (message.member.voiceChannel && this.data.streaming === true) {
-        this.data.dispatcher.end();
+      } else if (message.member.voiceChannel && !this.data.streaming && !this.data.onAir) {
+        this.data.dispatcher.end;
         this.data.streaming = false;
         message.reply(`Stopped streaming`);
       } else {
@@ -202,8 +225,12 @@ class Voice {
 
   volume(message) {
     if (message.member.voiceChannel && this.data.dispatcher != false) {
-      var volume = message.content.substring(8, message.content.length);
-      this.data.dispatcher.setVolume(parseFloat(volume / 1000));
+      let volume = message.content.substring(8, message.content.length);
+      if(volume <= 200){
+       this.data.dispatcher.setVolume(parseFloat(volume / 1000));
+      } else {
+        message.reply(`You exited available range of sound try to use 0 - 200`);
+      }
     }
   }
 
@@ -215,10 +242,22 @@ class Voice {
       message.reply(`No queue`);
     }
   }
+
+  rerun(message){
+    embed = validation.clearEmbed(embed);
+    if(this.data.skippedSong != null && this.data.skippedSong != false ){
+      this.data.queue.unshift(this.data.skippedSong);
+      this.data.queue.unshift(this.data.skippedSong);
+      this.data.dispatcher.end("rerun");
+    } else {
+      message.reply(`You didn't skip any song`);
+    } 
+  }
 }
 
 async function Play(connection, data, message) {
-  validation.clearEmbed(embed);
+  embed = validation.clearEmbed(embed);
+  data.videoData = await ytdlVideo.getInfo(data.queue[0]);
   embed
     .setColor("#b92727")
     .setAuthor(
@@ -236,7 +275,7 @@ async function Play(connection, data, message) {
     });
   message.channel.send({ embed });
   try {
-    data.dispatcher = connection.playStream(
+      data.dispatcher = await connection.playStream(
       await ytdlVideo(data.queue[0]),
       streamOptions
     );
@@ -245,20 +284,19 @@ async function Play(connection, data, message) {
   }
   data.dispatcher.on("end", function(reason) {
     console.log(reason);
-    reason === "skip"
-      ? finish(connection, data, reason, message)
-      : () => {
-          finish(connection, data, reason, message);
-        };
+    finish(connection, data, reason, message)
   });
 }
 
 async function finish(connection, data, reason, message) {
-  skippedSong = await ytdlVideo.getInfo(data.queue.shift());
+  data.skippedSong = data.queue.shift();
+  if(reason === "rerun"){
+    data.skippedSong = "";
+  }
   if (reason === "force" || data.queue.length === 0) {
     data.playing = false;
     data.dispatcher = false;
-    message.reply(`End of queue`);
+    message.channel.send(`End of queue`);
     connection.disconnect();
   } else {
     Play(connection, data, message);

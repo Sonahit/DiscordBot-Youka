@@ -103,3 +103,7 @@ client.on("message", async msg => {
       }
     }
 });
+
+client.on('error', error => {
+  console.log(error);
+})

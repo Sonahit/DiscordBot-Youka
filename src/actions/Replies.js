@@ -44,6 +44,7 @@ class Replies {
     msg.reply("Pong${config.prefix} :D");
   }
   Error(msg) {
+    embed = validation.clearEmbed(embed);
     embed.setAuthor(
       "Validator",
       "https://cdn.pixabay.com/photo/2012/04/15/19/12/cross-34976_960_720.png"
@@ -72,7 +73,7 @@ class Replies {
       "https://discordemoji.com/assets/emoji/AYAYA.png"
     );
     const cry = ":cry:";
-    await msg.reply(attachment);
+    await msg.author.send(attachment);
     embed.setTitle("Help");
     embed.setFooter(
       `Requested by ${msg.author.username}`,
@@ -97,25 +98,17 @@ class Replies {
         value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
                 \`${config.prefix}join\`:\tJoins your channel 
                 \`${config.prefix}leave\`:\tLeaves your channel 
-                \`${config.prefix}\`${
-          config.prefix
-        }radio\`:\tPlays a radio  
+                \`${config.prefix}radio\`:\tPlays a radio  
                 \`${config.prefix}pause\`:\tPause playing video 
                 \`${config.prefix}resume\`:\tResumes playing video 
                 \`${config.prefix}end\`:\tEnds playing video 
-                \`${
-                  config.prefix
-                }volume 0-200\`:\tChanges volume from 0 to 200
-                \`${
-                  config.prefix
-                }moveTo \`:\tGet all channels and their ids
+                \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
+                \`${config.prefix}moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
                 \`${config.prefix}follow me\`:\tFollows you 
                 \`${config.prefix}follow me\`:\tBot is following you 
-                \`${
-                  config.prefix
-                }follow (@username)\`:\tBot is following (@username) 
+                \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
                 \`${config.prefix}follow stop\`:\tStop following you `
       });
       embed.fields.push({
@@ -153,7 +146,7 @@ class Replies {
         value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
                 \`${config.prefix}join\`:\tJoins your channel 
                 \`${config.prefix}leave\`:\tLeaves your channel 
-                \`${config.prefix}\`${config.prefix}radio\`:\tPlays a radio  
+                \`${config.prefix}radio\`:\tPlays a radio  
                 \`${config.prefix}pause\`:\tPause playing video 
                 \`${config.prefix}resume\`:\tResumes playing video 
                 \`${config.prefix}end\`:\tEnds playing video 
@@ -163,9 +156,7 @@ class Replies {
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
                 \`${config.prefix}follow me\`:\tFollows you 
                 \`${config.prefix}follow me\`:\tBot is following you 
-                \`${
-                  config.prefix
-                }follow (@username)\`:\tBot is following (@username) 
+                \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
                 \`${config.prefix}follow stop\`:\tStop following you `
       });
       embed.fields.push({
@@ -213,9 +204,7 @@ class Replies {
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
                 \`${config.prefix}follow me\`:\tFollows you 
                 \`${config.prefix}follow me\`:\tBot is following you 
-                \`${
-                  config.prefix
-                }follow (@username)\`:\tBot is following (@username) 
+                \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
                 \`${config.prefix}follow stop\`:\tStop following you `
       });
       embed.setColor("0xff8040");

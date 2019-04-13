@@ -51,8 +51,8 @@ class Voice {
 
   leave(message) {
     message.member.voice.channel.leave();
-    this.data.streaming = false;
     this.data.playing = false;
+    this.data.queue = [];
     this.data.onAir = false;
   }
 
@@ -85,9 +85,7 @@ class Voice {
       }
     } else {
       embed = validation.clearEmbed(embed);
-      if (this.data.streaming) {
-        embed.setColor("0x004444").setDescription(`I am streaming!`);
-      } else if (this.data.onAir) {
+       if (this.data.onAir) {
         embed.setColor("0x004444").setDescription(`Radio is on air!`);
       } else if (this.data.playing) {
         embed.setColor("0x004444").setDescription(`I am playing a song!`);
@@ -101,8 +99,7 @@ class Voice {
       if (
         message.member.voice.channel &&
         !this.data.onAir &&
-        !this.data.playing &&
-        !this.data.streaming
+        !this.data.playing
       ) {
         embed = validation.clearEmbed(embed);
         message.member.voice.channel
@@ -120,9 +117,7 @@ class Voice {
           .catch(console.error);
       } else {
         embed = validation.clearEmbed(embed);
-        if (this.data.streaming) {
-          embed.setColor("0x004444").setDescription(`I am streaming!`);
-        } else if (this.data.onAir) {
+        if (this.data.onAir) {
           embed.setColor("0x004444").setDescription(`Radio is on air!`);
         } else if (this.data.playing) {
           embed.setColor("0x004444").setDescription(`I am playing a song!`);
@@ -152,7 +147,7 @@ class Voice {
   }
 
   async stop(message, client, mode = "force") {
-    if (message.content === `${config.prefix}stop` || mode === "skip") {
+    if (message.content === `${config.prefix}stop` || mode === "skip" || this.data.dispatcher) {
       if (
         message.member.voice.channel &&
         !this.data.onAir &&
@@ -167,15 +162,7 @@ class Voice {
           this.data.dispatcher.end("skip");
           message.reply(`Skipped song`);
         }
-      } else if (
-        message.member.voice.channel &&
-        !this.data.streaming &&
-        !this.data.onAir
-      ) {
-        this.data.dispatcher.end;
-        this.data.streaming = false;
-        message.reply(`Stopped streaming`);
-      } else {
+      } else if(this.data.onAir) {
         this.data.onAir = false;
         message.reply(`Shutting down radio...`);
         http.globalAgent.destroy();
@@ -230,11 +217,12 @@ async function Play(connection, data, message) {
       await ytdlVideo(data.queue[0]),
       streamOptions
     );
+    console.log('STARTED PLAYING SONG');
   } catch (err) {
     message.reply("WRONG URL");
   }
   data.dispatcher.on("finish", function(reason) {
-    console.log(reason);
+    console.log(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
     finish(connection, data, reason, message);
   });
 }
@@ -248,6 +236,9 @@ async function finish(connection, data, reason, message) {
     data.playing = false;
     data.dispatcher = false;
     message.channel.send(`End of queue`);
+    if(reason === "force"){
+      data.queue = [];
+    }
     connection.disconnect();
   } else {
     Play(connection, data, message);

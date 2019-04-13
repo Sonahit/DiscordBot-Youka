@@ -1,4 +1,5 @@
 const essentials = require("./essentials");
+const client = require("../src/utils/Client");
 module.exports = {
   token: essentials.token,
   owners: [

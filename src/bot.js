@@ -38,7 +38,6 @@ client.on("message", async msg => {
     logger.info(
       `"${msg.content}" sent by ${msg.author.username} at ${Date.now()}`
     );
-    
     if (
       msg.mentions.has(client.user) &&
       msg.author.bot === false &&
@@ -73,36 +72,47 @@ client.on("message", async msg => {
             executor = index;
           }
         });
-        if (executor) {
-          if (
-            executor.constructor.name === "AdminRights" &&
-            (validation.isRole(msg, "Модератор") || validation.isAuthor(msg))
-          ) {
-            executor[keyWord](msg, client);
-          } else if (
-            executor.constructor.name === "Voice" &&
-            (validation.isRole(msg, "DJ") || validation.isAuthor(msg))
-          ) {
-            executor[keyWord](msg, client);
-          } else if (
-            executor.constructor.name === "AdminText" &&
-            (validation.isRole(msg, "Модератор") || validation.isAuthor(msg))
-          ) {
-            executor[keyWord](msg, client);
-          } else if (
-            (executor.constructor.name === "Moving" &&
-              validation.isRole(msg, "DJ")) ||
-            validation.isAuthor(msg)
-          ) {
-            executor[keyWord](msg, client);
-          } else if (executor.constructor.name === "Replies") {
-            executor[keyWord](msg, client);
+        switch (executor.constructor.name) {
+          case ("AdminRights"): {
+            if(validation.isRole(msg, "Модератор") || validation.isAuthor(msg)){
+              executor[keyWord](msg, client);
+              break;
+            } else {
+              replies.Error(msg);
+            }
           }
-        } else {
-          msg.reply(`${msg.content} command not found. Try to use ${config.prefix}help`);
+          case ("AdminText"): {
+            if(validation.isRole(msg, "Модератор") || validation.isAuthor(msg)){
+              executor[keyWord](msg, client);
+              break;
+            } else {
+              replies.Error(msg);
+            }
+          }
+          case ("Voice"): {
+            if(validation.isRole(msg, "DJ") || validation.isAuthor(msg)){
+              executor[keyWord](msg, client);
+              break;
+            } else {
+              replies.Error(msg);
+            }
+          }
+          case ("Moving"): {
+            if(validation.isRole(msg, "DJ") || validation.isAuthor(msg)){
+              executor[keyWord](msg, client);
+              break;
+            } else {
+              replies.Error(msg);
+            }
+          }
+          case ("Replies"): {
+            executor[keyWord](msg, client);
+            break;
+          }
+          default : {
+            msg.reply(`${msg.content} command not found. Try to use ${config.prefix}help`);
+          }
         }
-      } else {
-        replies.Error(msg);
       }
     }
   } catch(err){

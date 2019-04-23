@@ -29,7 +29,7 @@ class Replies {
       `https://pmcvariety.files.wordpress.com/2018/05/discord-logo.jpg?w=1000&h=563&crop=1`
     );
     embed.setDescription(
-      "Hello${config.prefix} I am author of this bot${config.prefix} If you have any suggestions please contact me at github or via email."
+      `Hello ${msg.author.username}! I am author of this bot. If you have any suggestions please contact me at github or via email.`
     );
     embed.addField("GitHub", "https://github.com/Sonahit/");
     embed.addField("Gmail", "grandpajok@gmail.com");

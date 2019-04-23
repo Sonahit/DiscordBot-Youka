@@ -63,8 +63,8 @@ class Moving {
       msg.reply(embed);
     }
     if (msg.content === `${config.prefix}moveTo me`) {
-      msg.member.voiceChannel.join().then(connection => {
-        msg.reply(`Successfully connected to ${msg.member.voiceChannel.name}`);
+      msg.member.voice.channel.join().then(connection => {
+        msg.reply(`Successfully connected to ${msg.member.voice.channel.name}`);
         this.currentChannel = msg.channel.id;
       });
     }
@@ -98,7 +98,7 @@ class Moving {
     }
   }
   "follow user"(msg, client, user){
-    if (user.voiceChannel && this.follows.follow === false) {
+    if (user.voice.channel && this.follows.follow === false) {
       this.idInterval = setInterval(function() {
         followUser(msg, user, this);
       }, 1000);
@@ -112,7 +112,7 @@ class Moving {
     }
   }
   "follow me"(msg, client) {
-    if (msg.member.voiceChannel && this.follows.follow === false) {
+    if (msg.member.voice.channel && this.follows.follow === false) {
       this.idInterval = setInterval(function() {
         follow(msg, client, this);
       }, 1000);
@@ -180,8 +180,8 @@ class Moving {
 function follow(msg, client, object) {
   // if(msg.member.voiceChannel != )
   if(msg.member != null){
-    msg.member.voiceChannel.join();
-    object.currentChannel = msg.member.voiceChannel.name;
+    msg.member.voice.channel.join();
+    object.currentChannel = msg.member.voice.channel.name;
   } else {
     clearInterval(object.idInterval);
     object.follows.follow = false;
@@ -192,8 +192,8 @@ function follow(msg, client, object) {
 function followUser(msg, user, object) {
   // if(msg.member.voiceChannel != )
   if(user != null){
-    user.voiceChannel.join();
-    object.currentChannel = user.voiceChannel.name;
+    user.voice.channel.join();
+    object.currentChannel = user.voice.channel.name;
   } else {
     clearInterval(object.idInterval);
     object.follows.follow = false;

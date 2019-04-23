@@ -118,18 +118,7 @@ class Replies {
                 \`${config.prefix}IUser\`:\tSet user mode 
                 \`${config.prefix}disconnect\`:\tShutdowns bot  
                 \`${config.prefix}restart\`:\tRestarts bot
-                \`${config.prefix}move {name} #\`:\tMoving {name} to # Channel
-                \`${config.prefix}flush\`:\tDeletes bot's messages in his sight
-                \`${
-                  config.prefix
-                }flush (channel Name) \`:\tDeletes bot's (channel name) messages in his sight
-                \`${
-                  config.prefix
-                }flush all\`:\tDeletes all messages  in bot's sight  
-                \`${
-                  config.prefix
-                }flush me\`:\tDeletes your messages in bot's sight  
-                \`${
+                \`${config.prefix}move {name} #\`:\tMoving {name} to # Channel${
                   config.prefix
                 }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
                 \`${
@@ -167,17 +156,7 @@ class Replies {
                 \`${config.prefix}disconnect\`:\tShutdowns bot  
                 \`${config.prefix}restart\`:\tRestarts bot
                 \`${config.prefix}move name #\`:\tMoving {name} to # Channel
-                \`${config.prefix}flush\`:\tDeletes bot's messages in his sight
-                \`${
-                  config.prefix
-                }flush (channel Name) \`:\tDeletes bot's (channel name) messages in his sight
-                \`${
-                  config.prefix
-                }flush all\`:\tDeletes all messages  in bot's sight  
-                \`${
-                  config.prefix
-                }flush me\`:\tDeletes your messages in bot's sight  
-                \`${
+                ${
                   config.prefix
                 }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
                 \`${

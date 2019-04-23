@@ -50,8 +50,7 @@ class Moving {
 
   moveTo(msg) {
     if (
-      msg.content === `${config.prefix}moveTo` ||
-      msg.content === `${config.prefix}move`
+      msg.content === `${config.prefix}moveTo`
     ) {
       embed = validation.clearEmbed(embed);
       embed.setColor("0xff8040");
@@ -62,16 +61,16 @@ class Moving {
       });
       msg.reply(embed);
     }
-    if (msg.content === `${config.prefix}moveTo me`) {
+    else if (msg.content === `${config.prefix}moveTo me`) {
       msg.member.voice.channel.join().then(() => {
         msg.reply(`Successfully connected to ${msg.member.voice.channel.name}`);
         this.currentChannel = msg.channel.id;
       });
     }
-    if (validation.checkBotMove(msg.content)) {
+    else if (validation.checkBotMove(msg.content)) {
       this.getRooms(msg.guild.channels);
-      let split = msg.content.split(" ");
-      let channel = this.getChannel(split[1]);
+      let voiceNumber = msg.content.split(" ")[1];
+      let channel = this.getChannel(voiceNumber, msg);
       if (!channel) return console.error("The channel does not exist!");
       channel
         .join()
@@ -83,6 +82,7 @@ class Moving {
         .catch(e => {
           // Oh no, it errored! Let's log it to console :)
           console.error(e);
+          console.error("The channel does not exist!");
         });
     }
   }
@@ -168,10 +168,10 @@ class Moving {
     return voiceChannels;
   }
 
-  getChannel(id, client) {
+  getChannel(id, msg) {
     for (let i = 0; i < this.channelIds.length; i++) {
       if (i === parseInt(id) - 1) {
-        return client.channels.get(this.channelIds[i]);
+        return msg.guild.channels.get(this.channelIds[i]);
       }
     }
   }

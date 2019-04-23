@@ -28,18 +28,18 @@ class Voice {
     this._data = data;
   }
 
-  join(message) {
-    if (message.member != null) {
-      if (message.member.voice.channel) {
-        message.member.voice.channel.join();
+  join(msg) {
+    if (msg.member != null) {
+      if (msg.member.voice.channel) {
+        msg.member.voice.channel.join();
       } else {
         embed
           .setColor("0xff0000")
           .setDescription("You need to join a voice channel first!");
-        message.reply(embed);
+        msg.reply(embed);
       }
     } else {
-      const current = message.author;
+      const current = msg.author;
       embed
         .setColor("0xff0000")
         .setDescription(`Stop typying me in pm :angry: `);
@@ -47,38 +47,38 @@ class Voice {
     }
   }
 
-  leave(message) {
-    message.member.voice.channel.leave();
+  leave(msg) {
+    msg.member.voice.channel.leave();
     this.data.playing = false;
     this.data.queue = [];
     this.data.onAir = false;
   }
 
-  async play(message) {
-    if (message.member != null && !this.data.onAir) {
+  async play(msg) {
+    if (msg.member != null && !this.data.onAir) {
       embed = validation.clearEmbed(embed);
-      let url = message.content.split(" ")[1];
+      let url = msg.content.split(" ")[1];
       if (this.data.playing || this.data.queue > 0) {
         this.data.queue.push(url);
         let videoData = await ytdlVideo.getInfo(url);
-        showVideoData(message, videoData, "queue");
+        showVideoData(msg, videoData, "queue");
       } else {
-        if (message.member.voice.channel) {
+        if (msg.member.voice.channel) {
           embed = validation.clearEmbed(embed);
           this.data.playing = true;
           this.data.queue.push(url);
-          message.member.voice.channel
+          msg.member.voice.channel
             .join()
             .then(async connection => {
               this.data.videoData = await ytdlVideo.getInfo(url);
-              Play(connection, this.data, message);
+              Play(connection, this.data, msg);
             })
             .catch(console.error);
         } else {
           embed
             .setColor("0xff0000")
             .setDescription("You need to join a voice channel first!");
-          message.reply(embed);
+          msg.reply(embed);
         }
       }
     } else {
@@ -88,24 +88,24 @@ class Voice {
       } else if (this.data.playing) {
         embed.setColor("0x004444").setDescription(`I am playing a song!`);
       }
-      message.channel.send(embed);
+      msg.channel.send(embed);
     }
   }
 
-  radio(message) {
-    if (message.member != null) {
+  radio(msg) {
+    if (msg.member != null) {
       if (
-        message.member.voice.channel &&
+        msg.member.voice.channel &&
         !this.data.onAir &&
         !this.data.playing
       ) {
         embed = validation.clearEmbed(embed);
-        message.member.voice.channel
+        msg.member.voice.channel
           .join()
           .then(async connection => {
             embed = validation.clearEmbed(embed);
             http.get(
-              await awaitRadioChoose(message, message.author, embed),
+              await awaitRadioChoose(msg, msg.author, embed),
               res => {
                 this.data.onAir = true;
                 this.data.dispatcher = connection.play(res, streamOptions);
@@ -124,30 +124,30 @@ class Voice {
             .setColor("0xff0000")
             .setDescription("You need to join a voice channel first!");
         }
-        message.channel.send(embed);
+        msg.channel.send(embed);
       }
     } else {
-      const current = message.author;
+      const current = msg.author;
       current.send(`Stop typying me in pm :angry: `);
     }
   }
 
-  pause(message) {
-    if (message.member.voice.channel && this.data.dispatcher != false) {
+  pause(msg) {
+    if (msg.member.voice.channel && this.data.dispatcher != false) {
       this.data.dispatcher.pause();
     }
   }
 
-  resume(message) {
-    if (message.member.voice.channel && this.data.dispatcher != false) {
+  resume(msg) {
+    if (msg.member.voice.channel && this.data.dispatcher != false) {
       this.data.dispatcher.resume();
     }
   }
 
-  async stop(message, client, mode = "force") {
-    if (message.content === `${config.prefix}stop` || mode === "skip" || this.data.dispatcher) {
+  async stop(msg, client, mode = "force") {
+    if (msg.content === `${config.prefix}stop` || mode === "skip" || this.data.dispatcher) {
       if (
-        message.member.voice.channel &&
+        msg.member.voice.channel &&
         !this.data.onAir &&
         this.data.playing === true
       ) {
@@ -155,61 +155,61 @@ class Voice {
           this.data.dispatcher.end("force");
           this.data.dispatcher = false;
           this.data.playing = false;
-          message.reply(`Stopped playing songs`);
+          msg.reply(`Stopped playing songs`);
         } else {
           this.data.dispatcher.end("skip");
-          message.reply(`Skipped song`);
+          msg.reply(`Skipped song`);
         }
       } else if(this.data.onAir) {
         this.data.onAir = false;
-        message.reply(`Shutting down radio...`);
+        msg.reply(`Shutting down radio...`);
         http.globalAgent.destroy();
       }
     } else {
-      message.reply(`I am not playing any song or radio`);
+      msg.reply(`I am not playing any song or radio`);
     }
   }
 
-  skip(message, client) {
-    this.stop(message, client, "skip");
+  skip(msg, client) {
+    this.stop(msg, client, "skip");
   }
 
-  volume(message) {
-    if (message.member.voice.channel && this.data.dispatcher != false) {
-      let volume = message.content.substring(8, message.content.length);
+  volume(msg) {
+    if (msg.member.voice.channel && this.data.dispatcher != false) {
+      let volume = msg.content.substring(8, msg.content.length);
       if (volume <= 200) {
         this.data.dispatcher.setVolume(parseFloat(volume / 1000));
       } else {
-        message.reply(`You exited available range of sound try to use 0 - 200`);
+        msg.reply(`You exited available range of sound try to use 0 - 200`);
       }
     }
   }
 
-  async queue(message) {
+  async queue(msg) {
     embed = validation.clearEmbed(embed);
     if (this.data.playing === true) {
-      await awaitEmbedReply(message, this.data, embed);
+      await awaitEmbedReply(msg, this.data, embed);
     } else {
-      message.reply(`No queue`);
+      msg.reply(`No queue`);
     }
   }
 
-  rerun(message) {
+  rerun(msg) {
     embed = validation.clearEmbed(embed);
     if (this.data.skippedSong != null && this.data.skippedSong != false) {
       this.data.queue.unshift(this.data.skippedSong);
       this.data.queue.unshift(this.data.skippedSong);
       this.data.dispatcher.end("rerun");
     } else {
-      message.reply(`You didn't skip any song`);
+      msg.reply(`You didn't skip any song`);
     }
   }
 }
 
-async function Play(connection, data, message) {
+async function Play(connection, data, msg) {
   embed = validation.clearEmbed(embed);
   data.videoData = await ytdlVideo.getInfo(data.queue[0]);
-  showVideoData(message, data.videoData, "play");
+  showVideoData(msg, data.videoData, "play");
   try {
     data.dispatcher = await connection.play(
       await ytdlVideo(data.queue[0]),
@@ -217,15 +217,15 @@ async function Play(connection, data, message) {
     );
     console.log('STARTED PLAYING SONG');
   } catch (err) {
-    message.reply("WRONG URL");
+    msg.reply("WRONG URL");
   }
   data.dispatcher.on("finish", function(reason) {
     console.log(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
-    finish(connection, data, reason, message);
+    finish(connection, data, reason, msg);
   });
 }
 
-async function finish(connection, data, reason, message) {
+async function finish(connection, data, reason, msg) {
   data.skippedSong = data.queue.shift();
   if (reason === "rerun") {
     data.skippedSong = "";
@@ -233,17 +233,17 @@ async function finish(connection, data, reason, message) {
   if (reason === "force" || data.queue.length === 0) {
     data.playing = false;
     data.dispatcher = false;
-    message.channel.send(`End of queue`);
+    msg.channel.send(`End of queue`);
     if(reason === "force"){
       data.queue = [];
     }
     connection.disconnect();
   } else {
-    Play(connection, data, message);
+    Play(connection, data, msg);
   }
 }
 
-function showVideoData(message, videoData, mode = "play") {
+function showVideoData(msg, videoData, mode = "play") {
   let durationMin = Math.floor(videoData.length_seconds / 60);
   let durationSec = Math.ceil(videoData.length_seconds % 60);
   let stream = (durationMin && durationSec) === 0;
@@ -270,6 +270,6 @@ function showVideoData(message, videoData, mode = "play") {
           : durationMin + "min"
       }  ${durationSec === 0 ? " " : durationSec + "seconds"} `
     });
-  message.channel.send(embed);
+  msg.channel.send(embed);
 }
 module.exports = Voice;

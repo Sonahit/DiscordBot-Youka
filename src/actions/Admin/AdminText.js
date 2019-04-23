@@ -21,37 +21,37 @@ class AdminText {
     this._users = users;
   }
 
-  async Tmute(message) {
-    this.setMuteRole(message);
+  async Tmute(msg) {
+    this.setMuteRole(msg);
     if (classes.Admin.mode === "admin") {
-      const user = message.mentions.users.first();
+      const user = msg.mentions.users.first();
       if (user) {
-        const member = message.guild.member(user);
+        const member = msg.guild.member(user);
         let reason =
-          message.content.split(` <@${member.user.id}> `)[1] || "no reason";
+          msg.content.split(` <@${member.user.id}> `)[1] || "no reason";
         if (member) {
           this.users.set(member, new Map(member.roles));
           member.roles.set([this.mutedRole], reason);
-          message.channel.send(`<@${member.user.id}> be a good boy next time`);
+          msg.channel.send(`<@${member.user.id}> be a good boy next time`);
         } else {
-          message.reply("You didn't mention the user to mute at textchannels!");
+          msg.reply("You didn't mention the user to mute at textchannels!");
         }
       } else {
-        message.reply("That user isn't in this guild!");
+        msg.reply("That user isn't in this guild!");
       }
     } else {
-      message.reply(`You have to enter admin mode`);
+      msg.reply(`You have to enter admin mode`);
     }
   }
 
-  Tunmute(message) {
-    this.setMuteRole(message);
+  Tunmute(msg) {
+    this.setMuteRole(msg);
     if (classes.Admin.mode === "admin") {
-      const user = message.mentions.users.first();
+      const user = msg.mentions.users.first();
       if (user) {
-        const member = message.guild.member(user);
+        const member = msg.guild.member(user);
         let reason =
-          message.content.split(` <@${member.user.id}> `)[1] || "no reason";
+          msg.content.split(` <@${member.user.id}> `)[1] || "no reason";
         if (member) {
           member.roles.remove(this.mutedRole);
           this.users.get(member).forEach((role) => {
@@ -59,20 +59,20 @@ class AdminText {
               member.roles.add(role, reason);
             }
           });
-          message.channel.send(`<@${member.user.id}> good boy!`);
+          msg.channel.send(`<@${member.user.id}> good boy!`);
           this.users.delete(member);
         } else {
-          message.reply("You didn't mention the user to mute at textchannels!");
+          msg.reply("You didn't mention the user to mute at textchannels!");
         }
       } else {
-        message.reply("That user isn't in this guild!");
+        msg.reply("That user isn't in this guild!");
       }
     } else {
-      message.reply(`You have to enter admin mode`);
+      msg.reply(`You have to enter admin mode`);
     }
   }
-  setMuteRole(message) {
-    const serverRoles = message.guild.roles;
+  setMuteRole(msg) {
+    const serverRoles = msg.guild.roles;
     serverRoles.forEach((item) => {
       if (item.name === "Muted") {
         this.mutedRole = item;

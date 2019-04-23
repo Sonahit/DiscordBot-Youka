@@ -80,7 +80,7 @@ module.exports = class Validation {
    */
   checkMoveUser(msg = "") {
     //let pattern = /!(move|moveTo)(\s*(\w|[А-Яа-я])+\s[0-9]*)/g;
-    let pattern = new RegExp(`${this.config.prefix}(move|moveTo)\\s*(\\w|[А-Яа-я])+\\s[0-9]+`,'g')
+    let pattern = new RegExp(`${this.config.prefix}move\\s*(\\w|[А-Яа-я])+\\s[0-9]+`,'g');
     let check = pattern.test(msg);
     return check;
   }

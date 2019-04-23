@@ -1,7 +1,5 @@
 const ytdlVideo = require("ytdl-core");
-const ytdlDiscord = require("ytdl-core-discord");
 const streamOptions = { volume: 0.03, passes: 3 };
-const streamOpusOptions = { type: "opus", volume: 0.03, passes: 3 };
 const Discord = require("discord.js");
 let embed = new Discord.MessageEmbed();
 const Validation = require("../Validation");

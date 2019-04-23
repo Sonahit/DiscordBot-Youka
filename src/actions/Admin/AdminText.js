@@ -1,7 +1,4 @@
-const Validation = require("../../Validation");
-const validation = new Validation();
-const config = validation.config;
-
+/* eslint-disable no-undef */
 class AdminText {
   constructor() {
     this._users = new Map();
@@ -24,7 +21,7 @@ class AdminText {
     this._users = users;
   }
 
-  async Tmute(message, client) {
+  async Tmute(message) {
     this.setMuteRole(message);
     if (classes.Admin.mode === "admin") {
       const user = message.mentions.users.first();
@@ -47,7 +44,7 @@ class AdminText {
     }
   }
 
-  Tunmute(message, client) {
+  Tunmute(message) {
     this.setMuteRole(message);
     if (classes.Admin.mode === "admin") {
       const user = message.mentions.users.first();
@@ -57,7 +54,7 @@ class AdminText {
           message.content.split(` <@${member.user.id}> `)[1] || "no reason";
         if (member) {
           member.roles.remove(this.mutedRole);
-          this.users.get(member).forEach((role, index) => {
+          this.users.get(member).forEach((role) => {
             if (role.name !== "@everyone") {
               member.roles.add(role, reason);
             }
@@ -76,7 +73,7 @@ class AdminText {
   }
   setMuteRole(message) {
     const serverRoles = message.guild.roles;
-    serverRoles.forEach((item, index) => {
+    serverRoles.forEach((item) => {
       if (item.name === "Muted") {
         this.mutedRole = item;
       }

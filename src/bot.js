@@ -65,7 +65,7 @@ client.on("message", async msg => {
         let executor;
         commands.forEach((item, index) => {
           if (
-            item.some((item, index) => {
+            item.some((item) => {
               return item === keyWord;
             }) === true
           ) {
@@ -76,34 +76,34 @@ client.on("message", async msg => {
           case ("AdminRights"): {
             if(validation.isRole(msg, "Модератор") || validation.isAuthor(msg)){
               executor[keyWord](msg, client);
-              break;
             } else {
               replies.Error(msg);
             }
+            break;
           }
           case ("AdminText"): {
             if(validation.isRole(msg, "Модератор") || validation.isAuthor(msg)){
               executor[keyWord](msg, client);
-              break;
             } else {
               replies.Error(msg);
             }
+            break;
           }
           case ("Voice"): {
             if(validation.isRole(msg, "DJ") || validation.isAuthor(msg)){
               executor[keyWord](msg, client);
-              break;
             } else {
               replies.Error(msg);
             }
+            break;
           }
           case ("Moving"): {
             if(validation.isRole(msg, "DJ") || validation.isAuthor(msg)){
               executor[keyWord](msg, client);
-              break;
             } else {
               replies.Error(msg);
             }
+            break;
           }
           case ("Replies"): {
             executor[keyWord](msg, client);

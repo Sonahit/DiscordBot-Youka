@@ -48,14 +48,14 @@ class Moving {
   }
   
 
-  moveTo(msg, client) {
+  moveTo(msg) {
     if (
       msg.content === `${config.prefix}moveTo` ||
       msg.content === `${config.prefix}move`
     ) {
       embed = validation.clearEmbed(embed);
       embed.setColor("0xff8040");
-      embed.setDescription(`Type !moveTo (number) to move a bot`);
+      embed.setDescription(`Type ${config.prefix}moveTo (number) to move a bot`);
       embed.fields.push({
         name: "Avaiable rooms:",
         value: `${this.getRooms(msg.guild.channels)}`
@@ -63,7 +63,7 @@ class Moving {
       msg.reply(embed);
     }
     if (msg.content === `${config.prefix}moveTo me`) {
-      msg.member.voice.channel.join().then(connection => {
+      msg.member.voice.channel.join().then(() => {
         msg.reply(`Successfully connected to ${msg.member.voice.channel.name}`);
         this.currentChannel = msg.channel.id;
       });
@@ -75,7 +75,7 @@ class Moving {
       if (!channel) return console.error("The channel does not exist!");
       channel
         .join()
-        .then(connection => {
+        .then(() => {
           msg.reply(`Successfully connected to ${channel.name}`);
           this.currentChannel = msg.channel.id;
           console.log(`Successfully connected to ${channel.name}`);
@@ -154,10 +154,10 @@ class Moving {
   }
 
   getRooms(channels = []) {
-    voiceChannels = [];
+    let voiceChannels = [];
     this.channelIds = [];
     let i = 0;
-    channels.forEach((item, index) => {
+    channels.forEach((item) => {
       if (item.type == "voice" && item.joinable === true) {
         voiceChannels.push(
           `Channel number ->\t${++i}\t->\t\t${item.name}\n`

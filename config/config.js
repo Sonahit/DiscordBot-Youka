@@ -1,5 +1,5 @@
 module.exports = {
-  token: "NTYzNDQxNjAwNDcxMTA1NTQ2.XKjVmA.X6WhztiJyFUHmJ90O7CrmhpW6EM",
+  token: "YOUR TOKEN HERE",
   prefix: ">>",
   owners: [
     (VanyaSkatilsya = {

@@ -41,7 +41,7 @@ class Replies {
     msg.author.send(embed);
   }
   ping(msg) {
-    msg.reply("Pong${config.prefix} :D");
+    msg.reply(`Pong! :D`);
   }
   Error(msg) {
     embed = validation.clearEmbed(embed);
@@ -118,12 +118,9 @@ class Replies {
                 \`${config.prefix}IUser\`:\tSet user mode 
                 \`${config.prefix}disconnect\`:\tShutdowns bot  
                 \`${config.prefix}restart\`:\tRestarts bot
-                \`${config.prefix}move {name} #\`:\tMoving {name} to # Channel${
-                  config.prefix
-                }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
-                \`${
-                  config.prefix
-                }[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
+                \`${config.prefix}move name #\`:\tMoving {name} to # Channel
+                \`${config.prefix}[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
+                \`${config.prefix}[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
       });
       embed.setColor("0xff8040");
       msg.author.send(embed);
@@ -156,12 +153,8 @@ class Replies {
                 \`${config.prefix}disconnect\`:\tShutdowns bot  
                 \`${config.prefix}restart\`:\tRestarts bot
                 \`${config.prefix}move name #\`:\tMoving {name} to # Channel
-                ${
-                  config.prefix
-                }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
-                \`${
-                  config.prefix
-                }[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
+                \`${config.prefix}[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
+                \`${config.prefix}[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
       });
       embed.setColor("0xff8040");
       msg.author.send(embed);

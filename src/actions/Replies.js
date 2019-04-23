@@ -18,10 +18,10 @@ class Replies {
     );
     msg.reply(embed);
   }
-  onHello(msg, client) {
+  onHello(msg) {
     msg.channel.send(`Rise and shine <@${msg.author.id}>`);
   }
-  author(msg, client) {
+  author(msg) {
     embed = validation.clearEmbed(embed);
     embed.setColor("0xffffff");
     embed.setAuthor(`@IvanSadykov`);

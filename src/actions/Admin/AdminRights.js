@@ -65,7 +65,7 @@ class AdminRights {
       message.reply(`You have to enter admin mode`);
     }
   }
-
+/*
   ban(msg) {
     if (isAdmin(this.getMode())) {
     } else {
@@ -79,7 +79,7 @@ class AdminRights {
       msg.reply(`You have to enter admin mode`);
     }
   }
-
+*/
   mute(message) {
     if (isAdmin(this.getMode())) {
       const user = message.mentions.users.first();

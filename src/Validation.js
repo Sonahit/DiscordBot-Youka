@@ -4,7 +4,7 @@ module.exports = class Validation {
   }
   
   isAuthor(msg) {
-    return this.config.owners.some((item, index) => {
+    return this.config.owners.some((item) => {
       return (
         msg.author.username === item.username &&
         msg.author.discriminator === item.id
@@ -22,15 +22,15 @@ module.exports = class Validation {
     if(msg.content !== `${this.config.prefix}help`){
       if (typingCheck != null) {
         if(!Array.isArray(roles)){
-          let check = msg.member.roles.some((item, index)=> {
+          let check = msg.member.roles.some((item)=> {
             if(roles === item.name){
               return true;
             }
           })
           return check;
         } else {
-          let check = msg.member.roles.some((item, index)=> {
-            return roles.some((role, index)=> {
+          let check = msg.member.roles.some((item)=> {
+            return roles.some((role)=> {
               if(role === item.name){
                 return true;
               }
@@ -70,7 +70,7 @@ module.exports = class Validation {
   }
 
   greetMessage(msg){
-    let check = /^(?!\W.*$).*(g?h?w?)(reetings|hat's up|ello|ola|ey|azzup|hi)(!?)/gi.test(msg) || /^(?![><!"№;%:?*()@#$^&?/.'"\]}{,|`~\+\-[].*$).*(привет)|(^[з]|дравствуй[те]?|драсти$)|^(дар(ова|оу))|([х](ай|еллоу))(!?)/gi.test(msg);
+    let check = /^(?!\W.*$).*(g?h?w?)(reetings|hat's up|ello|ola|ey|azzup|hi)(!?)/gi.test(msg) || /^(?![><!"№;%:?*()@#$^&?/.'"\]}{,|`~+\-[].*$).*(привет)|(^[з]|дравствуй[те]?|драсти$)|^(дар(ова|оу))|([х](ай|еллоу))(!?)/gi.test(msg);
     return check;
   }
   /**
@@ -80,7 +80,7 @@ module.exports = class Validation {
    */
   checkMoveUser(msg = "") {
     //let pattern = /!(move|moveTo)(\s*(\w|[А-Яа-я])+\s[0-9]*)/g;
-    let pattern = new RegExp(`${config.prefix}(move|moveTo)\\s*(\\w|[А-Яа-я])+\\s[0-9]+`,'g')
+    let pattern = new RegExp(`${this.config.prefix}(move|moveTo)\\s*(\\w|[А-Яа-я])+\\s[0-9]+`,'g')
     let check = pattern.test(msg);
     return check;
   }

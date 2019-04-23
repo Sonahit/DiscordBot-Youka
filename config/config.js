@@ -1,5 +1,6 @@
+/* eslint-disable no-undef */
 module.exports = {
-  token: "YOUR TOKEN HERE",
+  token: "NTYzNDQxNjAwNDcxMTA1NTQ2.XKjVmA.X6WhztiJyFUHmJ90O7CrmhpW6EM",
   prefix: ">>",
   owners: [
     (VanyaSkatilsya = {

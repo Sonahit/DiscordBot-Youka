@@ -1,7 +1,6 @@
-const essentials = require("./essentials");
-const client = require("../src/utils/Client");
 module.exports = {
-  token: essentials.token,
+  token: "NTYzNDQxNjAwNDcxMTA1NTQ2.XKjVmA.X6WhztiJyFUHmJ90O7CrmhpW6EM",
+  prefix: ">>",
   owners: [
     (VanyaSkatilsya = {
       username: "VanyaSkatilsya",
@@ -9,7 +8,6 @@ module.exports = {
     })
   ],
   Priority: ["Админ", "Модератор"],
-  prefix: essentials.prefix,
   Commands: [
     (Admins = [
       "kick",

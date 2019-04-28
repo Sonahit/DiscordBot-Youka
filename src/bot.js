@@ -116,7 +116,7 @@ client.on("message", async msg => {
       }
     }
   } catch(err){
-    console.log(err.messsage);
+    console.log(err.message);
   }
 });
 

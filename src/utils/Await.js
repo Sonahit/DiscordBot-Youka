@@ -40,7 +40,9 @@ module.exports.awaitRadioChoose = async function awaitRadioChoose(
         url = config.RadioList[parseInt(msg.content.split("#")[1]) - 1].URL;
       } catch (err) {
         message.reply(
-          `${message.content} is wrong pattern try using #1, #2 and etc.\n Type ${
+          `${
+            message.content
+          } is wrong pattern try using #1, #2 and etc.\n Type ${
             config.prefix
           }radio again`
         );
@@ -69,30 +71,43 @@ module.exports.awaitEmbedReply = async function awaitEmbedReply(
   embed
 ) {
   embed.setColor("0x00d0ff").setTitle("Current Queue");
-  const start = async () => {
-    await data.queue.forEach(async (item, index) => {
-      await ytdl
-        .getInfo(item)
-        .then(videoData => {
-          embed.addField(
-            `${index === 0 ? `#${index + 1} Current Song` : `#${index + 1} Song`}`,
-            `Author ${videoData.author.name}**\n[${
-              videoData.title
-            }](${videoData.video_url})**\nDuration: ${Math.floor(
-              videoData.length_seconds / 60
-            )} min ${Math.ceil(data.videoData.length_seconds % 60)} seconds`
-          );
-        })
-        .finally(() => {
-          if (embed.fields.length === data.queue.length) {
-            embed.fields.sort(
-              (a, b) =>
-                parseInt(a.name.split(" ")[0].substring(1,a.name.split(" ")[0].length)) -
-                parseInt(b.name.split(" ")[0].substring(1,b.name.split(" ")[0].length))
+  const start = () => {
+    let promises = [];
+    data.queue.forEach((item, index) => {
+      promises.push(
+        ytdl
+          .getInfo(item)
+          .then(videoData => {
+            embed.addField(
+              `${
+                index === 0
+                  ? `#${index + 1} Current Song`
+                  : `#${index + 1} Song`
+              }`,
+              `Author ${videoData.author.name}**\n[${videoData.title}](${
+                videoData.video_url
+              })**\nDuration: ${Math.floor(
+                videoData.length_seconds / 60
+              )} min ${Math.ceil(data.videoData.length_seconds % 60)} seconds`
             );
-            message.reply(embed);
-          }
-        });
+          })
+          .catch(err => {
+            console.log(err);
+            message.reply(err);
+          })
+      );
+    });
+    Promise.all(promises).then(() => {
+      embed.fields.sort(
+        (a, b) =>
+          parseInt(
+            a.name.split(" ")[0].substring(1, a.name.split(" ")[0].length)
+          ) -
+          parseInt(
+            b.name.split(" ")[0].substring(1, b.name.split(" ")[0].length)
+          )
+      );
+      message.reply(embed);
     });
   };
   start();

@@ -65,7 +65,9 @@ class Voice {
       let url = msg.content.split(" ")[1];
       if (this.data.playing || this.data.queue > 0) {
         this.data.queue.push(url);
-        let videoData = await ytdlVideo.getInfo(url);
+        let videoData = await ytdlVideo.getInfo(url).catch(err => {
+          msg.reply(err.message);
+        });
         showVideoData(msg, videoData, "queue");
       } else {
         if (msg.member.voice.channel) {
@@ -75,7 +77,9 @@ class Voice {
           msg.member.voice.channel
             .join()
             .then(async connection => {
-              this.data.videoData = await ytdlVideo.getInfo(url);
+              this.data.videoData = await ytdlVideo.getInfo(url).catch(err => {
+                msg.reply(err.message);
+              });
               Play(connection, this.data, msg);
             })
             .catch(console.error);
@@ -227,22 +231,29 @@ class Voice {
       };
       let videos = await getYoutubePlayList(options);
       const setFields = () => {
-        videos.forEach(async video => {
-          await ytdlVideo
-            .getInfo(video.snippet.resourceId.videoId)
-            .then(info => {
-              let durationMin = Math.floor(info.length_seconds / 60);
-              let durationSec = Math.ceil(info.length_seconds % 60);
-              embed.addField(
-                `Author: ${info.author.name}`,
-                `Duration: ${durationMin} mins : ${durationSec} seconds. \n Title: [${
-                  info.title
-                }](${info.video_url})`
-              );
-              if (videos.length === embed.fields.length) {
-                msg.reply(embed);
-              }
-            });
+        let promises = [];
+        videos.forEach(video => {
+          promises.push(
+            ytdlVideo
+              .getInfo(video.snippet.resourceId.videoId)
+              .then(info => {
+                let durationMin = Math.floor(info.length_seconds / 60);
+                let durationSec = Math.ceil(info.length_seconds % 60);
+                embed.addField(
+                  `Author: ${info.author.name}`,
+                  `Duration: ${durationMin} mins : ${durationSec} seconds. \n Title: [${
+                    info.title
+                  }](${info.video_url})`
+                );
+              })
+              .catch(err => {
+                console.log(err);
+                msg.reply(err.message);
+              })
+          );
+        });
+        Promise.all(promises).then(() => {
+          msg.reply(embed);
         });
       };
       embed.setDescription(`Play list requested by ${msg.author.username}`);
@@ -282,7 +293,11 @@ class Voice {
             msg.member.voice.channel
               .join()
               .then(async connection => {
-                this.data.videoData = await ytdlVideo.getInfo(url);
+                this.data.videoData = await ytdlVideo
+                  .getInfo(url)
+                  .catch(err => {
+                    msg.reply(err.message);
+                  });
                 Play(connection, this.data, msg);
               })
               .catch(console.error);
@@ -343,7 +358,9 @@ async function Play(connection, data, msg) {
   showVideoData(msg, data.videoData, "play");
   try {
     data.dispatcher = await connection.play(
-      await ytdlVideo(data.queue[0]),
+      await ytdlVideo(data.queue[0]).catch(err => {
+        msg.reply(err.message);
+      }),
       streamOptions
     );
     console.log("STARTED PLAYING SONG");

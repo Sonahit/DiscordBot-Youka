@@ -29,7 +29,9 @@ class Replies {
       `https://pmcvariety.files.wordpress.com/2018/05/discord-logo.jpg?w=1000&h=563&crop=1`
     );
     embed.setDescription(
-      `Hello ${msg.author.username}! I am author of this bot. If you have any suggestions please contact me at github or via email.`
+      `Hello ${
+        msg.author.username
+      }! I am author of this bot. If you have any suggestions please contact me at github or via email.`
     );
     embed.addField("GitHub", "https://github.com/Sonahit/");
     embed.addField("Gmail", "grandpajok@gmail.com");
@@ -93,9 +95,9 @@ class Replies {
       }
     );
     if (validation.isAuthor(msg) > 0) {
-      embed.addField({
-        name: `For DJs:`,
-        value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
+      embed.addField(
+        `For DJs:`,
+        `\`${config.prefix}play https://[url]\`:\tPlays a video 
                 \`${config.prefix}join\`:\tJoins your channel 
                 \`${config.prefix}leave\`:\tLeaves your channel 
                 \`${config.prefix}radio\`:\tPlays a radio  
@@ -104,35 +106,45 @@ class Replies {
                 \`${config.prefix}resume\`:\tResumes playing video 
                 \`${config.prefix}end\`:\tEnds playing video 
                 \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
-                \`${config.prefix}playList #playlistID\`:\tShows play list at playlist id 
-                \`${config.prefix}playList play #playlistID\`:\tPlay all videos at playlist 
+                \`${
+                  config.prefix
+                }playList #playlistID\`:\tShows play list at playlist id 
+                \`${
+                  config.prefix
+                }playList play #playlistID\`:\tPlay all videos at playlist 
                 \`${config.prefix}moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
                 \`${config.prefix}follow me\`:\tFollows you 
                 \`${config.prefix}follow me\`:\tBot is following you 
-                \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
+                \`${
+                  config.prefix
+                }follow (@username)\`:\tBot is following (@username) 
                 \`${config.prefix}follow stop\`:\tStop following you `
-      });
-      embed.addField({
-        name: `For Admins:`,
-        value: ` 
+      );
+      embed.addField(
+        `For Admins:`,
+        ` 
                 \`${config.prefix}IAdmin\`:\tSet admin mode 
                 \`${config.prefix}IUser\`:\tSet user mode 
                 \`${config.prefix}disconnect\`:\tShutdowns bot  
                 \`${config.prefix}restart\`:\tRestarts bot
                 \`${config.prefix}move name #\`:\tMoving {name} to # Channel
-                \`${config.prefix}[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
-                \`${config.prefix}[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
-      });
+                \`${
+                  config.prefix
+                }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
+                \`${
+                  config.prefix
+                }[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
+      );
       embed.setColor("0xff8040");
       msg.author.send(embed);
       return;
     }
     if (validation.isRole(msg, "Модератор")) {
-      embed.addField({
-        name: `For DJs:`,
-        value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
+      embed.addField(
+        `For DJs:`,
+        `\`${config.prefix}play https://[url]\`:\tPlays a video 
                 \`${config.prefix}join\`:\tJoins your channel 
                 \`${config.prefix}leave\`:\tLeaves your channel 
                 \`${config.prefix}radio\`:\tPlays a radio  
@@ -141,35 +153,45 @@ class Replies {
                 \`${config.prefix}resume\`:\tResumes playing video 
                 \`${config.prefix}end\`:\tEnds playing video 
                 \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
-                \`${config.prefix}playList #playlistID\`:\tShows play list at playlist id 
-                \`${config.prefix}playList play #playlistID\`:\tPlay all videos at playlist 
+                \`${
+                  config.prefix
+                }playList #playlistID\`:\tShows play list at playlist id 
+                \`${
+                  config.prefix
+                }playList play #playlistID\`:\tPlay all videos at playlist 
                 \`${config.prefix}moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
                 \`${config.prefix}follow me\`:\tFollows you 
                 \`${config.prefix}follow me\`:\tBot is following you 
-                \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
+                \`${
+                  config.prefix
+                }follow (@username)\`:\tBot is following (@username) 
                 \`${config.prefix}follow stop\`:\tStop following you `
-      });
-      embed.addField({
-        name: `For Admins:`,
-        value: ` 
+      );
+      embed.addField(
+        `For Admins:`,
+        ` 
                 \`${config.prefix}IAdmin\`:\tSet admin mode 
                 \`${config.prefix}IUser\`:\tSet user mode 
                 \`${config.prefix}disconnect\`:\tShutdowns bot  
                 \`${config.prefix}restart\`:\tRestarts bot
                 \`${config.prefix}move name #\`:\tMoving {name} to # Channel
-                \`${config.prefix}[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
-                \`${config.prefix}[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
-      });
+                \`${
+                  config.prefix
+                }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
+                \`${
+                  config.prefix
+                }[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
+      );
       embed.setColor("0xff8040");
       msg.author.send(embed);
       return;
     }
     if (validation.isRole(msg, "DJ")) {
-      embed.addField({
-        name: `For DJs:`,
-        value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
+      embed.addField(
+        `For DJs:`,
+        `\`${config.prefix}play https://[url]\`:\tPlays a video 
                 \`${config.prefix}join\`:\tJoins your channel 
                 \`${config.prefix}leave\`:\tLeaves your channel 
                 \`${config.prefix}radio\`:\tPlays a radio  
@@ -178,16 +200,22 @@ class Replies {
                 \`${config.prefix}resume\`:\tResumes playing video 
                 \`${config.prefix}end\`:\tEnds playing video 
                 \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
-                \`${config.prefix}playList #playlistID\`:\tShows play list at playlist id 
-                \`${config.prefix}playList play #playlistID\`:\tPlay all videos at playlist 
+                \`${
+                  config.prefix
+                }playList #playlistID\`:\tShows play list at playlist id 
+                \`${
+                  config.prefix
+                }playList play #playlistID\`:\tPlay all videos at playlist 
                 \`${config.prefix}moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
                 \`${config.prefix}follow me\`:\tFollows you 
                 \`${config.prefix}follow me\`:\tBot is following you 
-                \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
+                \`${
+                  config.prefix
+                }follow (@username)\`:\tBot is following (@username) 
                 \`${config.prefix}follow stop\`:\tStop following you `
-      });
+      );
       embed.setColor("0xff8040");
       msg.author.send(embed);
       return;

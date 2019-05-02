@@ -357,9 +357,7 @@ async function Play(connection, data, msg) {
   showVideoData(msg, data.videoData, "play");
   try {
     data.dispatcher = await connection.play(
-      await ytdlVideo(data.queue[0]).catch(err => {
-        console.log(err);
-      }),
+      await ytdlVideo(data.queue[0]),
       streamOptions
     );
     console.log("STARTED PLAYING SONG");
@@ -408,12 +406,12 @@ function showVideoData(msg, videoData, mode = "play") {
           : "Added to queue " + videoData.title
       }`
     )
-    .addField({
-      name: `${stream ? "Live Stream" : "Duration"}`,
-      value: `${
+    .addField(
+      `${stream ? "Live Stream" : "Duration"}`,
+      `${
         stream ? `Thanks to ${videoData.author.name}` : durationMin + " min"
       }  ${durationSec === 0 ? " " : durationSec + "seconds"} `
-    });
+    );
   msg.channel.send(embed);
 }
 module.exports = Voice;

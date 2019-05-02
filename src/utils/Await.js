@@ -40,7 +40,7 @@ module.exports.awaitRadioChoose = async function awaitRadioChoose(
         url = config.RadioList[parseInt(msg.content.split("#")[1]) - 1].URL;
       } catch (err) {
         message.reply(
-          `${msg.content} is wrong pattern try using #1, #2 and etc.\n Type ${
+          `${message.content} is wrong pattern try using #1, #2 and etc.\n Type ${
             config.prefix
           }radio again`
         );
@@ -87,8 +87,8 @@ module.exports.awaitEmbedReply = async function awaitEmbedReply(
           if (embed.fields.length === data.queue.length) {
             embed.fields.sort(
               (a, b) =>
-                parseInt(a.name.substring(1, 2)) -
-                parseInt(b.name.substring(1, 2))
+                parseInt(a.name.substring(1, 3)) -
+                parseInt(b.name.substring(1, 3))
             );
             message.reply(embed);
           }

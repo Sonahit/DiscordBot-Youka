@@ -87,8 +87,8 @@ module.exports.awaitEmbedReply = async function awaitEmbedReply(
           if (embed.fields.length === data.queue.length) {
             embed.fields.sort(
               (a, b) =>
-                parseInt(a.name.substring(1, 3)) -
-                parseInt(b.name.substring(1, 3))
+                parseInt(a.name.split(" ")[0].substring(1,a.name.split(" ")[0].length)) -
+                parseInt(b.name.split(" ")[0].substring(1,b.name.split(" ")[0].length))
             );
             message.reply(embed);
           }

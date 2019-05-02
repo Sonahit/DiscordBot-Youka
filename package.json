@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "eslint": "^5.16.0",
+    "ffmpeg": "0.0.4",
     "ytdl-core-discord": "^1.0.3"
   }
 }

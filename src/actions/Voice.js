@@ -365,6 +365,7 @@ async function Play(connection, data, msg) {
     msg.reply("WRONG URL");
   }
   data.dispatcher.on("end", reason => {
+    reason = reason || "end";
     console.log(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
     finish(connection, data, reason, msg);
   });

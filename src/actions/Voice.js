@@ -66,7 +66,7 @@ class Voice {
       if (this.data.playing || this.data.queue > 0) {
         this.data.queue.push(url);
         let videoData = await ytdlVideo.getInfo(url).catch(err => {
-          msg.reply(err.message);
+          console.log(err);
         });
         showVideoData(msg, videoData, "queue");
       } else {
@@ -78,7 +78,7 @@ class Voice {
             .join()
             .then(async connection => {
               this.data.videoData = await ytdlVideo.getInfo(url).catch(err => {
-                msg.reply(err.message);
+                console.log(err);
               });
               Play(connection, this.data, msg);
             })
@@ -248,7 +248,6 @@ class Voice {
               })
               .catch(err => {
                 console.log(err);
-                msg.reply(err.message);
               })
           );
         });
@@ -296,7 +295,7 @@ class Voice {
                 this.data.videoData = await ytdlVideo
                   .getInfo(url)
                   .catch(err => {
-                    msg.reply(err.message);
+                    console.log(err);
                   });
                 Play(connection, this.data, msg);
               })
@@ -359,7 +358,7 @@ async function Play(connection, data, msg) {
   try {
     data.dispatcher = await connection.play(
       await ytdlVideo(data.queue[0]).catch(err => {
-        msg.reply(err.message);
+        console.log(err);
       }),
       streamOptions
     );

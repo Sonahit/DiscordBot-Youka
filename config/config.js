@@ -11,6 +11,7 @@ module.exports = {
   Priority: ["Админ", "Модератор"],
   Commands: [
     (Admins = [
+      "test",
       "kick",
       "mute",
       "unmute",
@@ -32,7 +33,8 @@ module.exports = {
       "volume",
       "rerun",
       "skip",
-      "queue"
+      "queue",
+      "playList"
     ]),
     (AdminText = ["flush", "Tmute", "Tunmute"]),
     (Default = ["AYAYA", "help", "ping", "author", "time"])

@@ -81,18 +81,13 @@ class Replies {
       `Requested by ${msg.author.username}`,
       `${msg.author.avatarURL() || "https://i.redd.it/1cp6bf2ahaky.jpg"} `
     );
+    embed.addField(` You said you need ?HELP?`, `${cry.repeat(8)}`);
     embed.addField(
-      {
-        name: ` You said you need ?HELP?`,
-        value: `${cry.repeat(8)}`
-      },
-      {
-        name: `Available commands:`,
-        value: ` AYAYA:\tAYAYA                         
+      `Available commands:`,
+      ` AYAYA:\tAYAYA                         
                 \`${config.prefix}ping\`:\tTypes a reply pong 
                 \`${config.prefix}time\`:\tShows local time of bot
                 \`${config.prefix}help\`:\tGet help`
-      }
     );
     if (validation.isAuthor(msg) > 0) {
       embed.addField(

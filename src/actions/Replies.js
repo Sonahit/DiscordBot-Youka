@@ -100,9 +100,11 @@ class Replies {
                 \`${config.prefix}leave\`:\tLeaves your channel 
                 \`${config.prefix}radio\`:\tPlays a radio  
                 \`${config.prefix}pause\`:\tPause playing video 
+                \`${config.prefix}rerun\`:\tPlay last played video 
                 \`${config.prefix}resume\`:\tResumes playing video 
                 \`${config.prefix}end\`:\tEnds playing video 
                 \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
+                \`${config.prefix}playList #playlistID\`:\tShows play list at playlist id 
                 \`${config.prefix}moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
@@ -134,9 +136,11 @@ class Replies {
                 \`${config.prefix}leave\`:\tLeaves your channel 
                 \`${config.prefix}radio\`:\tPlays a radio  
                 \`${config.prefix}pause\`:\tPause playing video 
+                \`${config.prefix}rerun\`:\tPlay last played video 
                 \`${config.prefix}resume\`:\tResumes playing video 
                 \`${config.prefix}end\`:\tEnds playing video 
                 \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
+                \`${config.prefix}playList #playlistID\`:\tShows play list at playlist id 
                 \`${config.prefix}moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
@@ -168,9 +172,11 @@ class Replies {
                 \`${config.prefix}leave\`:\tLeaves your channel 
                 \`${config.prefix}radio\`:\tPlays a radio  
                 \`${config.prefix}pause\`:\tPause playing video 
+                \`${config.prefix}rerun\`:\tPlay last played video 
                 \`${config.prefix}resume\`:\tResumes playing video 
                 \`${config.prefix}end\`:\tEnds playing video 
                 \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
+                \`${config.prefix}playList #playlistID\`:\tShows play list at playlist id 
                 \`${config.prefix}moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you

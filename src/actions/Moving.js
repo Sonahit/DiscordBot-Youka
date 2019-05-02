@@ -55,10 +55,9 @@ class Moving {
       embed = validation.clearEmbed(embed);
       embed.setColor("0xff8040");
       embed.setDescription(`Type ${config.prefix}moveTo (number) to move a bot`);
-      embed.fields.push({
-        name: "Avaiable rooms:",
-        value: `${this.getRooms(msg.guild.channels)}`
-      });
+      this.getRooms(msg.guild.channels).forEach(channel => {
+        embed.addField("Available rooms:", channel);
+      })
       msg.reply(embed);
     }
     else if (msg.content === `${config.prefix}moveTo me`) {

@@ -368,7 +368,7 @@ function showVideoData(msg, videoData, mode = "play") {
           : "Added to queue " + videoData.title
       }`
     )
-    .fields.push({
+    .addField({
       name: `${stream ? "Live Stream" : "Duration"}`,
       value: `${
           stream

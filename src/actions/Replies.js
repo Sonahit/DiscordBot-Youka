@@ -79,7 +79,7 @@ class Replies {
       `Requested by ${msg.author.username}`,
       `${msg.author.avatarURL() || "https://i.redd.it/1cp6bf2ahaky.jpg"} `
     );
-    embed.fields.push(
+    embed.addField(
       {
         name: ` You said you need ?HELP?`,
         value: `${cry.repeat(8)}`
@@ -93,7 +93,7 @@ class Replies {
       }
     );
     if (validation.isAuthor(msg) > 0) {
-      embed.fields.push({
+      embed.addField({
         name: `For DJs:`,
         value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
                 \`${config.prefix}join\`:\tJoins your channel 
@@ -114,7 +114,7 @@ class Replies {
                 \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
                 \`${config.prefix}follow stop\`:\tStop following you `
       });
-      embed.fields.push({
+      embed.addField({
         name: `For Admins:`,
         value: ` 
                 \`${config.prefix}IAdmin\`:\tSet admin mode 
@@ -130,7 +130,7 @@ class Replies {
       return;
     }
     if (validation.isRole(msg, "Модератор")) {
-      embed.fields.push({
+      embed.addField({
         name: `For DJs:`,
         value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
                 \`${config.prefix}join\`:\tJoins your channel 
@@ -151,7 +151,7 @@ class Replies {
                 \`${config.prefix}follow (@username)\`:\tBot is following (@username) 
                 \`${config.prefix}follow stop\`:\tStop following you `
       });
-      embed.fields.push({
+      embed.addField({
         name: `For Admins:`,
         value: ` 
                 \`${config.prefix}IAdmin\`:\tSet admin mode 
@@ -167,7 +167,7 @@ class Replies {
       return;
     }
     if (validation.isRole(msg, "DJ")) {
-      embed.fields.push({
+      embed.addField({
         name: `For DJs:`,
         value: `\`${config.prefix}play https://[url]\`:\tPlays a video 
                 \`${config.prefix}join\`:\tJoins your channel 

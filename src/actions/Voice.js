@@ -10,7 +10,7 @@ const { awaitRadioChoose, awaitEmbedReply } = require("../utils/Await");
 const { google } = require('googleapis');
 const youApi = google.youtube({
   version: "v3",
-  auth: "AIzaSyAPBSJV6CrlLrpSy_3T1KJhlM_i6VpNLd8"
+  auth: config.API_KEY
 });
 
 class Voice {

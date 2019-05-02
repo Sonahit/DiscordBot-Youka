@@ -2,6 +2,7 @@
 module.exports = {
   token: "NTYzNDQxNjAwNDcxMTA1NTQ2.XKjVmA.X6WhztiJyFUHmJ90O7CrmhpW6EM",
   prefix: ">>",
+  API_KEY: "AIzaSyAPBSJV6CrlLrpSy_3T1KJhlM_i6VpNLd8",
   owners: [
     (VanyaSkatilsya = {
       username: "VanyaSkatilsya",

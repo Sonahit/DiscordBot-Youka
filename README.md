@@ -5,11 +5,8 @@
 ``` bash
 
 #install required dependencies and run the bot
-First of all you need create file named essentials.js to config folder and export token and prefix
 npm install
-
-Then add 
-
+You need to input your Token ID into config with API_KEY at google services
 Now you can type npm start
 
 ```
@@ -18,9 +15,9 @@ Now you can type npm start
 
 ``` bash
 STREAMABLE
-NO QUEUE
+QUEUEABLE
 
-Youtka bot is made by @Ivan Sadykov. Can play music but no queue
+Youtka bot is made by @Ivan Sadykov. Can play music with queue and downloading song from  youtube playlists
 For extended information type !help on running
 
 ```

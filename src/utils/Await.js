@@ -76,9 +76,9 @@ module.exports.awaitEmbedReply = async function awaitEmbedReply(
         .then(videoData => {
           embed.addField(
             `${index === 0 ? `#${index + 1} Current Song` : `#${index + 1} Song`}`,
-            `Author ${videoData.author.name}**\n${
+            `Author ${videoData.author.name}**\n[${
               videoData.title
-            }**\nDuration: ${Math.floor(
+            }](${videoData.video_url})**\nDuration: ${Math.floor(
               videoData.length_seconds / 60
             )} min ${Math.ceil(data.videoData.length_seconds % 60)} seconds`
           );

@@ -105,6 +105,7 @@ class Replies {
                 \`${config.prefix}end\`:\tEnds playing video 
                 \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
                 \`${config.prefix}playList #playlistID\`:\tShows play list at playlist id 
+                \`${config.prefix}playList play #playlistID\`:\tPlay all videos at playlist 
                 \`${config.prefix}moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
@@ -141,6 +142,7 @@ class Replies {
                 \`${config.prefix}end\`:\tEnds playing video 
                 \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
                 \`${config.prefix}playList #playlistID\`:\tShows play list at playlist id 
+                \`${config.prefix}playList play #playlistID\`:\tPlay all videos at playlist 
                 \`${config.prefix}moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you
@@ -177,6 +179,7 @@ class Replies {
                 \`${config.prefix}end\`:\tEnds playing video 
                 \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
                 \`${config.prefix}playList #playlistID\`:\tShows play list at playlist id 
+                \`${config.prefix}playList play #playlistID\`:\tPlay all videos at playlist 
                 \`${config.prefix}moveTo \`:\tGet all channels and their ids
                 \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
                 \`${config.prefix}moveTo me\`:\tMoves bot to you

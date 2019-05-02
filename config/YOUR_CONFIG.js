@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 module.exports = {
-  token: "NTYzNDQxNjAwNDcxMTA1NTQ2.XKjVmA.X6WhztiJyFUHmJ90O7CrmhpW6EM",
+  token: "YOUR_TOKEN",
   prefix: ">>",
-  API_KEY: "AIzaSyAPBSJV6CrlLrpSy_3T1KJhlM_i6VpNLd8",
+  API_KEY: "YOUR_GOOGLE_API_KEY",
   owners: [
     (VanyaSkatilsya = {
       username: "VanyaSkatilsya",

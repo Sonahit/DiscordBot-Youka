@@ -47,9 +47,7 @@ class AdminRights {
           member
             .kick()
             .then(() => {
-              msg.reply(
-                `Successfully kicked ${user.tag} because ${reason}`
-              );
+              msg.reply(`Successfully kicked ${user.tag} because ${reason}`);
             })
             .catch(err => {
               msg.reply("I was unable to kick the member");
@@ -65,7 +63,7 @@ class AdminRights {
       msg.reply(`You have to enter admin mode`);
     }
   }
-/*
+  /*
   ban(msg) {
     if (isAdmin(this.getMode())) {
     } else {

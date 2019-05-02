@@ -23,7 +23,10 @@ client.on("ready", () => {
   logger.info("Logged in as: ");
   logger.info(client.user.username + " - (" + client.user.id + ")");
   console.log(`Connected via ${client.user.username}`);
-  client.user.setPresence({ activity: { name: "With pleasure", type:"PLAYING" }, status: 'online' })
+  client.user.setPresence({
+    activity: { name: "With pleasure", type: "PLAYING" },
+    status: "online"
+  });
 });
 
 client.login(config.token);
@@ -34,7 +37,7 @@ client.login(config.token);
  * if exists and valid make an execution of command
  */
 client.on("message", async msg => {
-  try{
+  try {
     logger.info(
       `"${msg.content}" sent by ${msg.author.username} at ${Date.now()}`
     );
@@ -59,13 +62,16 @@ client.on("message", async msg => {
     ) {
       replies.onHello(msg, client);
     }
-    if (msg.content.startsWith(`${config.prefix}`) && msg.author.bot === false) {
+    if (
+      msg.content.startsWith(`${config.prefix}`) &&
+      msg.author.bot === false
+    ) {
       if (validation.isRole(msg)) {
         let keyWord = msg.content.split(`${config.prefix}`)[1].split(" ")[0];
         let executor;
         commands.forEach((item, index) => {
           if (
-            item.some((item) => {
+            item.some(item => {
               return item === keyWord;
             }) === true
           ) {
@@ -73,49 +79,59 @@ client.on("message", async msg => {
           }
         });
         switch (executor.constructor.name) {
-          case ("AdminRights"): {
-            if(validation.isRole(msg, "Модератор") || validation.isAuthor(msg)){
+          case "AdminRights": {
+            if (
+              validation.isRole(msg, "Модератор") ||
+              validation.isAuthor(msg)
+            ) {
               executor[keyWord](msg, client);
             } else {
               replies.Error(msg);
             }
             break;
           }
-          case ("AdminText"): {
-            if(validation.isRole(msg, "Модератор") || validation.isAuthor(msg)){
+          case "AdminText": {
+            if (
+              validation.isRole(msg, "Модератор") ||
+              validation.isAuthor(msg)
+            ) {
               executor[keyWord](msg, client);
             } else {
               replies.Error(msg);
             }
             break;
           }
-          case ("Voice"): {
-            if(validation.isRole(msg, "DJ") || validation.isAuthor(msg)){
+          case "Voice": {
+            if (validation.isRole(msg, "DJ") || validation.isAuthor(msg)) {
               executor[keyWord](msg, client);
             } else {
               replies.Error(msg);
             }
             break;
           }
-          case ("Moving"): {
-            if(validation.isRole(msg, "DJ") || validation.isAuthor(msg)){
+          case "Moving": {
+            if (validation.isRole(msg, "DJ") || validation.isAuthor(msg)) {
               executor[keyWord](msg, client);
             } else {
               replies.Error(msg);
             }
             break;
           }
-          case ("Replies"): {
+          case "Replies": {
             executor[keyWord](msg, client);
             break;
           }
-          default : {
-            msg.reply(`${msg.content} command not found. Try to use ${config.prefix}help`);
+          default: {
+            msg.reply(
+              `${msg.content} command not found. Try to use ${
+                config.prefix
+              }help`
+            );
           }
         }
       }
     }
-  } catch(err){
+  } catch (err) {
     console.log(err.message);
   }
 });

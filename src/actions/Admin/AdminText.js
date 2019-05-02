@@ -54,7 +54,7 @@ class AdminText {
           msg.content.split(` <@${member.user.id}> `)[1] || "no reason";
         if (member) {
           member.roles.remove(this.mutedRole);
-          this.users.get(member).forEach((role) => {
+          this.users.get(member).forEach(role => {
             if (role.name !== "@everyone") {
               member.roles.add(role, reason);
             }
@@ -73,7 +73,7 @@ class AdminText {
   }
   setMuteRole(msg) {
     const serverRoles = msg.guild.roles;
-    serverRoles.forEach((item) => {
+    serverRoles.forEach(item => {
       if (item.name === "Muted") {
         this.mutedRole = item;
       }

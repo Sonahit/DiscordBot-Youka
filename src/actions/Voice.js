@@ -7,7 +7,7 @@ const validation = new Validation();
 const config = validation.config;
 const http = require("http");
 const { awaitRadioChoose, awaitEmbedReply } = require("../utils/Await");
-const { google } = require('googleapis');
+const { google } = require("googleapis");
 const youApi = google.youtube({
   version: "v3",
   auth: config.API_KEY
@@ -177,7 +177,10 @@ class Voice {
 
   volume(msg) {
     if (msg.member.voice.channel && this.data.dispatcher != false) {
-      let volume = msg.content.substring(config.prefix.length + "volume".length, msg.content.length );
+      let volume = msg.content.substring(
+        config.prefix.length + "volume".length,
+        msg.content.length
+      );
       if (volume <= 200) {
         this.data.dispatcher.setVolume(parseFloat(volume / 1000));
       } else {
@@ -206,69 +209,85 @@ class Voice {
     }
   }
 
-  async playList (msg){
-    if(!msg.content.includes(`${config.prefix}playList play`)){
-      let playListURL = msg.content.substring(config.prefix.length + "playList".length + 1, msg.content.length);
-      let playlistId = isListURL(playListURL) ? parseIntoId(playListURL) : playListURL; 
-      const Discord = require('discord.js');
+  async playList(msg) {
+    if (!msg.content.includes(`${config.prefix}playList play`)) {
+      let playListURL = msg.content.substring(
+        config.prefix.length + "playList".length + 1,
+        msg.content.length
+      );
+      let playlistId = isListURL(playListURL)
+        ? parseIntoId(playListURL)
+        : playListURL;
+      const Discord = require("discord.js");
       let embed = new Discord.MessageEmbed();
       embed.setColor("0x004444");
       let options = {
         part: "snippet",
-        playlistId : playlistId
-      };  
+        playlistId: playlistId
+      };
       let videos = await getYoutubePlayList(options);
       const setFields = () => {
         videos.forEach(async video => {
-          await ytdlVideo.getInfo(video.snippet.resourceId.videoId).then( info => {
-            let durationMin = Math.floor(info.length_seconds / 60);
-            let durationSec = Math.ceil(info.length_seconds % 60);
-            embed.addField(
-              `Author: ${info.author.name}`,
-              `Duration: ${durationMin} mins : ${durationSec} seconds. \n Title: [${info.title}](${info.video_url})`
-            );
-            if(videos.length === embed.fields.length){
-              msg.reply(embed);
-            }
-          });
-        })
-      }
+          await ytdlVideo
+            .getInfo(video.snippet.resourceId.videoId)
+            .then(info => {
+              let durationMin = Math.floor(info.length_seconds / 60);
+              let durationSec = Math.ceil(info.length_seconds % 60);
+              embed.addField(
+                `Author: ${info.author.name}`,
+                `Duration: ${durationMin} mins : ${durationSec} seconds. \n Title: [${
+                  info.title
+                }](${info.video_url})`
+              );
+              if (videos.length === embed.fields.length) {
+                msg.reply(embed);
+              }
+            });
+        });
+      };
       embed.setDescription(`Play list requested by ${msg.author.username}`);
-      msg.reply('Collecting videos... Please wait!');
+      msg.reply("Collecting videos... Please wait!");
       setFields(videos);
     } else {
       this["playList play"](msg);
     }
   }
 
-  async "playList play"(msg){
-    let playListURL = msg.content.substring(config.prefix.length + "playList play".length + 1, msg.content.length);
-    let playlistId = isListURL(playListURL) ? parseIntoId(playListURL) : playListURL; 
-    const Discord = require('discord.js');
+  async "playList play"(msg) {
+    let playListURL = msg.content.substring(
+      config.prefix.length + "playList play".length + 1,
+      msg.content.length
+    );
+    let playlistId = isListURL(playListURL)
+      ? parseIntoId(playListURL)
+      : playListURL;
+    const Discord = require("discord.js");
     let embed = new Discord.MessageEmbed();
     embed.setColor("0x004444");
     let options = {
       part: "snippet",
-      playlistId : playlistId
-    };  
+      playlistId: playlistId
+    };
     let videos = await getYoutubePlayList(options);
     const setFields = () => {
       if (msg.member.voice.channel) {
         videos.forEach(async video => {
-              let url = `https://www.youtube.com/watch?v=${video.snippet.resourceId.videoId}`;
-              this.data.queue.push(url);
-              embed = validation.clearEmbed(embed);
-              if(!this.data.playing){
-              this.data.playing = true;
-              msg.member.voice.channel
-                .join()
-                .then(async connection => {
-                  this.data.videoData = await ytdlVideo.getInfo(url);
-                  Play(connection, this.data, msg);
-                })
-                .catch(console.error);
-              }
-        })
+          let url = `https://www.youtube.com/watch?v=${
+            video.snippet.resourceId.videoId
+          }`;
+          this.data.queue.push(url);
+          embed = validation.clearEmbed(embed);
+          if (!this.data.playing) {
+            this.data.playing = true;
+            msg.member.voice.channel
+              .join()
+              .then(async connection => {
+                this.data.videoData = await ytdlVideo.getInfo(url);
+                Play(connection, this.data, msg);
+              })
+              .catch(console.error);
+          }
+        });
       } else {
         embed
           .setColor("0xff0000")
@@ -276,41 +295,46 @@ class Voice {
         msg.reply(embed);
         throw new Error(`${msg.author.username} hasn't joined voice channel`);
       }
-    }
-    embed.setDescription(`Added to queue.\nRequested by ${msg.author.username}`);
-    msg.reply('Collecting videos... Please wait!');
+    };
+    embed.setDescription(
+      `Added to queue.\nRequested by ${msg.author.username}`
+    );
+    msg.reply("Collecting videos... Please wait!");
     setFields(videos);
   }
 }
 
-function isListURL(playListURL){
+function isListURL(playListURL) {
   return /https|www|youtube|com/gi.test(playListURL);
 }
 
-function parseIntoId(playListURL = ""){
+function parseIntoId(playListURL = "") {
   let url = playListURL.trim();
-  url = url.substring(url.indexOf("list=")+"list=".length, url.length);
-  const id = url.split('&')[0];
+  url = url.substring(url.indexOf("list=") + "list=".length, url.length);
+  const id = url.split("&")[0];
   return id;
 }
 
-function getYoutubePlayList(options){
-  return youApi.playlistItems.list({
-    part: options.part,
-    playlistId: options.playlistId,
-    pageToken : options.pageToken ? options.pageToken : ""
-  }).then( async list => {
-    if(list.data.nextPageToken){
-      options["pageToken"] = list.data.nextPageToken;
-      let videos = await getYoutubePlayList(options);
-      videos.forEach(video => {
-        list.data.items.push(video);
-      })
-    }
-    return list.data.items;
-  }).catch(err => {
-    console.log(err);
-  });
+function getYoutubePlayList(options) {
+  return youApi.playlistItems
+    .list({
+      part: options.part,
+      playlistId: options.playlistId,
+      pageToken: options.pageToken ? options.pageToken : ""
+    })
+    .then(async list => {
+      if (list.data.nextPageToken) {
+        options["pageToken"] = list.data.nextPageToken;
+        let videos = await getYoutubePlayList(options);
+        videos.forEach(video => {
+          list.data.items.push(video);
+        });
+      }
+      return list.data.items;
+    })
+    .catch(err => {
+      console.log(err);
+    });
 }
 
 async function Play(connection, data, msg) {
@@ -326,7 +350,7 @@ async function Play(connection, data, msg) {
   } catch (err) {
     msg.reply("WRONG URL");
   }
-  data.dispatcher.on("end", (reason) => {
+  data.dispatcher.on("end", reason => {
     console.log(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
     finish(connection, data, reason, msg);
   });
@@ -371,9 +395,7 @@ function showVideoData(msg, videoData, mode = "play") {
     .addField({
       name: `${stream ? "Live Stream" : "Duration"}`,
       value: `${
-          stream
-          ? `Thanks to ${videoData.author.name}`
-          : durationMin + " min"
+        stream ? `Thanks to ${videoData.author.name}` : durationMin + " min"
       }  ${durationSec === 0 ? " " : durationSec + "seconds"} `
     });
   msg.channel.send(embed);

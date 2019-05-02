@@ -15,58 +15,55 @@ class Moving {
     };
   }
 
-  get currentChannel(){
+  get currentChannel() {
     return this._currentChannel;
   }
 
-  get channelIds(){
+  get channelIds() {
     return this._channelIds;
   }
 
-  get idInterval(){
+  get idInterval() {
     return this._idInterval;
   }
 
-  get follows(){
+  get follows() {
     return this._follows;
   }
 
-  set currentChannel(currentChannel){
+  set currentChannel(currentChannel) {
     this._currentChannel = currentChannel;
   }
 
-  set channelIds(channelIds){
+  set channelIds(channelIds) {
     this._channelIds = channelIds;
   }
 
-  set idInterval(idInterval){
+  set idInterval(idInterval) {
     this._idInterval = idInterval;
   }
 
-  set follows(follows){
+  set follows(follows) {
     this._follows = follows;
   }
-  
 
   moveTo(msg) {
-    if (
-      msg.content === `${config.prefix}moveTo`
-    ) {
+    if (msg.content === `${config.prefix}moveTo`) {
       embed = validation.clearEmbed(embed);
       embed.setColor("0xff8040");
-      embed.setDescription(`Type ${config.prefix}moveTo (number) to move a bot`);
+      embed.setDescription(
+        `Type ${config.prefix}moveTo (number) to move bot to certain channel`
+      );
       this.getRooms(msg.guild.channels).forEach(channel => {
-        embed.addField("Available rooms:", channel);
-      })
+        embed.addField(`Room #${channel.id}`, `\`\`\` ${channel.name} \`\`\``);
+      });
       msg.reply(embed);
-    }
-    else if (msg.content === `${config.prefix}moveTo me`) {
+    } else if (msg.content === `${config.prefix}moveTo me`) {
       msg.member.voice.channel.join().then(() => {
         msg.reply(`Successfully connected to ${msg.member.voice.channel.name}`);
         this.currentChannel = msg.channel.id;
       });
-    }
-    else if (validation.checkBotMove(msg.content)) {
+    } else if (validation.checkBotMove(msg.content)) {
       this.getRooms(msg.guild.channels);
       let voiceNumber = msg.content.split(" ")[1];
       let channel = this.getChannel(voiceNumber, msg);
@@ -87,8 +84,8 @@ class Moving {
   }
   follow(msg, client) {
     let user;
-    if((user = msg.guild.member(msg.mentions.users.first()))){
-      this["follow user"](msg,client, user);
+    if ((user = msg.guild.member(msg.mentions.users.first()))) {
+      this["follow user"](msg, client, user);
     }
     if (msg.content.includes("follow me")) {
       this["follow me"](msg, client);
@@ -96,7 +93,7 @@ class Moving {
       this["follow stop"](msg, client);
     }
   }
-  "follow user"(msg, client, user){
+  "follow user"(msg, client, user) {
     if (user.voice.channel && this.follows.follow === false) {
       this.idInterval = setInterval(function() {
         followUser(msg, user, this);
@@ -128,27 +125,25 @@ class Moving {
   "follow stop"(msg) {
     if (
       (msg.content === `${config.prefix}follow stop` &&
-        this.follows.user.username === msg.author.username) 
-        || (validation.isAuthor(msg) 
-        || validation.isRole(msg, "Модератор")
-        || validation.isRole(msg, "DJ"))
+        this.follows.user.username === msg.author.username) ||
+      (validation.isAuthor(msg) ||
+        validation.isRole(msg, "Модератор") ||
+        validation.isRole(msg, "DJ"))
     ) {
-     if( this.follows.follow ){
-      clearInterval(this.idInterval);
-      msg.channel.send(`Stopped following <@${this.follows.user.id}>`);
-      this.follows.user = "no one";
-      this.follows.follow = false;
-     } else {
-       if(this.follows.user !== "no one"){
-        msg.reply(`I am following <@${this.follows.user.id}>`);
-       } else {
-        msg.reply(`I am not following anyone`);
-       }
-     }
+      if (this.follows.follow) {
+        clearInterval(this.idInterval);
+        msg.channel.send(`Stopped following <@${this.follows.user.id}>`);
+        this.follows.user = "no one";
+        this.follows.follow = false;
+      } else {
+        if (this.follows.user !== "no one") {
+          msg.reply(`I am following <@${this.follows.user.id}>`);
+        } else {
+          msg.reply(`I am not following anyone`);
+        }
+      }
     } else {
-      msg.author.send(
-        `I am not following you >:C`
-      );
+      msg.author.send(`I am not following you >:C`);
     }
   }
 
@@ -156,11 +151,12 @@ class Moving {
     let voiceChannels = [];
     this.channelIds = [];
     let i = 0;
-    channels.forEach((item) => {
+    channels.forEach(item => {
       if (item.type == "voice" && item.joinable === true) {
-        voiceChannels.push(
-          `Channel number ->\t${++i}\t->\t\t${item.name}\n`
-        );
+        voiceChannels.push({
+          id: ++i,
+          name: item.name
+        });
         this.channelIds.push(item.id);
       }
     });
@@ -178,7 +174,7 @@ class Moving {
 
 function follow(msg, client, object) {
   // if(msg.member.voiceChannel != )
-  if(msg.member != null){
+  if (msg.member != null) {
     msg.member.voice.channel.join();
     object.currentChannel = msg.member.voice.channel.name;
   } else {
@@ -190,7 +186,7 @@ function follow(msg, client, object) {
 
 function followUser(msg, user, object) {
   // if(msg.member.voiceChannel != )
-  if(user != null){
+  if (user != null) {
     user.voice.channel.join();
     object.currentChannel = user.voice.channel.name;
   } else {

@@ -25,6 +25,9 @@
   "devDependencies": {
     "eslint": "^5.16.0",
     "ffmpeg": "0.0.4",
+    "node-fetch": "^2.5.0",
+    "readline-promise": "^1.0.4",
+    "vk-io": "^4.0.0-rc.17",
     "ytdl-core-discord": "^1.0.3"
   }
 }

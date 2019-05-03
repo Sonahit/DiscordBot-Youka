@@ -187,6 +187,7 @@ class Voice {
       );
       if (volume <= 200) {
         this.data.dispatcher.setVolume(parseFloat(volume / 1000));
+        streamOptions.volume = parseFloat(volume / 1000);
       } else {
         msg.reply(`You exited available range of sound try to use 0 - 200`);
       }

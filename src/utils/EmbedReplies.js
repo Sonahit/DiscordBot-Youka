@@ -1,13 +1,12 @@
-const Validation = require("../Validation");
-const validation = new Validation();
+const validation = new global.Validation();
 const config = validation.config;
 const ytdl = require("ytdl-core");
-
+const Discord = require("discord.js");
 module.exports.awaitRadioChoose = async function awaitRadioChoose(
   message,
-  author,
-  embed
+  author
 ) {
+  const embed = new Discord.MessageEmbed();
   embed.setTitle("Radio stations");
   embed.setURL("https://www.internet-radio.com/search/?radio=mp3&page=/#");
   embed.setDescription("Available stations:");
@@ -24,8 +23,8 @@ module.exports.awaitRadioChoose = async function awaitRadioChoose(
   await message.channel
     .awaitMessages(filter, { max: 1, time: 10000, errors: ["time"] })
     .then(async msgs => {
-      validation.clearEmbed(embed);
       try {
+        const embed = new Discord.MessageEmbed();
         let msg = msgs.values().next().value;
         embed.addField(
           "Now starting...",
@@ -51,7 +50,6 @@ module.exports.awaitRadioChoose = async function awaitRadioChoose(
     })
     .catch(() => {
       if (!sent) {
-        validation.clearEmbed(embed);
         embed.setTitle("Due to inactivity");
         let number = Math.floor(Math.random() * config.RadioList.length);
         embed.addField("Now starting...", `${config.RadioList[number].name}`);
@@ -65,14 +63,13 @@ module.exports.awaitRadioChoose = async function awaitRadioChoose(
   return url;
 };
 
-module.exports.awaitEmbedReply = async function awaitEmbedReply(
-  message,
-  data,
-  embed
-) {
+module.exports.awaitEmbedReply = async function awaitEmbedReply(message, data) {
+  const embed = new Discord.MessageEmbed();
   embed.setColor("0x00d0ff").setTitle("Current Queue");
   const start = () => {
     let promises = [];
+    // let pages = 1;
+    // if (data.queue.length <= 5) {
     data.queue.forEach((item, index) => {
       promises.push(
         ytdl
@@ -97,6 +94,33 @@ module.exports.awaitEmbedReply = async function awaitEmbedReply(
           })
       );
     });
+    /*    } else {
+      for (let index = 0; index < 5; index++) {
+        let songURL = data.queue[index];
+        promises.push(
+          ytdl
+            .getInfo(songURL)
+            .then(videoData => {
+              embed.addField(
+                `${
+                  index === 0
+                    ? `#${index + 1} Current Song`
+                    : `#${index + 1} Song`
+                }`,
+                `Author ${videoData.author.name}**\n[${videoData.title}](${
+                  videoData.video_url
+                })**\nDuration: ${Math.floor(
+                  videoData.length_seconds / 60
+                )} min ${Math.ceil(data.videoData.length_seconds % 60)} seconds`
+              );
+            })
+            .catch(err => {
+              console.log(err);
+              message.reply(err);
+            })
+        );
+      }
+    }*/
     Promise.all(promises).then(() => {
       embed.fields.sort(
         (a, b) =>

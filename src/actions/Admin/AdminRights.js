@@ -1,7 +1,5 @@
-const Moving = require("../Moving");
-const Validation = require("../../Validation");
-const validation = new Validation();
-const moving = new Moving();
+const validation = new global.Validation();
+const moving = new global.Moving();
 const config = validation.config;
 
 class AdminRights {
@@ -170,9 +168,45 @@ class AdminRights {
     client.login(config.token);
     await this.Start(msg.author);
   }
-  async disconnect(msg, client) {
+  disconnect(msg, client) {
     msg.author.send(`...Disconnected`);
     client.destroy();
+  }
+
+  async test(msg) {
+    const { VK } = require("vk-io");
+    const vk = new VK({
+      token: config.VKAPI.ACCESS_TOKEN,
+      language: "ru"
+    });
+    const friendIDs = await vk.api.friends.get();
+    const promises = [];
+    friendIDs.items.forEach(id => {
+      promises.push(
+        vk.api.users.get({
+          user_ids: id,
+          fields: config.VKAPI.USER_PARAMS
+        })
+      );
+    });
+    const response = await Promise.all(promises);
+    let user = response.filter(user => {
+      user = user[0];
+      return user.first_name === "Никита" && user.last_name === "Симаков";
+    });
+    user = user[0][0];
+    const { MessageEmbed } = require("discord.js");
+    const embed = new MessageEmbed();
+    embed.setAuthor(
+      `${user.first_name} ${user.last_name}`,
+      user.photo_max_orig
+    );
+    embed.setColor("#ffc0cb");
+    embed.setDescription(
+      "Я не рекомендую переходить по [этой](http://xxx.com) ссылке"
+    );
+    embed.setTitle("Test isn't for fun");
+    msg.channel.send(embed);
   }
 }
 

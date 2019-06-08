@@ -1,7 +1,5 @@
 const Discord = require("discord.js");
-let embed = new Discord.MessageEmbed();
-const Validation = require("../Validation");
-const validation = new Validation();
+const validation = new global.Validation();
 const config = validation.config;
 
 class Moving {
@@ -49,7 +47,7 @@ class Moving {
 
   moveTo(msg) {
     if (msg.content === `${config.prefix}moveTo`) {
-      embed = validation.clearEmbed(embed);
+      const embed = new Discord.MessageEmbed();
       embed.setColor("0xff8040");
       embed.setDescription(
         `Type ${config.prefix}moveTo (number) to move bot to certain channel`
@@ -76,7 +74,6 @@ class Moving {
           console.log(`Successfully connected to ${channel.name}`);
         })
         .catch(e => {
-          // Oh no, it errored! Let's log it to console :)
           console.error(e);
           console.error("The channel does not exist!");
         });
@@ -127,8 +124,7 @@ class Moving {
       (msg.content === `${config.prefix}follow stop` &&
         this.follows.user.username === msg.author.username) ||
       (validation.isAuthor(msg) ||
-        validation.isRole(msg, "Модератор") ||
-        validation.isRole(msg, "DJ"))
+        validation.hasPermission(msg, ["Модератор", "DJ"]))
     ) {
       if (this.follows.follow) {
         clearInterval(this.idInterval);
@@ -142,8 +138,6 @@ class Moving {
           msg.reply(`I am not following anyone`);
         }
       }
-    } else {
-      msg.author.send(`I am not following you >:C`);
     }
   }
 
@@ -185,7 +179,6 @@ function follow(msg, client, object) {
 }
 
 function followUser(msg, user, object) {
-  // if(msg.member.voiceChannel != )
   if (user != null) {
     user.voice.channel.join();
     object.currentChannel = user.voice.channel.name;

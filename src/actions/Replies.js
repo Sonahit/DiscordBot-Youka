@@ -1,13 +1,11 @@
 const { MessageAttachment } = require("discord.js");
 const Discord = require("discord.js");
-let embed = new Discord.MessageEmbed();
-const Validation = require("../Validation");
-const validation = new Validation();
+const validation = new global.Validation();
 const config = validation.config;
 
 class Replies {
   Greet(msg, client) {
-    embed = validation.clearEmbed(embed);
+    const embed = new Discord.MessageEmbed();
     embed.setColor("0xfafa33");
     embed.setAuthor(`${client.user.username}`);
     embed.setThumbnail(
@@ -22,7 +20,7 @@ class Replies {
     msg.channel.send(`Rise and shine <@${msg.author.id}>`);
   }
   author(msg) {
-    embed = validation.clearEmbed(embed);
+    const embed = new Discord.MessageEmbed();
     embed.setColor("0xffffff");
     embed.setAuthor(`@IvanSadykov`);
     embed.setThumbnail(
@@ -46,7 +44,7 @@ class Replies {
     msg.reply(`Pong! :D`);
   }
   Error(msg) {
-    embed = validation.clearEmbed(embed);
+    const embed = new Discord.MessageEmbed();
     embed.setAuthor(
       "Validator",
       "https://cdn.pixabay.com/photo/2012/04/15/19/12/cross-34976_960_720.png"
@@ -70,7 +68,7 @@ class Replies {
     msg.author.send(embed);
   }
   async help(msg) {
-    embed = validation.clearEmbed(embed);
+    const embed = new Discord.MessageEmbed();
     const attachment = new MessageAttachment(
       "https://discordemoji.com/assets/emoji/AYAYA.png"
     );
@@ -136,7 +134,7 @@ class Replies {
       msg.author.send(embed);
       return;
     }
-    if (validation.isRole(msg, "Модератор")) {
+    if (validation.hasPermission(msg, "Модератор")) {
       embed.addField(
         `For DJs:`,
         `\`${config.prefix}play https://[url]\`:\tPlays a video 
@@ -183,7 +181,7 @@ class Replies {
       msg.author.send(embed);
       return;
     }
-    if (validation.isRole(msg, "DJ")) {
+    if (validation.hasPermission(msg, "DJ")) {
       embed.addField(
         `For DJs:`,
         `\`${config.prefix}play https://[url]\`:\tPlays a video 
@@ -224,7 +222,7 @@ class Replies {
   }
 
   time(msg) {
-    embed = validation.clearEmbed(embed);
+    const embed = new Discord.MessageEmbed();
     embed.setAuthor("Current time");
     embed.addField(`Month: ${this.getMonth()}`, `Day: ${this.getDay()}`);
     embed.addField(

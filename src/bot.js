@@ -1,14 +1,10 @@
 const client = require("./utils/Client");
 const logger = require("winston");
 require("opusscript");
-
-const Replies = require("./actions/Replies");
-const replies = new Replies();
-const Validation = require("./Validation");
-const validation = new Validation();
-
+const commands = require("./utils/commands");
+const validation = new global.Validation();
+const replies = new global.Replies();
 const config = validation.config;
-
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console(), {
@@ -17,7 +13,7 @@ logger.add(new logger.transports.Console(), {
 logger.level = "debug";
 
 // Initialize Discord Bot
-const commands = require("./utils/commands");
+
 client.on("ready", () => {
   logger.info("Connected");
   logger.info("Logged in as: ");
@@ -42,83 +38,60 @@ client.on("message", async msg => {
       `"${msg.content}" sent by ${msg.author.username} at ${Date.now()}`
     );
     if (
-      msg.mentions.has(client.user) &&
-      msg.author.bot === false &&
-      msg.content === `<@${client.user.id}>`
-    ) {
-      replies.Greet(msg, client);
-    }
-    if (
       msg.content === "AYAYA" &&
-      validation.isRole(msg) &&
+      validation.hasPermission(msg) &&
       msg.author.bot === false
     ) {
       replies.AYAYA(msg);
     }
-    if (
-      validation.greetMessage(msg.content) &&
-      validation.isRole(msg) &&
-      msg.author.bot === false
-    ) {
-      replies.onHello(msg, client);
-    }
-    if (
-      msg.content.startsWith(`${config.prefix}`) &&
-      msg.author.bot === false
-    ) {
-      if (validation.isRole(msg)) {
-        let keyWord = msg.content.split(`${config.prefix}`)[1].split(" ")[0];
+    if (msg.content.startsWith(config.prefix) && msg.author.bot === false) {
+      if (validation.hasPermission(msg)) {
+        const keyWord = msg.content.split(`${config.prefix}`)[1].split(" ")[0];
         let executor;
-        commands.forEach((item, index) => {
+        commands.forEach((command, name) => {
           if (
-            item.some(item => {
-              return item === keyWord;
+            command.some(content => {
+              return content === keyWord;
             }) === true
           ) {
-            executor = index;
+            executor = name;
           }
         });
-        switch (executor.constructor.name) {
+        switch (executor) {
           case "AdminRights": {
             if (
-              validation.isRole(msg, "Модератор") ||
+              validation.hasPermission(msg, "Модератор") ||
               validation.isAuthor(msg)
             ) {
-              executor[keyWord](msg, client);
-            } else {
-              replies.Error(msg);
-            }
-            break;
-          }
-          case "AdminText": {
-            if (
-              validation.isRole(msg, "Модератор") ||
-              validation.isAuthor(msg)
-            ) {
-              executor[keyWord](msg, client);
-            } else {
-              replies.Error(msg);
+              const adminRights = new global.AdminRights();
+
+              adminRights[keyWord](msg, client);
             }
             break;
           }
           case "Voice": {
-            if (validation.isRole(msg, "DJ") || validation.isAuthor(msg)) {
-              executor[keyWord](msg, client);
-            } else {
-              replies.Error(msg);
+            if (
+              validation.hasPermission(msg, "DJ") ||
+              validation.isAuthor(msg)
+            ) {
+              const voice = new global.Voice();
+
+              voice[keyWord](msg, client);
             }
             break;
           }
           case "Moving": {
-            if (validation.isRole(msg, "DJ") || validation.isAuthor(msg)) {
-              executor[keyWord](msg, client);
-            } else {
-              replies.Error(msg);
+            if (
+              validation.hasPermission(msg, "DJ") ||
+              validation.isAuthor(msg)
+            ) {
+              const moving = new global.Moving();
+              moving[keyWord](msg, client);
             }
             break;
           }
           case "Replies": {
-            executor[keyWord](msg, client);
+            replies[keyWord](msg, client);
             break;
           }
           default: {
@@ -129,6 +102,8 @@ client.on("message", async msg => {
             );
           }
         }
+      } else {
+        replies.Error(msg);
       }
     }
   } catch (err) {

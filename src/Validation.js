@@ -17,44 +17,32 @@ module.exports = class Validation {
    * @param {*} msg
    * @param {*} role
    */
-  isRole(msg, roles = this.config.ValidRoles) {
-    let typingCheck = msg.member;
-    if (msg.content !== `${this.config.prefix}help`) {
-      if (typingCheck != null) {
-        if (!Array.isArray(roles)) {
-          let check = msg.member.roles.some(item => {
-            if (roles === item.name) {
-              return true;
-            }
-          });
-          return check;
-        } else {
-          let check = msg.member.roles.some(item => {
-            return roles.some(role => {
-              if (role === item.name) {
-                return true;
-              }
-            });
-          });
-          return check;
-        }
-      } else {
-        msg.author.send("Try to type from channel");
-      }
-    } else {
+  hasPermission(msg, roles = this.config.ValidRoles) {
+    if (msg.content === `${this.config.prefix}help`) {
       return true;
     }
+    if (msg.member == null) {
+      return false;
+    }
+    if (!Array.isArray(roles)) {
+      return msg.member.roles.some(item => {
+        return roles === item.name;
+      });
+    }
+    return msg.member.roles.some(item => {
+      return roles.some(role => {
+        return role === item.name;
+      });
+    });
   }
 
   validateURL(msg) {
-    let pattern = new RegExp(
+    return new RegExp(
       `${
         this.config.prefix
       }(play|stream) http.:[//]+www[.]youtube[.]com[/]watch.+`,
       "g"
-    );
-    let check = pattern.test(msg);
-    return check;
+    ).test(msg);
   }
 
   /**
@@ -63,24 +51,20 @@ module.exports = class Validation {
    * @param {*} msg
    */
   checkBotMove(msg = "") {
-    // let pattern = /!(move|moveTo)\s\d+/g
-    let pattern = new RegExp(
-      `${this.config.prefix}(move|moveTo)\\s*[0-9]+`,
-      "g"
+    return new RegExp(`${this.config.prefix}(move|moveTo)\\s*[0-9]+`, "g").test(
+      msg
     );
-    let check = pattern.test(msg);
-    return check;
   }
 
   greetMessage(msg) {
-    let check =
+    return (
       /^(?!\W.*$).*(g?h?w?)(reetings|hat's up|ello|ola|ey|azzup|hi)(!?)/gi.test(
         msg
       ) ||
       /^(?![><!"№;%:?*()@#$^&?/.'"\]}{,|`~+\-[].*$).*(привет)|(^[з]|дравствуй[те]?|драсти$)|^(дар(ова|оу))|([х](ай|еллоу))(!?)/gi.test(
         msg
-      );
-    return check;
+      )
+    );
   }
   /**
    * Checking if command is valid to move a user
@@ -89,30 +73,9 @@ module.exports = class Validation {
    */
   checkMoveUser(msg = "") {
     //let pattern = /!(move|moveTo)(\s*(\w|[А-Яа-я])+\s[0-9]*)/g;
-    let pattern = new RegExp(
+    return new RegExp(
       `${this.config.prefix}move\\s*(\\w|[А-Яа-я])+\\s[0-9]+`,
       "g"
-    );
-    let check = pattern.test(msg);
-    return check;
-  }
-  /**
-   *
-   * @param {*} embed
-   */
-  clearEmbed(embed) {
-    embed.setAuthor("");
-    embed.setColor("");
-    embed.setDescription("");
-    embed.setFooter("");
-    embed.setImage("");
-    embed.setThumbnail("");
-    embed.setTimestamp("");
-    embed.setTitle("");
-    embed.setURL("");
-    while (embed.fields.length > 0) {
-      embed.fields.shift();
-    }
-    return embed;
+    ).test(msg);
   }
 };

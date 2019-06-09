@@ -1,9 +1,14 @@
 const config = require("../../config/config");
-global.Validation = require("../Validation");
-global.Replies = require("../actions/Replies");
-global.Voice = require("../actions/Voice/Voice");
-global.Moving = require("../actions/Moving");
-global.AdminRights = require("../actions/Admin/AdminRights");
+const Validation = require("../Validation");
+global.Validation = new Validation();
+const Replies = require("../actions/Replies");
+const Voice = require("../actions/Voice/Voice");
+const Moving = require("../actions/Moving");
+const AdminRights = require("../actions/Admin/AdminRights");
+global.Replies = new Replies();
+global.Voice = new Voice();
+global.Moving = new Moving();
+global.AdminRights = new AdminRights();
 const commands = new Map();
 
 config.Commands.forEach((item, index) => {

@@ -1,6 +1,6 @@
 const { MessageAttachment } = require("discord.js");
 const Discord = require("discord.js");
-const validation = new global.Validation();
+const validation = global.Validation;
 const config = validation.config;
 
 class Replies {

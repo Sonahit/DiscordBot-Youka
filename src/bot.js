@@ -2,8 +2,8 @@ const client = require("./utils/Client");
 const logger = require("winston");
 require("opusscript");
 const commands = require("./utils/commands");
-const validation = new global.Validation();
-const replies = new global.Replies();
+const validation = global.Validation;
+const replies = global.Replies;
 const config = validation.config;
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -47,12 +47,12 @@ client.on("message", async msg => {
     if (msg.content.startsWith(config.prefix) && msg.author.bot === false) {
       if (validation.hasPermission(msg)) {
         const keyWord = msg.content.split(`${config.prefix}`)[1].split(" ")[0];
-        commands.forEach((command, emitter) => {
+        commands.forEach((command, emitterName) => {
           const validate = command.some(content => {
             return content === keyWord;
           });
           if (validate) {
-            executeCommand(emitter, keyWord, msg);
+            executeCommand(emitterName, keyWord, msg);
           }
         });
       } else {
@@ -68,7 +68,7 @@ const executeCommand = (emitter, command, msg) => {
   const executor = {
     AdminRights: function(command) {
       if (validation.hasPermission(msg, config.ModeratorPermission)) {
-        const adminRights = new global.AdminRights();
+        const adminRights = global.AdminRights;
         adminRights[command](msg, client);
         return true;
       }
@@ -76,7 +76,7 @@ const executeCommand = (emitter, command, msg) => {
     },
     Voice: function(command) {
       if (validation.hasPermission(msg, config.DJPermission)) {
-        const voice = new global.Voice();
+        const voice = global.Voice;
         voice[command](msg, client);
         return true;
       }
@@ -84,7 +84,7 @@ const executeCommand = (emitter, command, msg) => {
     },
     Moving: function(command) {
       if (validation.hasPermission(msg, config.DJPermission)) {
-        const moving = new global.Moving();
+        const moving = global.Moving;
         moving[command](msg, client);
         return true;
       }

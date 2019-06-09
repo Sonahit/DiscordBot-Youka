@@ -44,7 +44,7 @@ module.exports.Play = async function Play(
   streamOptions
 ) {
   data.videoData = await ytdlVideo.getInfo(data.queue[0]);
-  this.showVideoData(msg, data.videoData, "play");
+  showVideoData(msg, data.videoData, "play");
   try {
     data.dispatcher = await connection.play(
       await ytdlVideo(data.queue[0]),
@@ -84,11 +84,7 @@ module.exports.isPlayingMusic = function isPlayingMusic(
 ) {
   return music || radio;
 };
-module.exports.showVideoData = function showVideoData(
-  msg,
-  videoData,
-  mode = "play"
-) {
+function showVideoData(msg, videoData, mode = "play") {
   const embed = new Discord.MessageEmbed();
   let durationMin = Math.floor(videoData.length_seconds / 60);
   let durationSec = Math.ceil(videoData.length_seconds % 60);
@@ -119,4 +115,6 @@ module.exports.showVideoData = function showVideoData(
       }  ${durationSec === 0 ? " " : durationSec + "seconds"} `
     );
   msg.channel.send(embed);
-};
+}
+
+module.exports.showVideoData = showVideoData;

@@ -1,7 +1,7 @@
 const ytdlVideo = require("ytdl-core");
 const streamOptions = { volume: 0.03, passes: 3 };
 const Discord = require("discord.js");
-const validation = new global.Validation();
+const validation = global.Validation;
 const config = validation.config;
 const http = require("http");
 const {
@@ -202,7 +202,7 @@ class Voice {
 
   async queue(msg) {
     const embed = new Discord.MessageEmbed();
-    if (this.data.playing === true) {
+    if (this.data.playing) {
       await awaitEmbedReply(msg, this.data, embed);
     } else {
       msg.reply(`No queue`);
@@ -231,7 +231,6 @@ class Voice {
     const playlistId = isListURL(playListURL)
       ? parseIntoId(playListURL)
       : playListURL;
-    const Discord = require("discord.js");
     const embed = new Discord.MessageEmbed();
     embed.setColor("0x004444");
     const options = {
@@ -274,7 +273,6 @@ class Voice {
     const playlistId = isListURL(playListURL)
       ? parseIntoId(playListURL)
       : playListURL;
-    const Discord = require("discord.js");
     const embed = new Discord.MessageEmbed();
     const options = {
       part: "snippet",

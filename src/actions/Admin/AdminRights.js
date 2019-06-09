@@ -1,5 +1,5 @@
-const validation = new global.Validation();
-const moving = new global.Moving();
+const validation = global.Validation;
+const moving = global.Moving;
 const config = validation.config;
 
 class AdminRights {

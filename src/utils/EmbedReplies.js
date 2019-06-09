@@ -1,4 +1,4 @@
-const validation = new global.Validation();
+const validation = global.Validation;
 const config = validation.config;
 const ytdl = require("ytdl-core");
 const Discord = require("discord.js");

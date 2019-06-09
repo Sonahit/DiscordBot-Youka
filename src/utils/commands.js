@@ -1,7 +1,7 @@
 const config = require("../../config/config");
 global.Validation = require("../Validation");
 global.Replies = require("../actions/Replies");
-global.Voice = require("../actions/Voice");
+global.Voice = require("../actions/Voice/Voice");
 global.Moving = require("../actions/Moving");
 global.AdminRights = require("../actions/Admin/AdminRights");
 const commands = new Map();

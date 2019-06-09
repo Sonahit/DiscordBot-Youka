@@ -66,73 +66,36 @@ module.exports.awaitRadioChoose = async function awaitRadioChoose(
 module.exports.awaitEmbedReply = async function awaitEmbedReply(message, data) {
   const embed = new Discord.MessageEmbed();
   embed.setColor("0x00d0ff").setTitle("Current Queue");
-  const start = () => {
-    let promises = [];
-    // let pages = 1;
-    // if (data.queue.length <= 5) {
-    data.queue.forEach((item, index) => {
-      promises.push(
-        ytdl
-          .getInfo(item)
-          .then(videoData => {
-            embed.addField(
-              `${
-                index === 0
-                  ? `#${index + 1} Current Song`
-                  : `#${index + 1} Song`
-              }`,
-              `Author ${videoData.author.name}**\n[${videoData.title}](${
-                videoData.video_url
-              })**\nDuration: ${Math.floor(
-                videoData.length_seconds / 60
-              )} min ${Math.ceil(data.videoData.length_seconds % 60)} seconds`
-            );
-          })
-          .catch(err => {
-            console.log(err);
-            message.reply(err);
-          })
-      );
-    });
-    /*    } else {
-      for (let index = 0; index < 5; index++) {
-        let songURL = data.queue[index];
-        promises.push(
-          ytdl
-            .getInfo(songURL)
-            .then(videoData => {
-              embed.addField(
-                `${
-                  index === 0
-                    ? `#${index + 1} Current Song`
-                    : `#${index + 1} Song`
-                }`,
-                `Author ${videoData.author.name}**\n[${videoData.title}](${
-                  videoData.video_url
-                })**\nDuration: ${Math.floor(
-                  videoData.length_seconds / 60
-                )} min ${Math.ceil(data.videoData.length_seconds % 60)} seconds`
-              );
-            })
-            .catch(err => {
-              console.log(err);
-              message.reply(err);
-            })
-        );
-      }
-    }*/
-    Promise.all(promises).then(() => {
-      embed.fields.sort(
-        (a, b) =>
-          parseInt(
-            a.name.split(" ")[0].substring(1, a.name.split(" ")[0].length)
-          ) -
-          parseInt(
-            b.name.split(" ")[0].substring(1, b.name.split(" ")[0].length)
-          )
-      );
-      message.reply(embed);
-    });
-  };
-  start();
+  let promises = [];
+  data.queue.forEach((item, index) => {
+    promises.push(
+      ytdl
+        .getInfo(item)
+        .then(videoData => {
+          embed.addField(
+            `${
+              index === 0 ? `#${index + 1} Current Song` : `#${index + 1} Song`
+            }`,
+            `Author ${videoData.author.name}**\n[${videoData.title}](${
+              videoData.video_url
+            })**\nDuration: ${Math.floor(
+              videoData.length_seconds / 60
+            )} min ${Math.ceil(data.videoData.length_seconds % 60)} seconds`
+          );
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    );
+  });
+  await Promise.all(promises).then(() => {
+    embed.fields.sort(
+      (a, b) =>
+        parseInt(
+          a.name.split(" ")[0].substring(1, a.name.split(" ")[0].length)
+        ) -
+        parseInt(b.name.split(" ")[0].substring(1, b.name.split(" ")[0].length))
+    );
+    message.reply(embed);
+  });
 };

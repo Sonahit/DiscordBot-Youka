@@ -4,14 +4,25 @@ const Discord = require("discord.js");
 const validation = new global.Validation();
 const config = validation.config;
 const http = require("http");
-const { awaitRadioChoose, awaitEmbedReply } = require("../utils/EmbedReplies");
+const {
+  awaitRadioChoose,
+  awaitEmbedReply
+} = require("../../utils/EmbedReplies");
+const {
+  isListURL,
+  parseIntoId,
+  getYoutubePlayList,
+  showVideoData,
+  Play,
+  isPlayingMusic
+} = require("./Utils");
 const { google } = require("googleapis");
 const youtubeApi = google.youtube({
   version: "v3",
   auth: config.API_KEY
 });
 
-//#TODO Need to separate
+//#TODO refactor
 class Voice {
   constructor() {
     this._data = {
@@ -66,11 +77,7 @@ class Voice {
   async play(msg) {
     const embed = new Discord.MessageEmbed();
     if (!msg.member && this.data.onAir) {
-      if (this.data.onAir) {
-        embed.setColor("0x004444").setDescription(`Radio is on air!`);
-      } else if (this.data.playing) {
-        embed.setColor("0x004444").setDescription(`I am playing a song!`);
-      }
+      embed.setColor("0x004444").setDescription(`Radio is on air!`);
       msg.channel.send(embed);
       return;
     }
@@ -92,7 +99,7 @@ class Voice {
           this.data.videoData = await ytdlVideo.getInfo(url).catch(err => {
             console.log(err);
           });
-          Play(connection, this.data, msg);
+          Play(connection, this.data, msg, streamOptions);
         })
         .catch(console.error);
     } else {
@@ -108,7 +115,10 @@ class Voice {
       return;
     }
     const embed = new Discord.MessageEmbed();
-    if (msg.member.voice.channel && !this.data.onAir && !this.data.playing) {
+    if (
+      msg.member.voice.channel &&
+      !isPlayingMusic(this.data.onAir, this.data.playing)
+    ) {
       msg.member.voice.channel
         .join()
         .then(async connection => {
@@ -119,14 +129,16 @@ class Voice {
         })
         .catch(console.error);
     } else {
-      if (this.data.onAir) {
-        embed.setColor("0x004444").setDescription(`Radio is on air!`);
-      } else if (this.data.playing) {
-        embed.setColor("0x004444").setDescription(`I am playing a song!`);
-      } else {
+      if (!msg.member.voice.channel) {
         embed
           .setColor("0xff0000")
           .setDescription("You need to join a voice channel first!");
+      }
+      if (this.data.onAir) {
+        embed.setColor("0x004444").setDescription(`Radio is on air!`);
+      }
+      if (this.data.playing) {
+        embed.setColor("0x004444").setDescription(`I am playing a song!`);
       }
       msg.channel.send(embed);
     }
@@ -145,28 +157,24 @@ class Voice {
   }
 
   stop(msg, client, mode = "force") {
-    if (
-      msg.content === `${config.prefix}stop` ||
-      mode === "skip" ||
-      this.data.dispatcher
-    ) {
-      if (
-        msg.member.voice.channel &&
-        !this.data.onAir &&
-        this.data.playing === true
-      ) {
-        if (mode === "force") {
-          this.data.dispatcher.emit("end", "force");
-          this.data.playing = false;
-          msg.reply(`Stopped playing songs`);
-        } else {
-          this.data.dispatcher.emit("end", "skip");
-          msg.reply(`Skipped song`);
+    if (msg.content === `${config.prefix}stop` || this.data.dispatcher) {
+      if (msg.member.voice.channel) {
+        if (this.data.playing) {
+          if (mode === "force") {
+            this.data.dispatcher.emit("end", "force");
+            this.data.playing = false;
+            msg.reply(`Stopped playing songs`);
+          }
+          if (mode === "skip") {
+            this.data.dispatcher.emit("end", "skip");
+            msg.reply(`Skipped song`);
+          }
         }
-      } else if (this.data.onAir) {
-        this.data.onAir = false;
-        msg.reply(`Shutting down radio...`);
-        http.globalAgent.destroy();
+        if (this.data.onAir) {
+          this.data.onAir = false;
+          msg.reply(`Shutting down radio...`);
+          http.globalAgent.destroy();
+        }
       }
     } else {
       msg.reply(`I am not playing any song or radio`);
@@ -272,7 +280,7 @@ class Voice {
       part: "snippet",
       playlistId: playlistId
     };
-    const videos = await getYoutubePlayList(options);
+    const videos = await getYoutubePlayList(options, youtubeApi);
     embed.setColor("0x004444");
     embed.setDescription(
       `Added to queue.\nRequested by ${msg.author.username}`
@@ -305,108 +313,6 @@ class Voice {
       throw new Error(`${msg.author.username} hasn't joined voice channel`);
     }
   }
-}
-
-function isListURL(playListURL) {
-  return /https|www|youtube|com/gi.test(playListURL);
-}
-
-function parseIntoId(playListURL = "") {
-  let url = playListURL.trim();
-  url = url.substring(url.indexOf("list=") + "list=".length, url.length);
-  const id = url.split("&")[0];
-  return id;
-}
-
-function getYoutubePlayList(options) {
-  return youtubeApi.playlistItems
-    .list({
-      part: options.part,
-      playlistId: options.playlistId,
-      pageToken: options.pageToken ? options.pageToken : ""
-    })
-    .then(async list => {
-      if (list.data.nextPageToken) {
-        options["pageToken"] = list.data.nextPageToken;
-        let videos = await getYoutubePlayList(options);
-        videos.forEach(video => {
-          list.data.items.push(video);
-        });
-      }
-      return list.data.items;
-    })
-    .catch(err => {
-      console.log(err);
-    });
-}
-
-async function Play(connection, data, msg) {
-  data.videoData = await ytdlVideo.getInfo(data.queue[0]);
-  showVideoData(msg, data.videoData, "play");
-  try {
-    data.dispatcher = await connection.play(
-      await ytdlVideo(data.queue[0]),
-      streamOptions
-    );
-    console.log("STARTED PLAYING SONG");
-  } catch (err) {
-    msg.reply("WRONG URL");
-  }
-  data.dispatcher.on("end", reason => {
-    reason = reason || "end";
-    console.log(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
-    finish(connection, data, reason, msg);
-  });
-}
-
-async function finish(connection, data, reason, msg) {
-  data.skippedSong = data.queue.shift();
-  if (reason === "rerun") {
-    data.skippedSong = "";
-  }
-  if (reason === "force" || data.queue.length === 0) {
-    data.playing = false;
-    msg.channel.send(`End of queue`);
-    if (reason === "force") {
-      data.queue = [];
-    }
-    connection.disconnect();
-  } else {
-    Play(connection, data, msg);
-  }
-}
-
-function showVideoData(msg, videoData, mode = "play") {
-  const embed = new Discord.MessageEmbed();
-  let durationMin = Math.floor(videoData.length_seconds / 60);
-  let durationSec = Math.ceil(videoData.length_seconds % 60);
-  let stream = videoData.player_response.videoDetails.isLiveContent;
-  embed
-    .setColor("#b92727")
-    .setAuthor(
-      `${videoData.author.name}`,
-      `${videoData.author.avatar}`,
-      `${videoData.author.channel_url}${
-        videoData.player_response.videoDetails.channelId
-      }`
-    )
-    .setThumbnail(
-      `${videoData.player_response.videoDetails.thumbnail.thumbnails[0].url}`
-    )
-    .setDescription(
-      `${
-        mode === "play"
-          ? "Now playing " + videoData.title
-          : "Added to queue " + videoData.title
-      }`
-    )
-    .addField(
-      `${stream ? "Live Stream" : "Duration"}`,
-      `${
-        stream ? `Thanks to ${videoData.author.name}` : durationMin + " min"
-      }  ${durationSec === 0 ? " " : durationSec + "seconds"} `
-    );
-  msg.channel.send(embed);
 }
 
 module.exports = Voice;

@@ -120,15 +120,10 @@ class Replies {
         ` 
                 \`${config.prefix}IAdmin\`:\tSet admin mode 
                 \`${config.prefix}IUser\`:\tSet user mode 
-                \`${config.prefix}disconnect\`:\tShutdowns bot  
-                \`${config.prefix}restart\`:\tRestarts bot
                 \`${config.prefix}move name #\`:\tMoving {name} to # Channel
                 \`${
                   config.prefix
-                }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
-                \`${
-                  config.prefix
-                }[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
+                }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]`
       );
       embed.setColor("0xff8040");
       msg.author.send(embed);
@@ -216,6 +211,7 @@ class Replies {
     msg.author.send(embed);
     return;
   }
+
   AYAYA(msg) {
     msg.channel.send("AYAYA");
     msg.channel.send("https://discordemoji.com/assets/emoji/AYAYA.png");

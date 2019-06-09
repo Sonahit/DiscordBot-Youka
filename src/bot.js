@@ -47,61 +47,14 @@ client.on("message", async msg => {
     if (msg.content.startsWith(config.prefix) && msg.author.bot === false) {
       if (validation.hasPermission(msg)) {
         const keyWord = msg.content.split(`${config.prefix}`)[1].split(" ")[0];
-        let executor;
-        commands.forEach((command, name) => {
-          if (
-            command.some(content => {
-              return content === keyWord;
-            }) === true
-          ) {
-            executor = name;
+        commands.forEach((command, emitter) => {
+          const validate = command.some(content => {
+            return content === keyWord;
+          });
+          if (validate) {
+            executeCommand(emitter, keyWord, msg);
           }
         });
-        switch (executor) {
-          case "AdminRights": {
-            if (
-              validation.hasPermission(msg, "Модератор") ||
-              validation.isAuthor(msg)
-            ) {
-              const adminRights = new global.AdminRights();
-
-              adminRights[keyWord](msg, client);
-            }
-            break;
-          }
-          case "Voice": {
-            if (
-              validation.hasPermission(msg, "DJ") ||
-              validation.isAuthor(msg)
-            ) {
-              const voice = new global.Voice();
-
-              voice[keyWord](msg, client);
-            }
-            break;
-          }
-          case "Moving": {
-            if (
-              validation.hasPermission(msg, "DJ") ||
-              validation.isAuthor(msg)
-            ) {
-              const moving = new global.Moving();
-              moving[keyWord](msg, client);
-            }
-            break;
-          }
-          case "Replies": {
-            replies[keyWord](msg, client);
-            break;
-          }
-          default: {
-            msg.reply(
-              `${msg.content} command not found. Try to use ${
-                config.prefix
-              }help`
-            );
-          }
-        }
       } else {
         replies.Error(msg);
       }
@@ -110,6 +63,41 @@ client.on("message", async msg => {
     console.log(err.message);
   }
 });
+
+const executeCommand = (emitter, command, msg) => {
+  const executor = {
+    AdminRights: function(command) {
+      if (validation.hasPermission(msg, config.ModeratorPermission)) {
+        const adminRights = new global.AdminRights();
+        adminRights[command](msg, client);
+        return true;
+      }
+      return false;
+    },
+    Voice: function(command) {
+      if (validation.hasPermission(msg, config.DJPermission)) {
+        const voice = new global.Voice();
+        voice[command](msg, client);
+        return true;
+      }
+      return false;
+    },
+    Moving: function(command) {
+      if (validation.hasPermission(msg, config.DJPermission)) {
+        const moving = new global.Moving();
+        moving[command](msg, client);
+        return true;
+      }
+      return false;
+    },
+    Replies: function(command) {
+      replies[command](msg, client);
+      return true;
+    }
+  };
+  executor[emitter](command);
+  console.log(`${msg.author.username} executed ${emitter} ---> ${command}`);
+};
 
 client.on("error", error => {
   console.log(error);

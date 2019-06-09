@@ -70,29 +70,22 @@ const executeCommand = (emitter, command, msg) => {
       if (validation.hasPermission(msg, config.ModeratorPermission)) {
         const adminRights = global.AdminRights;
         adminRights[command](msg, client);
-        return true;
       }
-      return false;
     },
     Voice: function(command) {
       if (validation.hasPermission(msg, config.DJPermission)) {
         const voice = global.Voice;
         voice[command](msg, client);
-        return true;
       }
-      return false;
     },
     Moving: function(command) {
       if (validation.hasPermission(msg, config.DJPermission)) {
         const moving = global.Moving;
         moving[command](msg, client);
-        return true;
       }
-      return false;
     },
     Replies: function(command) {
       replies[command](msg, client);
-      return true;
     }
   };
   executor[emitter](command);

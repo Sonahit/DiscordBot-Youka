@@ -1,4 +1,3 @@
-const ytdlVideo = require("ytdl-core");
 const Discord = require("discord.js");
 
 module.exports.isListURL = function isListURL(playListURL) {
@@ -12,11 +11,11 @@ module.exports.parseIntoId = function parseIntoId(playListURL = "") {
   return id;
 };
 
-module.exports.getYoutubePlayList = function getYoutubePlayList(
+module.exports.getYoutubePlayList = async function getYoutubePlayList(
   options,
   youtubeApi
 ) {
-  return youtubeApi.playlistItems
+  return await youtubeApi.playlistItems
     .list({
       part: options.part,
       playlistId: options.playlistId,
@@ -25,7 +24,7 @@ module.exports.getYoutubePlayList = function getYoutubePlayList(
     .then(async list => {
       if (list.data.nextPageToken) {
         options["pageToken"] = list.data.nextPageToken;
-        let videos = await getYoutubePlayList(options);
+        let videos = await getYoutubePlayList(options, youtubeApi);
         videos.forEach(video => {
           list.data.items.push(video);
         });
@@ -37,46 +36,6 @@ module.exports.getYoutubePlayList = function getYoutubePlayList(
     });
 };
 
-module.exports.Play = async function Play(
-  connection,
-  data,
-  msg,
-  streamOptions
-) {
-  data.videoData = await ytdlVideo.getInfo(data.queue[0]);
-  showVideoData(msg, data.videoData, "play");
-  try {
-    data.dispatcher = await connection.play(
-      await ytdlVideo(data.queue[0]),
-      streamOptions
-    );
-    console.log("STARTED PLAYING SONG");
-  } catch (err) {
-    msg.reply("WRONG URL");
-  }
-  data.dispatcher.on("end", reason => {
-    reason = reason || "end";
-    console.log(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
-    finish(connection, data, reason, msg, streamOptions);
-  });
-};
-
-function finish(connection, data, reason, msg, streamOptions) {
-  data.skippedSong = data.queue.shift();
-  if (reason === "rerun") {
-    data.skippedSong = "";
-  }
-  if (reason === "force" || data.queue.length === 0) {
-    data.playing = false;
-    msg.channel.send(`End of queue`);
-    if (reason === "force") {
-      data.queue = [];
-    }
-    connection.disconnect();
-  } else {
-    this.Play(connection, data, msg, streamOptions);
-  }
-}
 
 module.exports.isPlayingMusic = function isPlayingMusic(
   music = false,

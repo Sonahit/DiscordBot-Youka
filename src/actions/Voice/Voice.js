@@ -13,13 +13,13 @@ const {
   parseIntoId,
   getYoutubePlayList,
   showVideoData,
-  Play,
   isPlayingMusic
 } = require("./Utils");
+const TTS = require("./TTS");
 const { google } = require("googleapis");
 const youtubeApi = google.youtube({
   version: "v3",
-  auth: config.API_KEY
+  auth: config.Google.youtubeApiKey
 });
 
 //#TODO refactor
@@ -164,17 +164,21 @@ class Voice {
             this.data.dispatcher.emit("end", "force");
             this.data.playing = false;
             msg.reply(`Stopped playing songs`);
+            return;
           }
           if (mode === "skip") {
             this.data.dispatcher.emit("end", "skip");
             msg.reply(`Skipped song`);
+            return;
           }
         }
         if (this.data.onAir) {
           this.data.onAir = false;
           msg.reply(`Shutting down radio...`);
           http.globalAgent.destroy();
+          return;
         }
+        this.data.dispatcher.emit("end", "force");
       }
     } else {
       msg.reply(`I am not playing any song or radio`);
@@ -265,6 +269,10 @@ class Voice {
     });
   }
 
+  TTS(msg) {
+    TTS.speak(msg, this.data);
+  }
+
   async "playList play"(msg) {
     const playListURL = msg.content.substring(
       config.prefix.length + "playList play".length + 1,
@@ -313,4 +321,42 @@ class Voice {
   }
 }
 
+async function Play(connection, data, msg, streamOptions) {
+  data.videoData = await ytdlVideo.getInfo(data.queue[0]);
+  showVideoData(msg, data.videoData, "play");
+  try {
+    data.dispatcher = await connection.play(
+      await ytdlVideo(data.queue[0]),
+      streamOptions
+    );
+    console.log("STARTED PLAYING SONG");
+  } catch (err) {
+    msg.reply("WRONG URL");
+  }
+  data.dispatcher.on("end", reason => {
+    reason = reason || "end";
+    console.log(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
+    finish(connection, data, reason, msg, streamOptions);
+  });
+}
+
+function finish(connection, data, reason, msg, streamOptions) {
+  data.skippedSong = data.queue.shift();
+  if (reason === "rerun") {
+    data.skippedSong = "";
+  }
+  if (reason === "force" || data.queue.length === 0) {
+    data.playing = false;
+    msg.channel.send(`End of queue`);
+    if (reason === "force") {
+      data.queue = [];
+    }
+    connection.disconnect();
+  } else {
+    Play(connection, data, msg, streamOptions);
+  }
+}
+
 module.exports = Voice;
+
+

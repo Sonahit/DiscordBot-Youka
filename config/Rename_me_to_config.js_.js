@@ -1,8 +1,18 @@
 /* eslint-disable no-undef */
+const fs = require("fs");
+const pathToCridentials = `${__dirname}\\JSON FILE`;
+const googleCridentials = JSON.parse(fs.readFileSync(pathToCridentials));
+
 module.exports = {
   token: "YOUR DISCORD APP TOKEN",
   prefix: ">>",
-  API_KEY: "YOUR GOOGLE API TOKEN",
+  Google: {
+    youtubeApiKey: "YOUR TOKEN API",
+    cridentials: {
+      projectId: googleCridentials.project_id,
+      path: pathToCridentials
+    }
+  },
   VKAPI: {
     ACCESS_TOKEN: "YOUR TOKEN",
     APP_ID: "YOUR APP VK ID",

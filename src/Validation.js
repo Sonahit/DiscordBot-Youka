@@ -78,4 +78,7 @@ module.exports = class Validation {
       "g"
     ).test(msg);
   }
+
+  addPriority() {}
+  addValidRole() {}
 };

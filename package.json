@@ -12,7 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/text-to-speech": "^1.1.0",
     "bufferutil": "^3.0.5",
+    "detectlanguage": "^1.2.2",
     "discord.js": "github:discordjs/discord.js",
     "ffmpeg-binaries": "^4.0.0",
     "ffmpeg-static": "^2.4.0",

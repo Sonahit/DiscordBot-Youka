@@ -11,11 +11,11 @@ module.exports.parseIntoId = function parseIntoId(playListURL = "") {
   return id;
 };
 
-module.exports.getYoutubePlayList = async function getYoutubePlayList(
+module.exports.getYoutubePlayList = function getYoutubePlayList(
   options,
   youtubeApi
 ) {
-  return await youtubeApi.playlistItems
+  return youtubeApi.playlistItems
     .list({
       part: options.part,
       playlistId: options.playlistId,

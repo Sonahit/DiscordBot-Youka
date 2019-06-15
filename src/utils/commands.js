@@ -5,25 +5,25 @@ const Replies = require("../actions/Replies");
 const Voice = require("../actions/Voice/Voice");
 const Moving = require("../actions/Moving");
 const AdminRights = require("../actions/Admin/AdminRights");
-global.Replies = new Replies();
-global.Voice = new Voice();
-global.Moving = new Moving();
-global.AdminRights = new AdminRights();
+const replies = new Replies();
+const voice = new Voice();
+const moving = new Moving();
+const adminRights = new AdminRights();
 const commands = new Map();
 
 config.Commands.forEach((item, index) => {
   switch (index) {
     case 0:
-      commands.set("Admin", item);
+      commands.set(adminRights, item);
       break;
     case 1:
-      commands.set("Moving", item);
+      commands.set(moving, item);
       break;
     case 2:
-      commands.set("Voice", item);
+      commands.set(voice, item);
       break;
     case 3:
-      commands.set("Replies", item);
+      commands.set(replies, item);
       break;
   }
 });

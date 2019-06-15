@@ -47,12 +47,12 @@ client.on("message", async msg => {
     if (msg.content.startsWith(config.prefix) && msg.author.bot === false) {
       if (validation.hasPermission(msg)) {
         const keyWord = msg.content.split(`${config.prefix}`)[1].split(" ")[0];
-        commands.forEach((command, emitterName) => {
+        commands.forEach((command, emitter) => {
           const validate = command.some(content => {
             return content === keyWord;
           });
           if (validate) {
-            executeCommand(emitterName, keyWord, msg);
+            executeCommand(emitter, keyWord, msg);
           }
         });
       } else {
@@ -64,34 +64,35 @@ client.on("message", async msg => {
   }
 });
 
-const executeCommand = (emitter, command, msg) => {
-  const executor = {
-    AdminRights: function(command) {
-      if (validation.hasPermission(msg, config.ModeratorPermission)) {
-        const adminRights = global.AdminRights;
-        adminRights[command](msg, client);
-      }
-    },
-    Voice: function(command) {
-      if (validation.hasPermission(msg, config.DJPermission)) {
-        const voice = global.Voice;
-        voice[command](msg, client);
-      }
-    },
-    Moving: function(command) {
-      if (validation.hasPermission(msg, config.DJPermission)) {
-        const moving = global.Moving;
-        moving[command](msg, client);
-      }
-    },
-    Replies: function(command) {
-      replies[command](msg, client);
-    }
-  };
-  executor[emitter](command);
-  console.log(`${msg.author.username} executed ${emitter} ---> ${command}`);
-};
-
 client.on("error", error => {
   console.log(error);
 });
+
+const executeCommand = (emitter, command, msg) => {
+  const executor = {
+    AdminRights: function(emitter, command) {
+      if (validation.hasPermission(msg, config.ModeratorPermission)) {
+        emitter[command](msg, client);
+      }
+    },
+    Voice: function(emitter, command) {
+      if (validation.hasPermission(msg, config.DJPermission)) {
+        emitter[command](msg, client);
+      }
+    },
+    Moving: function(emitter, command) {
+      if (validation.hasPermission(msg, config.DJPermission)) {
+        emitter[command](msg, client);
+      }
+    },
+    Replies: function(emitter, command) {
+      emitter[command](msg, client);
+    }
+  };
+  executor[emitter.constructor.name](emitter, command);
+  console.log(
+    `${msg.author.username} executed ${
+      emitter.constructor.name
+    } ---> ${command}`
+  );
+};

@@ -1,5 +1,4 @@
 const ytdlVideo = require("ytdl-core");
-const streamOptions = { volume: 0.03, passes: 3 };
 const Discord = require("discord.js");
 const validation = global.Validation;
 const config = validation.config;
@@ -33,6 +32,7 @@ class Voice {
       onAir: false,
       skippedSong: ""
     };
+    this.streamOptions = { volume: 0.03, passes: 3 };
   }
 
   get data() {
@@ -99,7 +99,7 @@ class Voice {
           this.data.videoData = await ytdlVideo.getInfo(url).catch(err => {
             console.log(err);
           });
-          Play(connection, this.data, msg, streamOptions);
+          this.startMusic(connection, msg);
         })
         .catch(console.error);
     } else {
@@ -124,7 +124,7 @@ class Voice {
         .then(async connection => {
           http.get(await awaitRadioChoose(msg, msg.author, embed), res => {
             this.data.onAir = true;
-            this.data.dispatcher = connection.play(res, streamOptions);
+            this.data.dispatcher = connection.play(res, this.streamOptions);
           });
         })
         .catch(console.error);
@@ -197,7 +197,7 @@ class Voice {
       );
       if (volume <= 200) {
         this.data.dispatcher.setVolume(parseFloat(volume / 1000));
-        streamOptions.volume = parseFloat(volume / 1000);
+        this.streamOptions.volume = parseFloat(volume / 1000);
       } else {
         msg.reply(`You exited available range of sound try to use 0 - 200`);
       }
@@ -306,7 +306,7 @@ class Voice {
               this.data.videoData = await ytdlVideo.getInfo(url).catch(err => {
                 console.log(err);
               });
-              Play(connection, this.data, msg);
+              this.startMusic(connection, msg);
             })
             .catch(console.error);
         }
@@ -319,44 +319,42 @@ class Voice {
       throw new Error(`${msg.author.username} hasn't joined voice channel`);
     }
   }
-}
-
-async function Play(connection, data, msg, streamOptions) {
-  data.videoData = await ytdlVideo.getInfo(data.queue[0]);
-  showVideoData(msg, data.videoData, "play");
-  try {
-    data.dispatcher = await connection.play(
-      await ytdlVideo(data.queue[0]),
-      streamOptions
-    );
-    console.log("STARTED PLAYING SONG");
-  } catch (err) {
-    msg.reply("WRONG URL");
-  }
-  data.dispatcher.on("end", reason => {
-    reason = reason || "end";
-    console.log(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
-    finish(connection, data, reason, msg, streamOptions);
-  });
-}
-
-function finish(connection, data, reason, msg, streamOptions) {
-  data.skippedSong = data.queue.shift();
-  if (reason === "rerun") {
-    data.skippedSong = "";
-  }
-  if (reason === "force" || data.queue.length === 0) {
-    data.playing = false;
-    msg.channel.send(`End of queue`);
-    if (reason === "force") {
-      data.queue = [];
+  async startMusic(connection, msg) {
+    this.data.videoData = await ytdlVideo.getInfo(this.data.queue[0]);
+    showVideoData(msg, this.data.videoData, "play");
+    try {
+      this.data.dispatcher = await connection.play(
+        await ytdlVideo(this.data.queue[0]),
+        this.streamOptions
+      );
+      console.log("STARTED PLAYING SONG");
+    } catch (err) {
+      msg.reply("WRONG URL");
     }
-    connection.disconnect();
-  } else {
-    Play(connection, data, msg, streamOptions);
+    this.data.dispatcher.on("end", reason => {
+      reason = reason || "end";
+      console.log(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
+      this.finish(connection, reason, msg);
+    });
+  }
+
+  finish(connection, reason, msg) {
+    this.data.skippedSong = this.data.queue.shift();
+    if (reason === "rerun") {
+      this.data.skippedSong = "";
+    }
+    if (reason === "force" || this.data.queue.length === 0) {
+      this.data.playing = false;
+      msg.channel.send(`End of queue`);
+      if (reason === "force") {
+        this.data.queue = [];
+        this.data.dispatcher = false;
+      }
+      connection.disconnect();
+    } else {
+      this.startMusic(connection, msg);
+    }
   }
 }
 
 module.exports = Voice;
-
-

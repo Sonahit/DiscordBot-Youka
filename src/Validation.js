@@ -25,15 +25,33 @@ module.exports = class Validation {
       return false;
     }
     if (!Array.isArray(roles)) {
-      return msg.member.roles.some(item => {
-        return roles === item.name;
+      return msg.member.roles.some(userRole => {
+        if (userRole.name) {
+          userRole = this.roleToString(userRole.name);
+          return roles === userRole;
+        }
       });
     }
-    return msg.member.roles.some(item => {
-      return roles.some(role => {
-        return role === item.name;
-      });
+    return msg.member.roles.some(userRole => {
+      if (userRole.name) {
+        userRole = this.roleToString(userRole.name);
+        return roles.some(role => {
+          return role === userRole;
+        });
+      }
     });
+  }
+
+  roleToString(role) {
+    const emojiSplitter = require("emoji-aware");
+    return emojiSplitter
+      .withoutEmoji(role)
+      .reduce((accum, char) => {
+        if (char !== ",") {
+          return accum.concat(char);
+        }
+      }, "")
+      .trim();
   }
 
   validateURL(msg) {

@@ -60,7 +60,7 @@ client.on("message", async msg => {
       }
     }
   } catch (err) {
-    console.log(err.message);
+    console.error(err);
   }
 });
 
@@ -73,16 +73,22 @@ const executeCommand = (emitter, command, msg) => {
     AdminRights: function(emitter, command) {
       if (validation.hasPermission(msg, config.ModeratorPermission)) {
         emitter[command](msg, client);
+      } else {
+        replies["Error"](msg, client);
       }
     },
     Voice: function(emitter, command) {
       if (validation.hasPermission(msg, config.DJPermission)) {
         emitter[command](msg, client);
+      } else {
+        replies["Error"](msg, client);
       }
     },
     Moving: function(emitter, command) {
       if (validation.hasPermission(msg, config.DJPermission)) {
         emitter[command](msg, client);
+      } else {
+        replies["Error"](msg, client);
       }
     },
     Replies: function(emitter, command) {

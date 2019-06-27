@@ -1,8 +1,10 @@
 const ytdlVideo = require("ytdl-core");
 const Discord = require("discord.js");
+const https = require("https");
+//XMLHttpRequest ?
+const http = require("http");
 const validation = global.Validation;
 const config = validation.config;
-const http = require("http");
 const {
   awaitRadioChoose,
   awaitEmbedReply
@@ -67,7 +69,7 @@ class Voice {
     try {
       msg.member.voice.channel.leave();
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
     this.data.playing = false;
     this.data.queue = [];
@@ -85,7 +87,7 @@ class Voice {
     if (this.data.playing || this.data.queue > 0) {
       this.data.queue.push(url);
       const videoData = await ytdlVideo.getInfo(url).catch(err => {
-        console.log(err);
+        console.error(err);
       });
       showVideoData(msg, videoData, "queue");
       return;
@@ -97,11 +99,13 @@ class Voice {
         .join()
         .then(async connection => {
           this.data.videoData = await ytdlVideo.getInfo(url).catch(err => {
-            console.log(err);
+            console.error(err);
           });
           this.startMusic(connection, msg);
         })
-        .catch(console.error);
+        .catch(err => {
+          console.error(err);
+        });
     } else {
       embed
         .setColor("0xff0000")
@@ -122,12 +126,20 @@ class Voice {
       msg.member.voice.channel
         .join()
         .then(async connection => {
-          http.get(await awaitRadioChoose(msg, msg.author, embed), res => {
-            this.data.onAir = true;
-            this.data.dispatcher = connection.play(res, this.streamOptions);
-          });
+          const url = await awaitRadioChoose(msg, msg.author, embed);
+          try {
+            https.get(url, res => {
+              this.data.onAir = true;
+              this.data.dispatcher = connection.play(res, this.streamOptions);
+            });
+          } catch (err) {
+            http.get(url, res => {
+              this.data.onAir = true;
+              this.data.dispatcher = connection.play(res, this.streamOptions);
+            });
+          }
         })
-        .catch(console.error);
+        .catch(err => console.error(err));
     } else {
       if (!msg.member.voice.channel) {
         embed
@@ -175,6 +187,7 @@ class Voice {
         if (this.data.onAir) {
           this.data.onAir = false;
           msg.reply(`Shutting down radio...`);
+          https.globalAgent.destroy();
           http.globalAgent.destroy();
           return;
         }
@@ -258,7 +271,7 @@ class Voice {
             );
           })
           .catch(err => {
-            console.log(err);
+            console.error(err);
           })
       );
     });
@@ -304,11 +317,11 @@ class Voice {
             .join()
             .then(async connection => {
               this.data.videoData = await ytdlVideo.getInfo(url).catch(err => {
-                console.log(err);
+                console.error(err);
               });
               this.startMusic(connection, msg);
             })
-            .catch(console.error);
+            .catch(err => console.error(err));
         }
       });
     } else {

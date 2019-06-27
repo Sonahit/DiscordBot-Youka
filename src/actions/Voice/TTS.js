@@ -6,7 +6,7 @@ const util = require("util");
 const DetectLanguage = require("detectlanguage");
 class TTS {
   async speak(msg, data) {
-    if (!data.dispatcher && msg.member.voice.channel) {
+    if (!data.dispatcher) {
       const client = new speaker.TextToSpeechClient({
         projectId: config.Google.cridentials.project_id,
         keyFilename: config.Google.cridentials.path

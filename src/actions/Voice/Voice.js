@@ -1,21 +1,10 @@
 const ytdlVideo = require("ytdl-core");
 const Discord = require("discord.js");
 const https = require("https");
-//XMLHttpRequest ?
 const http = require("http");
 const validation = global.Validation;
 const config = validation.config;
-const {
-  awaitRadioChoose,
-  awaitEmbedReply
-} = require("../../utils/EmbedReplies");
-const {
-  isListURL,
-  parseIntoId,
-  getYoutubePlayList,
-  showVideoData,
-  isPlayingMusic
-} = require("./Utils");
+const VoiceHelpers = require("./VoiceHelpers");
 const TTS = require("./TTS");
 const { google } = require("googleapis");
 const youtubeApi = google.youtube({
@@ -23,15 +12,15 @@ const youtubeApi = google.youtube({
   auth: config.Google.youtubeApiKey
 });
 
-//#TODO refactor
 class Voice {
   constructor() {
     this._data = {
       dispatcher: false,
-      videoData: "",
+      currentSong: "",
       queue: [],
       playing: false,
       onAir: false,
+      //If skip song contain it here
       skippedSong: ""
     };
     this.streamOptions = { volume: 0.03, passes: 3 };
@@ -48,6 +37,7 @@ class Voice {
   join(msg) {
     const embed = new Discord.MessageEmbed();
     if (msg.member != null) {
+      //Is user on channel?
       if (msg.member.voice.channel) {
         msg.member.voice.channel.join();
       } else {
@@ -86,19 +76,20 @@ class Voice {
     const url = msg.content.split(" ")[1];
     if (this.data.playing || this.data.queue > 0) {
       this.data.queue.push(url);
-      const videoData = await ytdlVideo.getInfo(url).catch(err => {
+      const currentSong = await ytdlVideo.getInfo(url).catch(err => {
         console.error(err);
       });
-      showVideoData(msg, videoData, "queue");
+      VoiceHelpers.showCurrentSong(msg, currentSong, "queue");
       return;
     }
+    //Is user on channel?
     if (msg.member.voice.channel) {
       this.data.playing = true;
       this.data.queue.push(url);
       msg.member.voice.channel
         .join()
         .then(async connection => {
-          this.data.videoData = await ytdlVideo.getInfo(url).catch(err => {
+          this.data.currentSong = await ytdlVideo.getInfo(url).catch(err => {
             console.error(err);
           });
           this.startMusic(connection, msg);
@@ -121,12 +112,16 @@ class Voice {
     const embed = new Discord.MessageEmbed();
     if (
       msg.member.voice.channel &&
-      !isPlayingMusic(this.data.onAir, this.data.playing)
+      !VoiceHelpers.isPlayingMusic(this.data.onAir, this.data.playing)
     ) {
       msg.member.voice.channel
         .join()
         .then(async connection => {
-          const url = await awaitRadioChoose(msg, msg.author, embed);
+          const url = await VoiceHelpers.awaitRadioChoose(
+            msg,
+            msg.author,
+            embed
+          );
           try {
             https.get(url, res => {
               this.data.onAir = true;
@@ -170,6 +165,7 @@ class Voice {
 
   stop(msg, client, mode = "force") {
     if (msg.content === `${config.prefix}stop` || this.data.dispatcher) {
+      //Is user on channel?
       if (msg.member.voice.channel) {
         if (this.data.playing) {
           if (mode === "force") {
@@ -204,23 +200,30 @@ class Voice {
 
   volume(msg) {
     if (msg.member.voice.channel && this.data.dispatcher != false) {
-      let volume = msg.content.substring(
-        config.prefix.length + "volume".length,
-        msg.content.length
-      );
-      if (volume <= 200) {
-        this.data.dispatcher.setVolume(parseFloat(volume / 1000));
-        this.streamOptions.volume = parseFloat(volume / 1000);
-      } else {
-        msg.reply(`You exited available range of sound try to use 0 - 200`);
+      try {
+        let volume = new Number(
+          msg.content.substring(
+            config.prefix.length + "volume".length,
+            msg.content.length
+          )
+        );
+        if (volume <= 200) {
+          this.data.dispatcher.setVolume(parseFloat(volume / 1000));
+          this.streamOptions.volume = parseFloat(volume / 1000);
+        } else {
+          msg.reply(`You exited available range of sound try to use 0 - 200`);
+        }
+      } catch (err) {
+        msg.reply("Wrong number");
       }
+    } else {
+      msg.reply("Join voice");
     }
   }
 
-  async queue(msg) {
-    const embed = new Discord.MessageEmbed();
+  queue(msg) {
     if (this.data.playing) {
-      await awaitEmbedReply(msg, this.data, embed);
+      VoiceHelpers.showQueue(msg, this.data.queue);
     } else {
       msg.reply(`No queue`);
     }
@@ -236,76 +239,61 @@ class Voice {
     }
   }
 
-  async playList(msg) {
-    if (msg.content.includes(`${config.prefix}playList play`)) {
-      this["playList play"](msg);
+  async playlist(msg) {
+    if (msg.content.includes(`${config.prefix}playlist play`)) {
+      this["playlist play"](msg);
       return;
     }
-    const playListURL = msg.content.substring(
-      config.prefix.length + "playList".length + 1,
+    const playlistURL = msg.content.substring(
+      config.prefix.length + "playlist".length + 1,
       msg.content.length
     );
-    const playlistId = isListURL(playListURL)
-      ? parseIntoId(playListURL)
-      : playListURL;
+    const playlistId = VoiceHelpers.isListURL(playlistURL)
+      ? VoiceHelpers.parseIntoId(playlistURL)
+      : playlistURL;
     const embed = new Discord.MessageEmbed();
     embed.setColor("0x004444");
     const options = {
       part: "snippet",
       playlistId: playlistId
     };
-    const videos = await getYoutubePlayList(options);
-    const promises = [];
-    videos.forEach(video => {
-      promises.push(
-        ytdlVideo
-          .getInfo(video.snippet.resourceId.videoId)
-          .then(info => {
-            const durationMin = Math.floor(info.length_seconds / 60);
-            const durationSec = Math.ceil(info.length_seconds % 60);
-            embed.addField(
-              `Author: ${info.author.name}`,
-              `Duration: ${durationMin} mins : ${durationSec} seconds. \n Title: [${
-                info.title
-              }](${info.video_url})`
-            );
-          })
-          .catch(err => {
-            console.error(err);
-          })
-      );
+    const videos = await VoiceHelpers.getYoutubePlaylist(
+      options,
+      youtubeApi
+    ).then(videos => {
+      videos.forEach((video, index, videos) => {
+        videos[index] = video.snippet.resourceId.videoId;
+      });
+      return videos;
     });
-    msg.reply("Collecting videos... Please wait!");
-    embed.setDescription(`Play list requested by ${msg.author.username}`);
-    await Promise.all(promises).then(() => {
-      msg.reply(embed);
-    });
+    VoiceHelpers.showQueue(msg, videos);
   }
 
   TTS(msg) {
     TTS.speak(msg, this.data);
   }
 
-  async "playList play"(msg) {
-    const playListURL = msg.content.substring(
-      config.prefix.length + "playList play".length + 1,
+  async "playlist play"(msg) {
+    const playlistURL = msg.content.substring(
+      config.prefix.length + "playlist play".length + 1,
       msg.content.length
     );
-    const playlistId = isListURL(playListURL)
-      ? parseIntoId(playListURL)
-      : playListURL;
+    const playlistId = VoiceHelpers.isListURL(playlistURL)
+      ? VoiceHelpers.parseIntoId(playlistURL)
+      : playlistURL;
     const embed = new Discord.MessageEmbed();
     const options = {
       part: "snippet",
       playlistId: playlistId
     };
-    const videos = await getYoutubePlayList(options, youtubeApi);
+    const videos = await VoiceHelpers.getYoutubeplaylist(options, youtubeApi);
     embed.setColor("0x004444");
     embed.setDescription(
       `Added to queue.\nRequested by ${msg.author.username}`
     );
-    msg.reply("Collecting videos... Please wait!");
+    //Is user on channel?
     if (msg.member.voice.channel) {
+      msg.reply("Collecting videos... Please wait!");
       videos.forEach(async video => {
         const url = `https://www.youtube.com/watch?v=${
           video.snippet.resourceId.videoId
@@ -316,9 +304,11 @@ class Voice {
           msg.member.voice.channel
             .join()
             .then(async connection => {
-              this.data.videoData = await ytdlVideo.getInfo(url).catch(err => {
-                console.error(err);
-              });
+              this.data.currentSong = await ytdlVideo
+                .getInfo(url)
+                .catch(err => {
+                  console.error(err);
+                });
               this.startMusic(connection, msg);
             })
             .catch(err => console.error(err));
@@ -333,8 +323,8 @@ class Voice {
     }
   }
   async startMusic(connection, msg) {
-    this.data.videoData = await ytdlVideo.getInfo(this.data.queue[0]);
-    showVideoData(msg, this.data.videoData, "play");
+    this.data.currentSong = await ytdlVideo.getInfo(this.data.queue[0]);
+    VoiceHelpers.showcurrentSong(msg, this.data.currentSong, "play");
     try {
       this.data.dispatcher = await connection.play(
         await ytdlVideo(this.data.queue[0]),

@@ -10,7 +10,7 @@ logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console(), {
   colorize: true
 });
-logger.level = "debug";
+logger.level = "info";
 
 // Initialize Discord Bot
 

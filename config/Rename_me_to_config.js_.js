@@ -110,7 +110,7 @@ module.exports = {
       "rerun",
       "skip",
       "queue",
-      "playList"
+      "playlist"
     ]),
     (Default = ["AYAYA", "help", "ping", "author", "time"])
   ],

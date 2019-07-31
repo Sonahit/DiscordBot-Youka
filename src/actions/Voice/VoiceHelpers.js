@@ -133,6 +133,7 @@ module.exports.awaitRadioChoose = async function awaitRadioChoose(
     })
     .catch(() => {
       if (!sent) {
+        const embed = new Discord.MessageEmbed();
         embed.setTitle("Due to inactivity");
         let number = Math.floor(Math.random() * config.RadioList.length);
         embed.addField("Now starting...", `${config.RadioList[number].name}`);

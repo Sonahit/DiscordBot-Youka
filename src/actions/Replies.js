@@ -2,7 +2,7 @@ const { MessageAttachment } = require("discord.js");
 const Discord = require("discord.js");
 const validation = global.Validation;
 const config = validation.config;
-const permissionEnum = require("../utils/Constants").permissionsEnum;
+
 module.exports = class Replies {
   Greet(msg, client) {
     const embed = new Discord.MessageEmbed();
@@ -73,13 +73,12 @@ module.exports = class Replies {
       "https://discordemoji.com/assets/emoji/AYAYA.png"
     );
     await msg.author.send(attachment);
-    embed.setTitle("Help");
+    embed.setTitle(`Available commands`);
     embed.setFooter(
       `Requested by ${msg.author.username}`,
       `${msg.author.avatarURL() || "https://i.redd.it/1cp6bf2ahaky.jpg"} `
     );
     embed.addField(` You said you need ?HELP?`, `${":cry:".repeat(8)}`);
-    embed.addField(`Available commands:`);
     embed.setColor("0xff8040");
     msg.author.send(this.getHelpMessage(embed, this.getPermission(msg)));
     return;
@@ -91,27 +90,28 @@ module.exports = class Replies {
   }
 
   getPermission(msg) {
-    if (validation.isAuthor(msg > 0)) {
-      return permissionEnum.Author;
+    const permissions = require("../utils/Constants").permissions;
+    if (validation.isAuthor(msg)) {
+      return "author";
     }
-    if (validation.hasPermission(msg, "Модератор")) {
-      return permissionEnum.Moderator;
+    if (validation.hasPermission(msg, permissions.moderRights)) {
+      return "mod";
     }
-    if (validation.hasPermission(msg, "DJ")) {
-      return permissionEnum.DJ;
+    if (validation.hasPermission(msg, permissions.voiceRights)) {
+      return "voice";
     }
     return "none";
   }
   getHelpMessage(embed, permission) {
-    switch (permission) {
-      case "none": {
-        embed.addField(`AYAYA:\tAYAYA                         
+    embed.addField(
+      "For All:",
+      `AYAYA:\tAYAYA                         
                 \`${config.prefix}ping\`:\tTypes a reply pong 
                 \`${config.prefix}time\`:\tShows local time of bot
-                \`${config.prefix}help\`:\tGet help`);
-        break;
-      }
-      case permissionEnum.Author: {
+                \`${config.prefix}help\`:\tGet help`
+    );
+    switch (permission) {
+      case "author": {
         embed.addField(
           `For DJs:`,
           `\`${config.prefix}play https://[url]\`:\tPlays a video 
@@ -151,7 +151,7 @@ module.exports = class Replies {
         );
         break;
       }
-      case permissionEnum.Moderator: {
+      case "mod": {
         embed.addField(
           `For DJs:`,
           `\`${config.prefix}play https://[url]\`:\tPlays a video 
@@ -191,7 +191,7 @@ module.exports = class Replies {
         );
         break;
       }
-      case permissionEnum.DJ: {
+      case "voice": {
         embed.addField(
           `For DJs:`,
           `\`${config.prefix}play https://[url]\`:\tPlays a video 

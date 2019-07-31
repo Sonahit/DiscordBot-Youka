@@ -2,8 +2,8 @@ const { MessageAttachment } = require("discord.js");
 const Discord = require("discord.js");
 const validation = global.Validation;
 const config = validation.config;
-
-class Replies {
+const permissionEnum = require("../utils/Constants").permissionsEnum;
+module.exports = class Replies {
   Greet(msg, client) {
     const embed = new Discord.MessageEmbed();
     embed.setColor("0xfafa33");
@@ -72,149 +72,157 @@ class Replies {
     const attachment = new MessageAttachment(
       "https://discordemoji.com/assets/emoji/AYAYA.png"
     );
-    const cry = ":cry:";
     await msg.author.send(attachment);
     embed.setTitle("Help");
     embed.setFooter(
       `Requested by ${msg.author.username}`,
       `${msg.author.avatarURL() || "https://i.redd.it/1cp6bf2ahaky.jpg"} `
     );
-    embed.addField(` You said you need ?HELP?`, `${cry.repeat(8)}`);
-    embed.addField(
-      `Available commands:`,
-      ` AYAYA:\tAYAYA                         
-                \`${config.prefix}ping\`:\tTypes a reply pong 
-                \`${config.prefix}time\`:\tShows local time of bot
-                \`${config.prefix}help\`:\tGet help`
-    );
-    if (validation.isAuthor(msg) > 0) {
-      embed.addField(
-        `For DJs:`,
-        `\`${config.prefix}play https://[url]\`:\tPlays a video 
-                \`${config.prefix}join\`:\tJoins your channel 
-                \`${config.prefix}leave\`:\tLeaves your channel 
-                \`${config.prefix}radio\`:\tPlays a radio  
-                \`${config.prefix}pause\`:\tPause playing video 
-                \`${config.prefix}rerun\`:\tPlay last played video 
-                \`${config.prefix}resume\`:\tResumes playing video 
-                \`${config.prefix}end\`:\tEnds playing video 
-                \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
-                \`${
-                  config.prefix
-                }playlist #playlistID\`:\tShows play list at playlist id 
-                \`${
-                  config.prefix
-                }playlist play #playlistID\`:\tPlay all videos at playlist 
-                \`${config.prefix}moveTo \`:\tGet all channels and their ids
-                \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
-                \`${config.prefix}moveTo me\`:\tMoves bot to you
-                \`${config.prefix}follow me\`:\tFollows you 
-                \`${config.prefix}follow me\`:\tBot is following you 
-                \`${
-                  config.prefix
-                }follow (@username)\`:\tBot is following (@username) 
-                \`${config.prefix}follow stop\`:\tStop following you `
-      );
-      embed.addField(
-        `For Admins:`,
-        ` 
-                \`${config.prefix}IAdmin\`:\tSet admin mode 
-                \`${config.prefix}IUser\`:\tSet user mode 
-                \`${config.prefix}move name #\`:\tMoving {name} to # Channel
-                \`${
-                  config.prefix
-                }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]`
-      );
-      embed.setColor("0xff8040");
-      msg.author.send(embed);
-      return;
-    }
-    if (validation.hasPermission(msg, "Модератор")) {
-      embed.addField(
-        `For DJs:`,
-        `\`${config.prefix}play https://[url]\`:\tPlays a video 
-                \`${config.prefix}join\`:\tJoins your channel 
-                \`${config.prefix}leave\`:\tLeaves your channel 
-                \`${config.prefix}radio\`:\tPlays a radio  
-                \`${config.prefix}pause\`:\tPause playing video 
-                \`${config.prefix}rerun\`:\tPlay last played video 
-                \`${config.prefix}resume\`:\tResumes playing video 
-                \`${config.prefix}end\`:\tEnds playing video 
-                \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
-                \`${
-                  config.prefix
-                }playlist #playlistID\`:\tShows play list at playlist id 
-                \`${
-                  config.prefix
-                }playlist play #playlistID\`:\tPlay all videos at playlist 
-                \`${config.prefix}moveTo \`:\tGet all channels and their ids
-                \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
-                \`${config.prefix}moveTo me\`:\tMoves bot to you
-                \`${config.prefix}follow me\`:\tFollows you 
-                \`${config.prefix}follow me\`:\tBot is following you 
-                \`${
-                  config.prefix
-                }follow (@username)\`:\tBot is following (@username) 
-                \`${config.prefix}follow stop\`:\tStop following you `
-      );
-      embed.addField(
-        `For Admins:`,
-        ` 
-                \`${config.prefix}IAdmin\`:\tSet admin mode 
-                \`${config.prefix}IUser\`:\tSet user mode 
-                \`${config.prefix}disconnect\`:\tShutdowns bot  
-                \`${config.prefix}restart\`:\tRestarts bot
-                \`${config.prefix}move name #\`:\tMoving {name} to # Channel
-                \`${
-                  config.prefix
-                }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]
-                \`${
-                  config.prefix
-                }[un]Tmute (name) [reason]\`:\t[un]Mute text of (name) with a [reason]`
-      );
-      embed.setColor("0xff8040");
-      msg.author.send(embed);
-      return;
-    }
-    if (validation.hasPermission(msg, "DJ")) {
-      embed.addField(
-        `For DJs:`,
-        `\`${config.prefix}play https://[url]\`:\tPlays a video 
-                \`${config.prefix}join\`:\tJoins your channel 
-                \`${config.prefix}leave\`:\tLeaves your channel 
-                \`${config.prefix}radio\`:\tPlays a radio  
-                \`${config.prefix}pause\`:\tPause playing video 
-                \`${config.prefix}rerun\`:\tPlay last played video 
-                \`${config.prefix}resume\`:\tResumes playing video 
-                \`${config.prefix}end\`:\tEnds playing video 
-                \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
-                \`${
-                  config.prefix
-                }playlist #playlistID\`:\tShows play list at playlist id 
-                \`${
-                  config.prefix
-                }playlist play #playlistID\`:\tPlay all videos at playlist 
-                \`${config.prefix}moveTo \`:\tGet all channels and their ids
-                \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
-                \`${config.prefix}moveTo me\`:\tMoves bot to you
-                \`${config.prefix}follow me\`:\tFollows you 
-                \`${config.prefix}follow me\`:\tBot is following you 
-                \`${
-                  config.prefix
-                }follow (@username)\`:\tBot is following (@username) 
-                \`${config.prefix}follow stop\`:\tStop following you `
-      );
-      embed.setColor("0xff8040");
-      msg.author.send(embed);
-      return;
-    }
-    msg.author.send(embed);
+    embed.addField(` You said you need ?HELP?`, `${":cry:".repeat(8)}`);
+    embed.addField(`Available commands:`);
+    embed.setColor("0xff8040");
+    msg.author.send(this.getHelpMessage(embed, this.getPermission(msg)));
     return;
   }
 
   AYAYA(msg) {
     msg.channel.send("AYAYA");
     msg.channel.send("https://discordemoji.com/assets/emoji/AYAYA.png");
+  }
+
+  getPermission(msg) {
+    if (validation.isAuthor(msg > 0)) {
+      return permissionEnum.Author;
+    }
+    if (validation.hasPermission(msg, "Модератор")) {
+      return permissionEnum.Moderator;
+    }
+    if (validation.hasPermission(msg, "DJ")) {
+      return permissionEnum.DJ;
+    }
+    return "none";
+  }
+  getHelpMessage(embed, permission) {
+    switch (permission) {
+      case "none": {
+        embed.addField(`AYAYA:\tAYAYA                         
+                \`${config.prefix}ping\`:\tTypes a reply pong 
+                \`${config.prefix}time\`:\tShows local time of bot
+                \`${config.prefix}help\`:\tGet help`);
+        break;
+      }
+      case permissionEnum.Author: {
+        embed.addField(
+          `For DJs:`,
+          `\`${config.prefix}play https://[url]\`:\tPlays a video 
+                \`${config.prefix}join\`:\tJoins your channel 
+                \`${config.prefix}leave\`:\tLeaves your channel 
+                \`${config.prefix}radio\`:\tPlays a radio  
+                \`${config.prefix}pause\`:\tPause playing video 
+                \`${config.prefix}rerun\`:\tPlay last played video 
+                \`${config.prefix}resume\`:\tResumes playing video 
+                \`${config.prefix}end\`:\tEnds playing video 
+                \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
+                \`${
+                  config.prefix
+                }playlist #playlistID\`:\tShows play list at playlist id 
+                \`${
+                  config.prefix
+                }playlist play #playlistID\`:\tPlay all videos at playlist 
+                \`${config.prefix}moveTo \`:\tGet all channels and their ids
+                \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
+                \`${config.prefix}moveTo me\`:\tMoves bot to you
+                \`${config.prefix}follow me\`:\tFollows you 
+                \`${config.prefix}follow me\`:\tBot is following you 
+                \`${
+                  config.prefix
+                }follow (@username)\`:\tBot is following (@username) 
+                \`${config.prefix}follow stop\`:\tStop following you `
+        );
+        embed.addField(
+          `For Admins:`,
+          ` 
+                \`${config.prefix}IAdmin\`:\tSet admin mode 
+                \`${config.prefix}IUser\`:\tSet user mode 
+                \`${config.prefix}move name #\`:\tMoving {name} to # Channel
+                \`${
+                  config.prefix
+                }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]`
+        );
+        break;
+      }
+      case permissionEnum.Moderator: {
+        embed.addField(
+          `For DJs:`,
+          `\`${config.prefix}play https://[url]\`:\tPlays a video 
+                \`${config.prefix}join\`:\tJoins your channel 
+                \`${config.prefix}leave\`:\tLeaves your channel 
+                \`${config.prefix}radio\`:\tPlays a radio  
+                \`${config.prefix}pause\`:\tPause playing video 
+                \`${config.prefix}rerun\`:\tPlay last played video 
+                \`${config.prefix}resume\`:\tResumes playing video 
+                \`${config.prefix}end\`:\tEnds playing video 
+                \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
+                \`${
+                  config.prefix
+                }playlist #playlistID\`:\tShows play list at playlist id 
+                \`${
+                  config.prefix
+                }playlist play #playlistID\`:\tPlay all videos at playlist 
+                \`${config.prefix}moveTo \`:\tGet all channels and their ids
+                \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
+                \`${config.prefix}moveTo me\`:\tMoves bot to you
+                \`${config.prefix}follow me\`:\tFollows you 
+                \`${config.prefix}follow me\`:\tBot is following you 
+                \`${
+                  config.prefix
+                }follow (@username)\`:\tBot is following (@username) 
+                \`${config.prefix}follow stop\`:\tStop following you `
+        );
+        embed.addField(
+          `For Admins:`,
+          ` 
+                \`${config.prefix}IAdmin\`:\tSet admin mode 
+                \`${config.prefix}IUser\`:\tSet user mode 
+                \`${config.prefix}move name #\`:\tMoving {name} to # Channel
+                \`${
+                  config.prefix
+                }[un]mute (name) [reason]\`:\t[un]Mute voice of (name) with a [reason]`
+        );
+        break;
+      }
+      case permissionEnum.DJ: {
+        embed.addField(
+          `For DJs:`,
+          `\`${config.prefix}play https://[url]\`:\tPlays a video 
+                \`${config.prefix}join\`:\tJoins your channel 
+                \`${config.prefix}leave\`:\tLeaves your channel 
+                \`${config.prefix}radio\`:\tPlays a radio  
+                \`${config.prefix}pause\`:\tPause playing video 
+                \`${config.prefix}rerun\`:\tPlay last played video 
+                \`${config.prefix}resume\`:\tResumes playing video 
+                \`${config.prefix}end\`:\tEnds playing video 
+                \`${config.prefix}volume 0-200\`:\tChanges volume from 0 to 200
+                \`${
+                  config.prefix
+                }playlist #playlistID\`:\tShows play list at playlist id 
+                \`${
+                  config.prefix
+                }playlist play #playlistID\`:\tPlay all videos at playlist 
+                \`${config.prefix}moveTo \`:\tGet all channels and their ids
+                \`${config.prefix}moveTo #\`:\tMoving bot to # Channel
+                \`${config.prefix}moveTo me\`:\tMoves bot to you
+                \`${config.prefix}follow me\`:\tFollows you 
+                \`${config.prefix}follow me\`:\tBot is following you 
+                \`${
+                  config.prefix
+                }follow (@username)\`:\tBot is following (@username) 
+                \`${config.prefix}follow stop\`:\tStop following you `
+        );
+        break;
+      }
+    }
+    return embed;
   }
 
   time(msg) {
@@ -277,6 +285,4 @@ class Replies {
         return "December";
     }
   }
-}
-
-module.exports = Replies;
+};

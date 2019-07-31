@@ -324,7 +324,7 @@ class Voice {
   }
   async startMusic(connection, msg) {
     this.data.currentSong = await ytdlVideo.getInfo(this.data.queue[0]);
-    VoiceHelpers.showcurrentSong(msg, this.data.currentSong, "play");
+    VoiceHelpers.showCurrentSong(msg, this.data.currentSong, "play");
     try {
       this.data.dispatcher = await connection.play(
         await ytdlVideo(this.data.queue[0]),

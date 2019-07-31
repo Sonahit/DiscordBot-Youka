@@ -51,8 +51,12 @@ module.exports.showCurrentSong = function showCurrentSong(
   mode = "play"
 ) {
   const embed = new Discord.MessageEmbed();
-  let durationMin = Math.floor(currentSong.length_seconds / 60);
-  let durationSec = Math.ceil(currentSong.length_seconds % 60);
+  let durationMin = Math.floor(
+    currentSong.player_response.videoDetails.lengthSeconds / 60
+  );
+  let durationSec = Math.ceil(
+    currentSong.player_response.videoDetails.lengthSeconds % 60
+  );
   let stream = currentSong.player_response.videoDetails.isLiveContent;
   embed
     .setColor("#b92727")
@@ -69,15 +73,15 @@ module.exports.showCurrentSong = function showCurrentSong(
     .setDescription(
       `${
         mode === "play"
-          ? "Now playing " + currentSong.title
-          : "Added to queue " + currentSong.title
+          ? "Now playing " + currentSong.player_response.videoDetails.title
+          : "Added to queue " + currentSong.player_response.videoDetails.title
       }`
     )
     .addField(
       `${stream ? "Live Stream" : "Duration"}`,
       `${
         stream ? `Thanks to ${currentSong.author.name}` : durationMin + " min"
-      }  ${durationSec === 0 ? " " : durationSec + "seconds"} `
+      }  ${durationSec === 0 ? " " : durationSec + " seconds"} `
     );
   msg.channel.send(embed);
 };
@@ -198,13 +202,13 @@ client.on("subscribe", data => {
   };
 });
 
-function hasNonBotReactions(react, bot) {
-  return react.users.some(user => {
-    return user.id !== bot.user.id;
-  });
-}
+client.addListener("messageReactionAdd", react => {
+  if (react.message.id === client.subscription.messageId) {
+    client.emit("switchPageInPlayer", react);
+  }
+});
 
-client.on("messageReactionAdd", react => {
+client.on("switchPageInPlayer", react => {
   if (
     react.message.id === client.subscription.messageId &&
     hasNonBotReactions(react, client)
@@ -240,6 +244,11 @@ client.on("messageReactionAdd", react => {
     react.message.edit(page);
   }
 });
+function hasNonBotReactions(react, bot) {
+  return react.users.some(user => {
+    return user.id !== bot.user.id;
+  });
+}
 
 function removeUserReaction(react) {
   const user = react.users.find(user => {

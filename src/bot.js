@@ -5,6 +5,7 @@ const commands = require("./utils/commands");
 const validation = global.Validation;
 const replies = global.Replies;
 const config = validation.config;
+const permissions = require("./utils/Constants").permissions;
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console(), {
@@ -71,28 +72,32 @@ client.on("error", error => {
 const executeCommand = (emitter, command, msg) => {
   const executor = {
     AdminRights: function(emitter, command) {
-      if (validation.hasPermission(msg, config.ModeratorPermission)) {
+      if (validation.hasPermission(msg, permissions.adminRights)) {
         emitter[command](msg, client);
       } else {
         replies["Error"](msg, client);
       }
     },
     Voice: function(emitter, command) {
-      if (validation.hasPermission(msg, config.DJPermission)) {
+      if (validation.hasPermission(msg, permissions.voiceRights)) {
         emitter[command](msg, client);
       } else {
         replies["Error"](msg, client);
       }
     },
     Moving: function(emitter, command) {
-      if (validation.hasPermission(msg, config.DJPermission)) {
+      if (validation.hasPermission(msg, permissions.moderRights)) {
         emitter[command](msg, client);
       } else {
         replies["Error"](msg, client);
       }
     },
     Replies: function(emitter, command) {
-      emitter[command](msg, client);
+      if (validation.hasPermission(msg, permissions.commonRights)) {
+        emitter[command](msg, client);
+      } else {
+        replies["Error"](msg, client);
+      }
     }
   };
   executor[emitter.constructor.name](emitter, command);

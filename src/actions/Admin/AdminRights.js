@@ -208,6 +208,9 @@ class AdminRights {
     embed.setTitle("Test isn't for fun");
     msg.channel.send(embed);
   }
+  addPriority() {}
+  addValidRole(msg) {}
+  changeValidRole(msg) {}
 }
 
 function getUser(name = "", client) {

@@ -1,6 +1,9 @@
+const commonRights = require("./utils/Constants").commonRights;
+
 module.exports = class Validation {
   constructor() {
     this.config = require("../config/config.js");
+    // eslint-disable-next-line no-unused-vars
   }
 
   isAuthor(msg) {
@@ -15,9 +18,8 @@ module.exports = class Validation {
   /**
    * Check if incoming role is valid to do an command
    * @param {*} msg
-   * @param {*} role
    */
-  hasPermission(msg, roles = this.config.ValidRoles) {
+  hasPermission(msg, roles = commonRights) {
     if (msg.content === `${this.config.prefix}help`) {
       return true;
     }
@@ -41,7 +43,6 @@ module.exports = class Validation {
       }
     });
   }
-
   roleToString(role) {
     const emojiSplitter = require("emoji-aware");
     return emojiSplitter
@@ -96,7 +97,4 @@ module.exports = class Validation {
       "g"
     ).test(msg);
   }
-
-  addPriority() {}
-  addValidRole() {}
 };

@@ -121,10 +121,8 @@ class Moving {
 
   "follow stop"(msg) {
     if (
-      (msg.content === `${config.prefix}follow stop` &&
-        this.follows.user.username === msg.author.username) ||
-      (validation.isAuthor(msg) ||
-        validation.hasPermission(msg, ["Модератор", "DJ"]))
+      msg.content === `${config.prefix}follow stop` &&
+      this.follows.user.username === msg.author.username
     ) {
       if (this.follows.follow) {
         clearInterval(this.idInterval);

@@ -17,8 +17,7 @@ logger.level = "info";
 
 client.on("ready", () => {
   logger.info("Connected");
-  logger.info("Logged in as: ");
-  logger.info(client.user.username + " - (" + client.user.id + ")");
+  logger.info(`Logged in as: ${client.user.username} ${client.user.id}`);
   console.log(`Connected via ${client.user.username}`);
   client.user.setPresence({
     activity: { name: "With pleasure", type: "PLAYING" },
@@ -39,8 +38,8 @@ client.on("message", async msg => {
       `"${msg.content}" sent by ${msg.author.username} at ${Date.now()}`
     );
     if (
+      validation.isBlacklisted(msg.author) &&
       msg.content === "AYAYA" &&
-      validation.hasPermission(msg) &&
       msg.author.bot === false
     ) {
       replies.AYAYA(msg);

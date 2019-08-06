@@ -1,6 +1,7 @@
 const validation = global.Validation;
 const moving = global.Moving;
 const config = validation.config;
+const Discord = require("discord.js");
 
 class AdminRights {
   constructor(mode = "user") {
@@ -173,6 +174,73 @@ class AdminRights {
     client.destroy();
   }
 
+  blacklist(msg) {
+    validation
+      .addToBlacklist(msg)
+      .then(() => {
+        msg.reply("Added to blacklist");
+      })
+      .catch(err => {
+        msg.reply(err.message);
+      });
+  }
+
+  whitelist(msg) {
+    validation
+      .addToWhitelist(msg)
+      .then(() => {
+        msg.reply("Added to whitelist");
+      })
+      .catch(err => {
+        msg.reply(err.message);
+      });
+  }
+
+  remove_whitelist(msg) {
+    const author = msg.guild.member(msg.mentions.users.first()).user;
+    let index = config.whitelist.findIndex(user => {
+      return user.id === author.id;
+    });
+    if (index >= 0) {
+      config.whitelist.splice(index, 1);
+      msg.reply("Removed from whitelist");
+    } else {
+      msg.reply("Didn't Remove from whitelist");
+    }
+  }
+  remove_blacklist(msg) {
+    const author = msg.guild.member(msg.mentions.users.first()).user;
+    let index = config.blacklist.findIndex(user => {
+      return user.id === author.id;
+    });
+    if (index >= 0) {
+      config.blacklist.splice(index, 1);
+      msg.reply("Removed from whitelist");
+    } else {
+      msg.reply("Didn't remove from blacklist");
+    }
+  }
+
+  show_whitelist(msg) {
+    const embed = new Discord.MessageEmbed();
+    embed.setTitle("Members of Whitelist");
+    embed.setColor("#ffffff");
+    config.whitelist.forEach((user, index) => {
+      embed.addField(`#${index + 1}`, `Name: ${user.username}`);
+    });
+    msg.reply(embed);
+  }
+
+  show_blacklist(msg) {
+    const embed = new Discord.MessageEmbed();
+    embed.setTitle("Members of Blacklist");
+    embed.setColor("#000000");
+    config.blacklist.forEach((user, index) => {
+      embed.addField(`#${index + 1}`, `Name: ${user.username}`);
+    });
+    msg.reply(embed);
+  }
+
   async test(msg) {
     const { VK } = require("vk-io");
     const vk = new VK({
@@ -208,9 +276,6 @@ class AdminRights {
     embed.setTitle("Test isn't for fun");
     msg.channel.send(embed);
   }
-  addPriority() {}
-  addValidRole(msg) {}
-  changeValidRole(msg) {}
 }
 
 function getUser(name = "", client) {

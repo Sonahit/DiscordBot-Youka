@@ -91,7 +91,7 @@ module.exports = class Replies {
 
   getPermission(msg) {
     const permissions = require("../utils/Constants").permissions;
-    if (validation.isAuthor(msg)) {
+    if (validation.isWhitelisted(msg.author)) {
       return "author";
     }
     if (validation.hasPermission(msg, permissions.moderRights)) {

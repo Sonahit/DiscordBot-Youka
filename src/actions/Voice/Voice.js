@@ -168,14 +168,13 @@ class Voice {
       //Is user on channel?
       if (msg.member.voice.channel) {
         if (this.data.playing) {
+          this.data.dispatcher.emit("end", mode);
           if (mode === "force") {
-            this.data.dispatcher.emit("end", "force");
             this.data.playing = false;
             msg.reply(`Stopped playing songs`);
             return;
           }
           if (mode === "skip") {
-            this.data.dispatcher.emit("end", "skip");
             msg.reply(`Skipped song`);
             return;
           }

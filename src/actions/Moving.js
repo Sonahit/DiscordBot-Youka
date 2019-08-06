@@ -93,7 +93,7 @@ class Moving {
   "follow user"(msg, client, user) {
     if (user.voice.channel && this.follows.follow === false) {
       this.idInterval = setInterval(function() {
-        followUser(msg, user, this);
+        followUser(user, this);
       }, 1000);
       this.follows.follow = true;
       this.follows.user = user.user;
@@ -104,10 +104,10 @@ class Moving {
       );
     }
   }
-  "follow me"(msg, client) {
+  "follow me"(msg) {
     if (msg.member.voice.channel && this.follows.follow === false) {
       this.idInterval = setInterval(function() {
-        follow(msg, client, this);
+        follow(msg, this);
       }, 1000);
       this.follows.follow = true;
       this.follows.user = msg.author;
@@ -164,7 +164,7 @@ class Moving {
   }
 }
 
-function follow(msg, client, object) {
+function follow(msg, object) {
   // if(msg.member.voiceChannel != )
   if (msg.member != null) {
     msg.member.voice.channel.join();
@@ -176,7 +176,7 @@ function follow(msg, client, object) {
   }
 }
 
-function followUser(msg, user, object) {
+function followUser(user, object) {
   if (user != null) {
     user.voice.channel.join();
     object.currentChannel = user.voice.channel.name;

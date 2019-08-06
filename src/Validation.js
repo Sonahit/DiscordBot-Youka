@@ -6,12 +6,73 @@ module.exports = class Validation {
     // eslint-disable-next-line no-unused-vars
   }
 
-  isAuthor(msg) {
-    return this.config.owners.some(item => {
+  isWhitelisted(author) {
+    return this.config.whitelist.some(user => {
       return (
-        msg.author.username === item.username &&
-        msg.author.discriminator === item.id
+        (author.username === user.username &&
+          author.discriminator === user.discriminator) ||
+        author.id === user.id
       );
+    });
+  }
+
+  isBlacklisted(author) {
+    return this.config.blacklist.some(user => {
+      return (
+        (user.discriminator === author.discriminator &&
+          user.username === author.username) ||
+        user.id === author.id
+      );
+    });
+  }
+
+  addToBlacklist(msg) {
+    return new Promise((resolve, reject) => {
+      const author = msg.guild.member(msg.mentions.users.first()).user;
+      if (!this.isBlacklisted(author)) {
+        this.config.blacklist.push(
+          (author.username = {
+            username: author.username,
+            discriminator: author.discriminator,
+            id: author.id
+          })
+        );
+        let index = this.config.whitelist.findIndex(user => {
+          return user.id === author.id;
+        });
+        if (index >= 0) {
+          this.config.whitelist.splice(index, 1);
+        }
+        resolve(author);
+      } else {
+        reject({
+          message: "Couldn't add to blacklist"
+        });
+      }
+    });
+  }
+
+  addToWhitelist(msg) {
+    return new Promise((resolve, reject) => {
+      const author = msg.guild.member(msg.mentions.users.first()).user;
+      if (!this.isWhitelisted(author)) {
+        this.config.whitelist.push(
+          (author.username = {
+            username: author.username,
+            discriminator: author.discriminator,
+            id: author.id
+          })
+        );
+        let index = this.config.blacklist.findIndex(user => {
+          return user.id === author.id;
+        });
+        if (index >= 0) {
+          this.config.blacklist.splice(index, 1);
+        }
+        resolve(author);
+      } else {
+        reject({ message: "Couldn't add to whitelist" });
+      }
     });
   }
 
@@ -20,6 +81,9 @@ module.exports = class Validation {
    * @param {*} msg
    */
   hasPermission(msg, roles = commonRights) {
+    if (this.isWhitelisted(msg.author)) {
+      return true;
+    }
     if (msg.content === `${this.config.prefix}help`) {
       return true;
     }

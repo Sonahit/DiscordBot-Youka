@@ -93,7 +93,9 @@ module.exports = {
       "restart",
       "playtest",
       "IAdmin",
-      "IUser"
+      "IUser",
+      "whitelist",
+      "blacklist"
     ]),
     (Moving = ["moveTo", "follow"]),
     (Voice = [

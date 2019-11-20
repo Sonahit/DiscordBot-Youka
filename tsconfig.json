@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "baseUrl": "./",
+    "paths": {
+      "yooka-bot": ["typings/index"]
+    }
+  },
+  "include": ["src/**/*", "typings"]
+}

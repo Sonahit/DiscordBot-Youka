@@ -1,0 +1,13 @@
+#node
+node_modules
+
+#vscode
+jsconfig
+.vscode
+
+#google-tokens
+*Google*
+
+#data
+config/config.ts
+user_data

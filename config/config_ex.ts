@@ -23,7 +23,8 @@ const commands: HandlersConfig = {
   Moving: ["moveTo", "follow"],
   Voice: ["radio", "play", "stop", "resume", "join", "leave", "volume", "rerun", "skip", "queue", "playlist"],
   Streams: ["stream"],
-  Replies: ["AYAYA", "help", "ping", "author", "time"]
+  Replies: ["AYAYA", "help", "ping", "author", "time"],
+  RolesPermissions: ["addPermission", "deletePermission", "hierarchy"]
 };
 
 const radioList: Array<Radio> = [

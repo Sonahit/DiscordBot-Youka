@@ -69,7 +69,7 @@ class IO {
       });
     })
       .then(() => {
-        fs.writeFileSync(path, JSON.stringify(permissions));
+        fs.writeFileSync(path, JSON.stringify(permissions, null, 4));
         return permissions;
       })
       .catch((err: any) => {

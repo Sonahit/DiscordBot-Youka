@@ -68,9 +68,9 @@ class IO {
         return resolve();
       });
     })
-      .then((data: any) => {
+      .then(() => {
         fs.writeFileSync(path, JSON.stringify(permissions));
-        return data;
+        return permissions;
       })
       .catch((err: any) => {
         console.error(err);

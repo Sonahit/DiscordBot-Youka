@@ -156,7 +156,7 @@ export interface IPermissions {
 }
 
 export interface PermissionsHandler {
-  addPermission(msg: Message): Promise<void>;
-  deletePermission(msg: Message): Promise<void>;
+  addPermission(msg: Message): void;
+  deletePermission(msg: Message): void;
   hierarchy(msg: Message): Promise<void>;
 }

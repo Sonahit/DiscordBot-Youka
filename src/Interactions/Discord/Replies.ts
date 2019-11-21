@@ -130,7 +130,10 @@ class Replies implements RepliesHandler {
       `For Admins:`,
       `${config.prefix}IAdmin: Set admin mode 
       ${config.prefix}IUser: Set user mode 
-      ${config.prefix}[un]mute (name) [reason]: [un]Mute voice of (name) with a [reason]`
+      ${config.prefix}[un]mute (name) [reason]: [un]Mute voice of (name) with a [reason]
+      ${config.prefix}addPermission (levelPermission) (roles): add new roles with permissions
+      ${config.prefix}deletePermission (levelPermission) (roles): delete roles in such permissions
+      ${config.prefix}hierarchy: show current hierarchy roles`
     );
   }
 

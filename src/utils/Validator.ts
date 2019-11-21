@@ -99,6 +99,7 @@ class Validator implements ValidationHandler {
       return false;
     });
   }
+
   roleWithoutEmoji(role: string) {
     return emojiSplitter
       .withoutEmoji(role)

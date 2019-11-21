@@ -56,7 +56,7 @@ class Bot {
     return false;
   }
 
-  initBot(client: Client): void {
+  initBot(client: Client): Bot {
     this.login(client)
       .then(() => {
         this.handleMessage();
@@ -64,14 +64,23 @@ class Bot {
       .catch(err => {
         logger.error(err.message);
       });
+    return this;
   }
 
-  initHandlers(): void {
+  initHandlers(): Bot {
     const handlers = [new Voice(), new AdminCommands(), new Moving(), new Replies(), new Streams()];
     handlers.forEach(handler => {
       const name = handler.constructor.name;
       this.setHandler(name, handler);
     });
+    return this;
+  }
+
+  initOnExit() {
+    process.on("beforeExit", () => {
+      this.disconnect();
+    });
+    return this;
   }
 
   login(client: Client): Promise<string> {
@@ -88,6 +97,10 @@ class Bot {
       logger.error(error.message);
     });
     return client.login(this.config.token);
+  }
+
+  disconnect() {
+    this.client.destroy();
   }
 
   handleCommand(command: string, msg: Message): void {
@@ -114,7 +127,10 @@ class Bot {
         }
         if (msg.content.startsWith(this.config.prefix) && msg.author.bot === false) {
           if (this.validator.hasPermission(msg)) {
-            const keyWord = msg.content.split(`${this.config.prefix}`)[1].trim();
+            const keyWord = msg.content
+              .split(`${this.config.prefix}`)[1]
+              .trim()
+              .split(" ")[0];
             this.handleCommand(keyWord, msg);
           } else {
             const replies = this.getHandlerByName("Replies") as Replies;

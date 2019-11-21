@@ -1,5 +1,4 @@
 import Discord, { Message, Client, GuildMember, GuildChannel, VoiceChannel, UserResolvable } from "discord.js";
-const validation = global.validator;
 import config from "../../../config/config";
 import { MovingHandler } from "typings";
 
@@ -10,12 +9,10 @@ class Moving implements MovingHandler {
   };
 
   currentChannel: string;
-  voiceChannelIds: Array<number>;
   idInterval: NodeJS.Timeout | number;
 
   constructor() {
     this.currentChannel = "";
-    this.voiceChannelIds = [];
     this.idInterval = 0;
     this.follows = {
       follow: false,
@@ -28,9 +25,11 @@ class Moving implements MovingHandler {
       const embed = new Discord.MessageEmbed();
       embed.setColor("0xff8040");
       embed.setDescription(`Type ${config.prefix}moveTo (number) to move bot to certain channel`);
-      this.getRooms(msg.guild!.channels).forEach(channel => {
-        embed.addField(`Room #${channel.id}`, `\`\`\` ${channel.name} \`\`\``);
-      });
+      getVoiceChannels(msg.guild!.channels)
+        .array()
+        .forEach((channel, i) => {
+          embed.addField(`Room #${i + 1}`, `\`\`\` ${channel!.name} \`\`\``);
+        });
       msg.reply(embed);
     } else if (msg.content === `${config.prefix}moveTo me`) {
       if (msg.member!.voice.channel) {
@@ -40,10 +39,10 @@ class Moving implements MovingHandler {
           this.currentChannel = msg!.channel.id;
         });
       }
-    } else if (validation.checkBotMove(msg.content)) {
-      this.getRooms(msg!.guild!.channels);
-      let voiceChannelId = msg.content.split(" ")[1];
-      let channel = this.getChannel(parseInt(voiceChannelId), msg) as GuildChannel;
+    } else if (global.validator.checkBotMove(msg.content)) {
+      getVoiceChannels(msg!.guild!.channels);
+      const voiceChannelId = msg.content.split(" ")[1];
+      const channel = getChannel(parseInt(voiceChannelId) - 1, msg) as GuildChannel;
       if (!(channel instanceof VoiceChannel)) return console.error("The channel does not exist!");
       channel
         .join()
@@ -59,8 +58,7 @@ class Moving implements MovingHandler {
     }
   }
   follow(msg: Message, client: Client) {
-    const mentioned = msg.mentions.users.first();
-    if (!mentioned) return;
+    const mentioned = msg.mentions.users.first() as Discord.User;
     const user = msg.guild!.member(mentioned);
     if (user) {
       this["follow user"](msg, client, user);
@@ -92,7 +90,7 @@ class Moving implements MovingHandler {
       this.follows.user = msg.author;
       msg.channel.send(`Following <@${msg.author.id}>`);
     } else {
-      if (this.follows.user instanceof Discord.User) {
+      if (typeof this.follows.user !== "string") {
         msg.author.send(`Join to voice channe}l first or I am following <@${this.follows.user.id}>`);
       }
     }
@@ -101,8 +99,8 @@ class Moving implements MovingHandler {
   "follow stop"(msg: Message) {
     if (
       msg.content === `${config.prefix}follow stop` &&
-      this.follows.user instanceof Discord.User &&
-      this.follows.user.username === msg.author.username
+      typeof this.follows.user !== "string" &&
+      (<Discord.User>this.follows.user).username === msg.author.username
     ) {
       if (this.follows.follow) {
         clearInterval(this.idInterval as number);
@@ -110,7 +108,7 @@ class Moving implements MovingHandler {
         this.follows.user = "no one";
         this.follows.follow = false;
       } else {
-        if (this.follows.user instanceof Discord.User) {
+        if (typeof this.follows.user !== "string") {
           msg.reply(`I am following <@${this.follows.user.id}>`);
         } else {
           msg.reply(`I am not following anyone`);
@@ -118,34 +116,15 @@ class Moving implements MovingHandler {
       }
     }
   }
-
-  getRooms(channels: Discord.GuildChannelStore) {
-    let voiceChannels: Array<any> = [];
-    this.voiceChannelIds = [];
-    let i = 0;
-    channels.forEach(item => {
-      if (item instanceof VoiceChannel && item.joinable === true) {
-        voiceChannels.push({
-          id: ++i,
-          name: item.name
-        });
-        this.voiceChannelIds.push(parseInt(item.id));
-      }
-    });
-    return voiceChannels;
-  }
-
-  getChannel(id: number, msg: Message): GuildChannel | undefined {
-    for (let i = 0; i < this.voiceChannelIds.length; i++) {
-      if (i === id - 1 && msg.guild) {
-        return msg.guild.channels.get(this.voiceChannelIds[i].toString());
-      }
-    }
-  }
 }
 
-function follow(msg: Message, moving: Moving) {
-  // if(msg.member.voiceChannel != )
+export function getChannel(id: number, msg: Message): GuildChannel | undefined {
+  const voiceChannel = getVoiceChannels(msg.guild!.channels).array()[id];
+  if (!voiceChannel) return undefined;
+  const channel = msg.guild?.channels.find(ch => ch.id === voiceChannel.id);
+  return channel;
+}
+export function follow(msg: Message, moving: Moving) {
   if (msg.member && msg.member.voice.channel) {
     msg.member.voice.channel.join();
     moving.currentChannel = msg.member.voice.channel.name;
@@ -156,7 +135,7 @@ function follow(msg: Message, moving: Moving) {
   }
 }
 
-function followUser(user: GuildMember, moving: Moving) {
+export function followUser(user: GuildMember, moving: Moving) {
   if (user != null) {
     if (user.voice.channel) {
       user.voice.channel.join();
@@ -169,4 +148,10 @@ function followUser(user: GuildMember, moving: Moving) {
   }
 }
 
+export function getVoiceChannels(channels: Discord.GuildChannelStore) {
+  const voice = channels.filter(item => {
+    return item instanceof Discord.VoiceChannel;
+  });
+  return voice;
+}
 export default Moving;

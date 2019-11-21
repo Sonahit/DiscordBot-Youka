@@ -124,8 +124,6 @@ export interface MovingHandler {
   ["follow user"](msg: Message, client: Client, user: GuildMember): void;
   ["follow me"](msg: Message): void;
   ["follow stop"](msg: Message): void;
-  getRooms(channels: GuildChannelStore): Array<any>;
-  getChannel(id: number, msg: Message): GuildChannel | undefined;
 }
 
 export interface AdminCommandsHandler {

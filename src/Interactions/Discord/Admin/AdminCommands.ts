@@ -1,9 +1,9 @@
 import { Message, Client, User, GuildMember } from "discord.js";
 import { YUser, AdminCommandsHandler } from "yooka-bot";
 
-const validation = global.validator;
 import config from "../../../../config/config";
 import Discord from "discord.js";
+import Validator from "src/utils/Validator";
 
 class AdminCommands implements AdminCommandsHandler {
   mode: string;
@@ -68,7 +68,7 @@ class AdminCommands implements AdminCommandsHandler {
   }
 
   blacklist(msg: Message) {
-    validation
+    global.validator
       .addToBlackList(msg)
       .then(() => {
         msg.reply("Added to blacklist");
@@ -79,7 +79,7 @@ class AdminCommands implements AdminCommandsHandler {
   }
 
   whitelist(msg: Message) {
-    validation
+    global.validator
       .addToWhiteList(msg)
       .then(() => {
         msg.reply("Added to whitelist");

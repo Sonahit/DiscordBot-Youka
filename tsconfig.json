@@ -12,5 +12,6 @@
       "yooka-bot": ["typings/index"]
     }
   },
-  "include": ["src/**/*", "typings"]
+  "include": ["src/**/*", "typings/*"],
+  "exclude": ["node_modules"]
 }

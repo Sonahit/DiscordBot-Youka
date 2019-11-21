@@ -13,7 +13,7 @@ const youtubeApi = google.youtube({
 });
 
 interface VoiceData {
-  dispatcher: boolean | StreamDispatcher;
+  dispatcher: boolean | Discord.StreamDispatcher;
   currentSong: string | ytdlVideo.videoInfo;
   queue: Array<string>;
   playing: boolean;
@@ -143,13 +143,13 @@ class Voice implements VoiceHandler {
   }
 
   pause(msg: Message) {
-    if (msg.member!.voice.channel && this.data.dispatcher instanceof StreamDispatcher) {
+    if (msg.member!.voice.channel && typeof this.data.dispatcher !== "boolean") {
       this.data.dispatcher.pause();
     }
   }
 
   resume(msg: Message) {
-    if (msg.member!.voice.channel && this.data.dispatcher instanceof StreamDispatcher) {
+    if (msg.member!.voice.channel && typeof this.data.dispatcher !== "boolean") {
       this.data.dispatcher.resume();
     }
   }
@@ -158,7 +158,7 @@ class Voice implements VoiceHandler {
     if (msg.content === `${config.prefix}stop`) {
       //Is user on channel?
       if (!msg.member!.voice.channel) return;
-      if (!(this.data.dispatcher instanceof StreamDispatcher)) return;
+      if (!(typeof this.data.dispatcher !== "boolean")) return;
       if (this.data.playing) {
         this.data.dispatcher.emit("end", mode);
         if (mode === "force") {
@@ -189,7 +189,7 @@ class Voice implements VoiceHandler {
   }
 
   volume(msg: Message) {
-    if (msg.member!.voice.channel && this.data.dispatcher instanceof StreamDispatcher) {
+    if (msg.member!.voice.channel && typeof this.data.dispatcher !== "boolean") {
       try {
         let volume = parseInt(msg.content.substring(config.prefix.length + "volume".length, msg.content.length));
         if (volume <= 200) {
@@ -215,7 +215,7 @@ class Voice implements VoiceHandler {
   }
 
   rerun(msg: Message) {
-    if (this.data.dispatcher instanceof StreamDispatcher) {
+    if (typeof this.data.dispatcher !== "boolean") {
       this.data.queue.unshift(this.data.skippedSong);
       this.data.queue.unshift(this.data.skippedSong);
       this.data.dispatcher.emit("end", "rerun");
@@ -289,7 +289,7 @@ class Voice implements VoiceHandler {
     } catch (err) {
       msg.reply("WRONG URL");
     }
-    if (!(this.data.dispatcher instanceof StreamDispatcher)) return;
+    if (typeof this.data.dispatcher === "boolean") return;
     this.data.dispatcher.on("end", (reason: string) => {
       reason = reason || "end";
       console.log(`FINISHED PLAYING A SONG BECAUSE ${reason}`);

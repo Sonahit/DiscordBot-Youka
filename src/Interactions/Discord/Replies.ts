@@ -4,8 +4,6 @@ import config from "../../../config/config";
 import { RepliesHandler } from "typings";
 import permissions from "../../utils/Permissions";
 
-const validation = global.validator;
-
 class Replies implements RepliesHandler {
   Greet(msg: Message, client: Client) {
     const embed = new Discord.MessageEmbed();
@@ -65,13 +63,13 @@ class Replies implements RepliesHandler {
   }
 
   getPermission(msg: Message) {
-    if (validation.isWhiteListed(msg.author)) {
+    if (global.validator.isWhiteListed(msg.author)) {
       return "author";
     }
-    if (validation.hasPermission(msg, permissions.moderPermissions)) {
+    if (global.validator.hasPermission(msg, permissions.moderPermissions)) {
       return "mod";
     }
-    if (validation.hasPermission(msg, permissions.voicePermissions)) {
+    if (global.validator.hasPermission(msg, permissions.voicePermissions)) {
       return "voice";
     }
     return "none";

@@ -38,7 +38,7 @@ export default class RolesPermissions implements PermissionsHandler {
     permissions[level].push(role);
     const result = await this.updatePermission(permissions);
     if (!result) return;
-    this.rolesPermission = permissions;
+    this.rolesPermission = Object.assign({}, permissions);
   }
 
   async deletePermission(msg: Message): Promise<void> {
@@ -50,7 +50,7 @@ export default class RolesPermissions implements PermissionsHandler {
     }, {} as { [key: string]: any }) as IPermissions;
     const result = await this.updatePermission(filteredPermissions);
     if (!result) return;
-    this.rolesPermission = filteredPermissions;
+    this.rolesPermission = Object.assign({}, filteredPermissions);
   }
 
   async hierarchy(msg: Message): Promise<void> {
@@ -61,7 +61,11 @@ export default class RolesPermissions implements PermissionsHandler {
       .setDescription(`Guild ${msg.guild?.name} role permissions`);
     Object.keys(this.rolesPermission).map(level => {
       const entries = this.rolesPermission[level];
-      embed.addField(`${level[0].toUpperCase() + level.substring(1, level.length)}`, entries.join(", "));
+      if (entries.length < 1) {
+        embed.addField(`${level[0].toUpperCase() + level.substring(1, level.length)}`, "No data");
+      } else {
+        embed.addField(`${level[0].toUpperCase() + level.substring(1, level.length)}`, entries.join(", "));
+      }
     });
     msg.reply(embed);
   }
@@ -70,6 +74,7 @@ export default class RolesPermissions implements PermissionsHandler {
     const regex = new RegExp(`^${config.prefix}\\w+\\s`, "i");
     const content = msgContent.split(regex)[1].split(" ");
     const [role, level] = content;
+    if (!level) return { role, level };
     return { role, level: level.toLowerCase() };
   }
 

@@ -1,4 +1,4 @@
-import RemindIO from "../../utils/RemindIO";
+import IO from "../../utils/IO";
 import Requests from "./Requests";
 
 import Discord from "discord.js";
@@ -59,7 +59,7 @@ class Streams implements StreamsHandler {
             msg.author.send(info.embed);
             clearInterval(id);
           } else {
-            const file = new RemindIO();
+            const file = new IO();
             const dir = `${__dirname}/user_data`;
             file.remindToFile(dir, {
               time: time,

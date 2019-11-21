@@ -2,7 +2,6 @@ import { MessageAttachment, Message, Client, MessageEmbed } from "discord.js";
 import Discord from "discord.js";
 import config from "../../../config/config";
 import { RepliesHandler } from "typings";
-import permissions from "../../utils/Permissions";
 
 class Replies implements RepliesHandler {
   Greet(msg: Message, client: Client) {
@@ -66,10 +65,10 @@ class Replies implements RepliesHandler {
     if (global.validator.isWhiteListed(msg.author)) {
       return "author";
     }
-    if (global.validator.hasPermission(msg, permissions.moderPermissions)) {
+    if (global.validator.hasPermission(msg, global.permissions.moderation)) {
       return "mod";
     }
-    if (global.validator.hasPermission(msg, permissions.voicePermissions)) {
+    if (global.validator.hasPermission(msg, global.permissions.voice)) {
       return "voice";
     }
     return "none";
@@ -131,7 +130,6 @@ class Replies implements RepliesHandler {
       `For Admins:`,
       `${config.prefix}IAdmin: Set admin mode 
       ${config.prefix}IUser: Set user mode 
-      ${config.prefix}move name #: Moving {name} to # Channel
       ${config.prefix}[un]mute (name) [reason]: [un]Mute voice of (name) with a [reason]`
     );
   }

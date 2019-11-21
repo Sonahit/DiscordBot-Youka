@@ -1,0 +1,6 @@
+{
+  "admin": ["your_roles"],
+  "moderation": ["your_roles"],
+  "voice": ["your_roles"],
+  "common": ["your_roles"]
+}

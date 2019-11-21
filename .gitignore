@@ -11,3 +11,4 @@ jsconfig
 #data
 config/config.ts
 user_data
+config/permissions.json

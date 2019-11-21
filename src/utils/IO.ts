@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
-import { RemindUser } from "yooka-bot";
+import { RemindUser, IPermissions } from "yooka-bot";
+import { NO_PERMISSIONS } from "../Interactions/Discord/RolesPermissions";
 
-class RemindIO {
+class IO {
   remindToFile(pathDirFile: string, data: RemindUser) {
-    // eslint-disable-next-line no-undef
     const dir = path.resolve(pathDirFile, "user_data");
     if (fs.existsSync(dir)) {
       const pathToFile = `${pathDirFile}/remind.json`;
@@ -49,6 +49,34 @@ class RemindIO {
       fs.mkdirSync(dir);
     }
   }
+
+  readPermissions(path: string): IPermissions {
+    try {
+      const data = JSON.parse(fs.readFileSync(path).toString());
+      if (!data) return NO_PERMISSIONS;
+      return data as IPermissions;
+    } catch (err) {
+      return NO_PERMISSIONS;
+    }
+  }
+
+  updatePermission(path: string, permissions: IPermissions): Promise<boolean | IPermissions> {
+    return new Promise((resolve, reject) => {
+      fs.open(path, "r", (err, fd) => {
+        if (err) return reject(err);
+        const fileData: IPermissions | undefined = JSON.parse(fs.readFileSync(path, "utf8").toString());
+        return resolve();
+      });
+    })
+      .then((data: any) => {
+        fs.writeFileSync(path, JSON.stringify(permissions));
+        return data;
+      })
+      .catch((err: any) => {
+        console.error(err);
+        return false;
+      });
+  }
 }
 
-export default RemindIO;
+export default IO;

@@ -9,13 +9,15 @@ import {
   VoiceChannel,
   GuildMember,
   GuildChannel,
-  GuildChannelStore
+  GuildChannelStore,
+  Role
 } from "discord.js";
 
 declare global {
   namespace NodeJS {
     interface Global {
       validator: Validator;
+      permissions: IPermissions;
     }
   }
 }
@@ -143,12 +145,18 @@ export interface StreamsHandler {
   stream(msg: Message): void;
   current(msg: Message): void;
   remind(msg: Message): void;
-  getStreamerInfo(
-    streamName: string,
-    embed: MessageEmbed
-  ): Promise<{
-    embed: MessageEmbed;
-    isOnline: boolean;
-  }>;
-  getApiUrl(host: string, path: string, options: any): string;
+}
+
+export interface IPermissions {
+  admin: Array<string>;
+  moderation: Array<string>;
+  voice: Array<string>;
+  common: Array<string>;
+  [key: string]: Array<string>;
+}
+
+export interface PermissionsHandler {
+  addPermission(msg: Message): Promise<void>;
+  deletePermission(msg: Message): Promise<void>;
+  hierarchy(msg: Message): Promise<void>;
 }

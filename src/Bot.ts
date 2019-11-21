@@ -1,7 +1,7 @@
 import { Client, Message } from "discord.js";
 import logger from "winston";
-import { HandlersCollection, Config, HandlersConfig } from "yooka-bot";
-import permissions from "./utils/Permissions";
+import { HandlersCollection, Config, HandlersConfig, IPermissions } from "yooka-bot";
+import RolesPermissions from "./Interactions/Discord/RolesPermissions";
 import Validator from "./utils/Validator";
 import Voice from "./Interactions/Discord/Voice/Voice";
 import Moving from "./Interactions/Discord/Moving";
@@ -22,14 +22,16 @@ class Bot {
   _commands: HandlersConfig;
   validator: Validator;
   client: Client;
+  permissions: RolesPermissions;
   config: Config;
 
-  constructor(client: Client, config: Config) {
+  constructor(client: Client, config: Config, permissionsPath: string) {
     this.client = client;
     this._handlers = {};
     this._commands = config.commands;
     this.config = config;
     this.validator = new Validator();
+    this.permissions = new RolesPermissions(permissionsPath);
   }
 
   get handlers(): HandlersCollection {
@@ -68,7 +70,7 @@ class Bot {
   }
 
   initHandlers(): Bot {
-    const handlers = [new Voice(), new AdminCommands(), new Moving(), new Replies(), new Streams()];
+    const handlers = [new Voice(), new AdminCommands(), new Moving(), new Replies(), new Streams(), this.permissions];
     handlers.forEach(handler => {
       const name = handler.constructor.name;
       this.setHandler(name, handler);
@@ -107,7 +109,7 @@ class Bot {
     const handler = this.getHandlerByCommand(command);
     if (handler) {
       const name = handler.constructor.name;
-      const permission = permissions.whatPermissions(name);
+      const permission = this.permissions.whatPermissions(name);
       if (this.validator.hasPermission(msg, permission)) {
         handler[command](msg, this.client);
         logger.info(`${msg.author.username} executed ${name} ---> ${command}`);

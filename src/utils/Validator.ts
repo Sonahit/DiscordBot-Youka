@@ -1,10 +1,7 @@
 import { YUser } from "yooka-bot";
 import { User, Message, UserResolvable, Role } from "discord.js";
 import config from "../../config/config";
-
-import permissions from "../utils/Permissions";
 import { ValidationHandler } from "typings";
-
 const emojiSplitter = require("emoji-aware");
 
 class Validator implements ValidationHandler {
@@ -70,9 +67,10 @@ class Validator implements ValidationHandler {
 
   /**
    * Check if incoming role is valid to do an command
-   * @param {*} msg
+   * @param msg incoming message
+   * @param roles incoming permissions
    */
-  hasPermission(msg: Message, roles = permissions.commonPermissions) {
+  hasPermission(msg: Message, roles = global.permissions.common) {
     if (this.isWhiteListed(msg.author)) {
       return true;
     }

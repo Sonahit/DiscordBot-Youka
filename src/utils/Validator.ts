@@ -70,33 +70,13 @@ class Validator implements ValidationHandler {
    * @param msg incoming message
    * @param roles incoming permissions
    */
-  hasPermission(msg: Message, roles = global.permissions.common) {
-    if (this.isWhiteListed(msg.author)) {
-      return true;
-    }
-    if (msg.content === `${config.prefix}help`) {
-      return true;
-    }
-    if (msg.member == null) {
-      return false;
-    }
-    if (!Array.isArray(roles)) {
-      return msg.member.roles.some(userRole => {
-        if (userRole.name) {
-          userRole = this.roleWithoutEmoji(userRole.name);
-          return roles === userRole;
-        }
-        return false;
-      });
-    }
+  hasPermission(msg: Message, roles: Array<string>) {
+    if (this.isWhiteListed(msg.author) || msg.content === `${config.prefix}help`) return true;
+    if (!msg.member || roles.length <= 0 || !Array.isArray(roles)) return false;
+
     return msg.member.roles.some(userRole => {
-      if (userRole.name) {
-        const userRoleName = this.roleWithoutEmoji(userRole.name);
-        return roles.some(role => {
-          return role === userRoleName;
-        });
-      }
-      return false;
+      if (!userRole.name) return false;
+      return roles.includes(this.roleWithoutEmoji(userRole.name));
     });
   }
 

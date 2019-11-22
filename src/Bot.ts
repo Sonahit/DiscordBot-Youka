@@ -12,9 +12,16 @@ import Replies from "./Interactions/Discord/Replies";
 import "opusscript";
 
 // Configure logger settings
-logger.remove(logger.transports.Console);
-logger.add(new logger.transports.Console());
-logger.level = "info";
+global.logger = logger
+  .remove(logger.transports.Console)
+  .add(new logger.transports.Console())
+  .add(
+    new logger.transports.File({
+      dirname: "./storage/logs",
+      filename: `[${new Date().getMonth()}M__${new Date().getDay()}D__${new Date().getHours()}H] winston_log_${new Date().getDay()}D.log`
+    })
+  );
+global.logger.level = "info";
 
 // Initialize Discord Bot
 class Bot {
@@ -128,7 +135,8 @@ class Bot {
           replies.AYAYA(msg);
         }
         if (msg.content.startsWith(this.config.prefix) && msg.author.bot === false) {
-          if (this.validator.hasPermission(msg)) {
+          //Checking for common permissions
+          if (this.validator.hasPermission(msg, global.permissions.common)) {
             const keyWord = msg.content
               .split(`${this.config.prefix}`)[1]
               .trim()
@@ -140,7 +148,7 @@ class Bot {
           }
         }
       } catch (err) {
-        console.error(err);
+        logger.error(err);
       }
     });
   }

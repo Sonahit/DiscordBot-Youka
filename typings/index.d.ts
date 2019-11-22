@@ -12,14 +12,17 @@ import {
   GuildChannelStore,
   Role
 } from "discord.js";
+import winston from "winston";
 
 declare global {
   namespace NodeJS {
     interface Global {
       validator: Validator;
       permissions: IPermissions;
+      logger: winston.Logger;
     }
   }
+  var logger: winston.Logger;
 }
 
 declare module "yooka-bot" {

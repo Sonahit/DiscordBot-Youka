@@ -39,7 +39,7 @@ class Voice implements VoiceHandler {
       //If skip song contain it here
       skippedSong: ""
     };
-    this.streamOptions = { volume: 0.03, passes: 3 };
+    this.streamOptions = { volume: 0.05, passes: 3 };
   }
 
   join(msg: Message) {
@@ -63,11 +63,10 @@ class Voice implements VoiceHandler {
     try {
       msg.member!.voice.channel!.leave();
     } catch (err) {
-      console.error(err);
+      logger.error(err);
     }
-    this.data.playing = false;
+    this.playVoice(false);
     this.data.queue = [];
-    this.data.onAir = false;
   }
 
   async play(msg: Message) {
@@ -80,24 +79,23 @@ class Voice implements VoiceHandler {
     if (this.data.playing || this.data.queue.length > 0) {
       this.data.queue.push(url);
       const currentSong = await ytdlVideo.getInfo(url).catch(err => {
-        console.error(err);
+        logger.error(err);
       });
       return Queuer.showCurrentSong(msg, currentSong as videoInfo, "queue");
     }
     //Is user on channel?
     if (msg.member!.voice.channel) {
-      this.data.playing = true;
       this.data.queue.push(url);
       msg
         .member!.voice.channel.join()
         .then(async connection => {
           this.data.currentSong = (await ytdlVideo.getInfo(url).catch(err => {
-            console.error(err);
+            logger.error(err);
           })) as ytdlVideo.videoInfo;
           this.startMusic(connection, msg);
         })
         .catch(err => {
-          console.error(err);
+          logger.error(err);
         });
     } else {
       embed.setColor("0xff0000").setDescription("You need to join a voice channel first!");
@@ -117,17 +115,15 @@ class Voice implements VoiceHandler {
           const url = await Queuer.awaitRadioChoose(msg, msg.author);
           try {
             https.get(url, res => {
-              this.data.onAir = true;
-              this.data.dispatcher = connection.play(res, this.streamOptions);
+              this.playVoice(connection.play(res, this.streamOptions), false, true);
             });
           } catch (err) {
             http.get(url, res => {
-              this.data.onAir = true;
-              this.data.dispatcher = connection.play(res, this.streamOptions);
+              this.playVoice(connection.play(res, this.streamOptions), false, true);
             });
           }
         })
-        .catch(err => console.error(err));
+        .catch(err => logger.error(err));
     } else {
       if (!msg.member.voice.channel) {
         embed.setColor("0xff0000").setDescription("You need to join a voice channel first!");
@@ -140,6 +136,12 @@ class Voice implements VoiceHandler {
       }
       msg.channel.send(embed);
     }
+  }
+
+  private playVoice(connection: StreamDispatcher | boolean, playing: boolean = false, onAir: boolean = false) {
+    this.data.dispatcher = connection;
+    this.data.playing = playing;
+    this.data.onAir = onAir;
   }
 
   pause(msg: Message) {
@@ -155,33 +157,28 @@ class Voice implements VoiceHandler {
   }
 
   stop(msg: Message, client: Client, mode = "force") {
-    if (msg.content === `${config.prefix}stop`) {
-      //Is user on channel?
-      if (!msg.member!.voice.channel) return;
-      if (!(typeof this.data.dispatcher !== "boolean")) return;
-      if (this.data.playing) {
-        this.data.dispatcher.emit("end", mode);
-        if (mode === "force") {
-          this.data.playing = false;
-          msg.reply(`Stopped playing songs`);
-          return;
-        }
-        if (mode === "skip") {
-          msg.reply(`Skipped song`);
-          return;
-        }
+    //Is user on channel?
+    if (!msg.member!.voice.channel) return;
+    if (!(typeof this.data.dispatcher !== "boolean")) return;
+    if (this.data.playing) {
+      if (mode === "force") {
+        msg.reply(`Stopped playing songs`);
       }
-      if (this.data.onAir) {
-        this.data.onAir = false;
-        msg.reply(`Shutting down radio...`);
-        https.globalAgent.destroy();
-        http.globalAgent.destroy();
-        return;
+      if (mode === "skip") {
+        msg.reply(`Skipped song`);
       }
-      this.data.dispatcher.emit("end", "force");
-    } else {
-      msg.reply(`I am not playing any song or radio`);
+      this.data.dispatcher.emit("end", mode);
+      this.playVoice(false);
+      return;
     }
+    if (this.data.onAir) {
+      this.playVoice(false);
+      msg.reply(`Shutting down radio...`);
+      https.globalAgent.destroy();
+      http.globalAgent.destroy();
+      return;
+    }
+    this.data.dispatcher.emit("end", "force");
   }
 
   skip(msg: Message, client: Client) {
@@ -189,17 +186,18 @@ class Voice implements VoiceHandler {
   }
 
   volume(msg: Message) {
-    if (msg.member!.voice.channel && typeof this.data.dispatcher !== "boolean") {
+    if (msg.member!.voice.channel) {
+      if (typeof this.data.dispatcher === "boolean") return msg.reply("Play video");
       try {
-        let volume = parseInt(msg.content.substring(config.prefix.length + "volume".length, msg.content.length));
-        if (volume <= 200) {
-          this.data.dispatcher.setVolume(parseFloat((volume / 1000).toString()));
-          this.streamOptions.volume = parseFloat((volume / 1000).toString());
-        } else {
-          msg.reply(`You exited available range of sound try to use 0 - 200`);
-        }
+        const regex = new RegExp(`${config.prefix}volume\\s+`, "gi");
+        const content = msg.content.split(regex);
+        const volume = parseInt(content[1]);
+        if (isNaN(volume)) throw new Error("Wrong Number");
+        if (volume > 200) return msg.reply(`You exited available range of sound try to use 0 - 200`);
+        this.data.dispatcher.setVolume(volume / 1000);
+        this.streamOptions.volume = volume / 1000;
       } catch (err) {
-        msg.reply("Wrong number");
+        msg.reply(err.message);
       }
     } else {
       msg.reply("Join voice");
@@ -207,28 +205,19 @@ class Voice implements VoiceHandler {
   }
 
   queue(msg: Message) {
-    if (this.data.playing) {
-      Queuer.showQueue(msg, this.data.queue);
-    } else {
-      msg.reply(`No queue`);
-    }
+    if (!this.data.playing) return msg.reply(`No queue`);
+    Queuer.showQueue(msg, this.data.queue);
   }
 
   rerun(msg: Message) {
-    if (typeof this.data.dispatcher !== "boolean") {
-      this.data.queue.unshift(this.data.skippedSong);
-      this.data.queue.unshift(this.data.skippedSong);
-      this.data.dispatcher.emit("end", "rerun");
-    } else {
-      msg.reply(`You didn't skip any song`);
-    }
+    if (typeof this.data.dispatcher === "boolean") return msg.reply(`You didn't skip any song`);
+    this.data.queue.unshift(this.data.skippedSong);
+    this.data.queue.unshift(this.data.skippedSong);
+    this.data.dispatcher.emit("end", "rerun");
   }
 
   async playlist(msg: Message) {
-    if (msg.content.includes(`${config.prefix}playlist play`)) {
-      this["playlist play"](msg);
-      return;
-    }
+    if (msg.content.includes(`${config.prefix}playlist play`)) return this["playlist play"](msg);
     const playlistURL = msg.content.substring(config.prefix.length + "playlist".length + 1, msg.content.length);
     const playlistId = Matcher.isListURL(playlistURL) ? Matcher.parseIntoId(playlistURL) : playlistURL;
     const embed = new Discord.MessageEmbed();
@@ -245,9 +234,14 @@ class Voice implements VoiceHandler {
   }
 
   async "playlist play"(msg: Message) {
+    const embed = new Discord.MessageEmbed();
+    if (!msg.member!.voice.channel) {
+      embed.setColor("0xff0000").setDescription("You need to join a voice channel first!");
+      msg.reply(embed);
+      throw new Error(`${msg.author.username} hasn't joined voice channel`);
+    }
     const playlistURL = msg.content.substring(config.prefix.length + "playlist play".length + 1, msg.content.length);
     const playlistId = Matcher.isListURL(playlistURL) ? Matcher.parseIntoId(playlistURL) : playlistURL;
-    const embed = new Discord.MessageEmbed();
     const options = {
       part: "snippet",
       playlistId: playlistId
@@ -256,43 +250,35 @@ class Voice implements VoiceHandler {
     embed.setColor("0x004444");
     embed.setDescription(`Added to queue.\nRequested by ${msg.author.username}`);
     //Is user on channel?
-    if (msg.member!.voice.channel) {
-      msg.reply("Collecting videos... Please wait!");
-      videos.forEach(async video => {
-        const url = `https://www.youtube.com/watch?v=${video.snippet!.resourceId!.videoId}`;
-        this.data.queue.push(url);
-        if (!this.data.playing) {
-          this.data.playing = true;
-          msg
-            .member!.voice.channel!.join()
-            .then(async connection => {
-              this.data.currentSong = (await ytdlVideo.getInfo(url).catch(err => {
-                console.error(err);
-              })) as videoInfo;
-              this.startMusic(connection, msg);
-            })
-            .catch(err => console.error(err));
-        }
-      });
-    } else {
-      embed.setColor("0xff0000").setDescription("You need to join a voice channel first!");
-      msg.reply(embed);
-      throw new Error(`${msg.author.username} hasn't joined voice channel`);
-    }
+    msg.reply("Collecting videos... Please wait!");
+    videos.forEach(async video => {
+      const url = `https://www.youtube.com/watch?v=${video.snippet!.resourceId!.videoId}`;
+      this.data.queue.push(url);
+      if (!this.data.playing) {
+        const connection = await msg.member!.voice.channel!.join();
+        this.startMusic(connection, msg);
+      }
+    });
   }
   async startMusic(connection: VoiceConnection, msg: Message) {
     this.data.currentSong = await ytdlVideo.getInfo(this.data.queue[0]);
     Queuer.showCurrentSong(msg, this.data.currentSong, "play");
+    const start = new URL(this.data.queue[0]).searchParams.get("t");
     try {
-      this.data.dispatcher = await connection.play(await ytdlVideo(this.data.queue[0]), this.streamOptions);
-      console.log("STARTED PLAYING SONG");
+      this.playVoice(connection.play(ytdlVideo(this.data.queue[0], { begin: start || 0 }), this.streamOptions), true, false);
+      logger.info("STARTED PLAYING SONG");
     } catch (err) {
       msg.reply("WRONG URL");
     }
     if (typeof this.data.dispatcher === "boolean") return;
+    this.data.dispatcher.on("finish", (reason: string) => {
+      reason = reason || "end";
+      logger.info(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
+      this.finish(connection, reason, msg);
+    });
     this.data.dispatcher.on("end", (reason: string) => {
       reason = reason || "end";
-      console.log(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
+      logger.info(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
       this.finish(connection, reason, msg);
     });
   }

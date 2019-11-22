@@ -109,9 +109,10 @@ class Replies implements RepliesHandler {
       ${config.prefix}leave: Leaves your channel
       ${config.prefix}radio: Plays a radio
       ${config.prefix}pause: Pause playing video
-      ${config.prefix}rerun:Play last played video
-      ${config.prefix}resume:Resumes playing video
-      ${config.prefix}end:Ends playing video
+      ${config.prefix}rerun: Play last played video
+      ${config.prefix}resume: Resumes playing video
+      ${config.prefix}stop: Ends playing video
+      ${config.prefix}skip: Skip video
       ${config.prefix}volume 0-200: Changes volume from 0 to 200
       ${config.prefix}playlist #playlistID: Shows play list at playlist id
       ${config.prefix}playlist play #playlistID: Play all videos at playlist

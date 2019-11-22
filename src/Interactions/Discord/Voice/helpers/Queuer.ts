@@ -2,7 +2,7 @@ import { MessageReaction, Message, User, Client } from "discord.js";
 import Discord from "discord.js";
 import client from "../../../../utils/Client";
 import config from "../../../../../config/config";
-import { videoInfo } from "ytdl-core";
+import ytdl, { videoInfo } from "ytdl-core";
 import { youtube_v3 } from "googleapis";
 import { isNull } from "util";
 
@@ -61,7 +61,7 @@ export async function awaitRadioChoose(message: Message, author: User) {
         url = config.radioList[parseInt(msg.content.split("#")[1]) - 1].URL;
       } catch (err) {
         message.reply(`${message.content} is wrong pattern try using #1, #2 and etc.\n Type ${config.prefix}radio again`);
-        console.log(err);
+        logger.log(err);
       }
     })
     .catch(() => {
@@ -102,7 +102,7 @@ export async function showQueue(msg: Message, videos: any) {
       return video;
     })
     .catch(err => {
-      console.error(err);
+      logger.error(err);
     })) as Discord.MessageEmbed;
   if (Array.isArray(queue.fields[0])) {
     const firstPage = new Discord.MessageEmbed(queue);
@@ -118,7 +118,7 @@ export async function showQueue(msg: Message, videos: any) {
         client.emit("subscribe", { id: msg.id, date: Date.now() });
       })
       .catch(err => {
-        console.error(err);
+        logger.error(err);
       });
   } else {
     msg.channel.send(queue);
@@ -192,7 +192,7 @@ export function getYoutubePlaylist(options: any, youtubeApi: youtube_v3.Youtube)
       return list.data.items;
     })
     .catch(err => {
-      console.log(err);
+      logger.log(err);
     });
 }
 
@@ -213,7 +213,7 @@ async function prepareQueue(queue: Array<string>) {
   const embed = new Discord.MessageEmbed();
   embed.setColor("0x00d0ff").setTitle("Current Queue");
   const promises = queue.map((song, index) => {
-    require("ytdl-core")
+    return ytdl
       .getInfo(song)
       .then((videoData: videoInfo) => {
         embed.addField(
@@ -224,7 +224,7 @@ async function prepareQueue(queue: Array<string>) {
         );
       })
       .catch((err: any) => {
-        console.error(err);
+        logger.error(err);
       });
   });
   await Promise.all(promises).then(() => {

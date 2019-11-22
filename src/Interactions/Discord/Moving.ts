@@ -43,17 +43,17 @@ class Moving implements MovingHandler {
       getVoiceChannels(msg!.guild!.channels);
       const voiceChannelId = msg.content.split(" ")[1];
       const channel = getChannel(parseInt(voiceChannelId) - 1, msg) as GuildChannel;
-      if (!(channel instanceof VoiceChannel)) return console.error("The channel does not exist!");
+      if (!(channel instanceof VoiceChannel)) return logger.error("The channel does not exist!");
       channel
         .join()
         .then(() => {
           msg.reply(`Successfully connected to ${channel.name}`);
           this.currentChannel = msg.channel.id;
-          console.log(`Successfully connected to ${channel.name}`);
+          logger.info(`Successfully connected to ${channel.name}`);
         })
         .catch(e => {
-          console.error(e);
-          console.error("The channel does not exist!");
+          logger.error(e);
+          logger.error("The channel does not exist!");
         });
     }
   }

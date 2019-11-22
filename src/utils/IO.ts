@@ -73,7 +73,7 @@ class IO {
         return permissions;
       })
       .catch((err: any) => {
-        console.error(err);
+        logger.error(err);
         return false;
       });
   }

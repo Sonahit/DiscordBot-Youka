@@ -3,7 +3,6 @@ import { YUser, AdminCommandsHandler } from "yooka-bot";
 
 import config from "../../../../config/config";
 import Discord from "discord.js";
-import Validator from "src/utils/Validator";
 
 class AdminCommands implements AdminCommandsHandler {
   mode: string;
@@ -38,7 +37,7 @@ class AdminCommands implements AdminCommandsHandler {
             })
             .catch(err => {
               msg.reply("I was unable to kick the member");
-              console.error(err);
+              logger.error(err);
             });
         } else {
           msg.reply("You didn't mention the user to kick!");

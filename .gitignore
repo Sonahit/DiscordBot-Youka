@@ -12,3 +12,7 @@ jsconfig
 config/config.ts
 user_data
 config/permissions.json
+
+
+#storage
+storage/logs/*

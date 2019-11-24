@@ -127,11 +127,9 @@ class Voice implements VoiceHandler {
     } else {
       if (!msg.member.voice.channel) {
         embed.setColor("0xff0000").setDescription("You need to join a voice channel first!");
-      }
-      if (this.data.onAir) {
+      } else if (this.data.onAir) {
         embed.setColor("0x004444").setDescription(`Radio is on air!`);
-      }
-      if (this.data.playing) {
+      } else if (this.data.playing) {
         embed.setColor("0x004444").setDescription(`I am playing a song!`);
       }
       msg.channel.send(embed);
@@ -167,18 +165,18 @@ class Voice implements VoiceHandler {
       if (mode === "skip") {
         msg.reply(`Skipped song`);
       }
-      this.data.dispatcher.emit("end", mode);
+      this.data.dispatcher.emit("finish", mode);
       this.playVoice(false);
       return;
     }
     if (this.data.onAir) {
-      this.playVoice(false);
+      this.data.dispatcher.emit("finish", "force");
       msg.reply(`Shutting down radio...`);
       https.globalAgent.destroy();
       http.globalAgent.destroy();
+      this.playVoice(false);
       return;
     }
-    this.data.dispatcher.emit("end", "force");
   }
 
   skip(msg: Message, client: Client) {
@@ -213,7 +211,7 @@ class Voice implements VoiceHandler {
     if (typeof this.data.dispatcher === "boolean") return msg.reply(`You didn't skip any song`);
     this.data.queue.unshift(this.data.skippedSong);
     this.data.queue.unshift(this.data.skippedSong);
-    this.data.dispatcher.emit("end", "rerun");
+    this.data.dispatcher.emit("finish", "rerun");
   }
 
   async playlist(msg: Message) {
@@ -254,10 +252,9 @@ class Voice implements VoiceHandler {
     videos.forEach(async video => {
       const url = `https://www.youtube.com/watch?v=${video.snippet!.resourceId!.videoId}`;
       this.data.queue.push(url);
-      if (!this.data.playing) {
-        const connection = await msg.member!.voice.channel!.join();
-        this.startMusic(connection, msg);
-      }
+      if (this.data.playing) return;
+      const connection = await msg.member!.voice.channel!.join();
+      this.startMusic(connection, msg);
     });
   }
   async startMusic(connection: VoiceConnection, msg: Message) {
@@ -276,11 +273,6 @@ class Voice implements VoiceHandler {
       logger.info(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
       this.finish(connection, reason, msg);
     });
-    this.data.dispatcher.on("end", (reason: string) => {
-      reason = reason || "end";
-      logger.info(`FINISHED PLAYING A SONG BECAUSE ${reason}`);
-      this.finish(connection, reason, msg);
-    });
   }
 
   finish(connection: VoiceConnection, reason: string, msg: Message) {
@@ -290,11 +282,11 @@ class Voice implements VoiceHandler {
     }
     if (reason === "force" || this.data.queue.length === 0) {
       this.data.playing = false;
-      msg.channel.send(`End of queue`);
       if (reason === "force") {
         this.data.queue = [];
         this.data.dispatcher = false;
       }
+      msg.channel.send(`End of queue`);
       connection.disconnect();
     } else {
       this.startMusic(connection, msg);

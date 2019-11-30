@@ -1,23 +1,19 @@
 import { MessageReaction, Message, User, Client } from "discord.js";
 import Discord from "discord.js";
 import client from "../../../../utils/Client";
-import config from "../../../../../config/config";
+import config from "@config";
 import ytdl, { videoInfo } from "ytdl-core";
 import { youtube_v3 } from "googleapis";
 import { isNull } from "util";
 
 export function showCurrentSong(msg: Message, currentSong: videoInfo, mode = "play") {
   const embed = new Discord.MessageEmbed();
-  let durationMin = Math.floor(currentSong.player_response.videoDetails.lengthSeconds / 60);
-  let durationSec = Math.ceil(currentSong.player_response.videoDetails.lengthSeconds % 60);
-  let stream = currentSong.player_response.videoDetails.isLiveContent;
+  const durationMin = Math.floor(currentSong.player_response.videoDetails.lengthSeconds / 60);
+  const durationSec = Math.ceil(currentSong.player_response.videoDetails.lengthSeconds % 60);
+  const stream = currentSong.player_response.videoDetails.isLiveContent;
   embed
     .setColor("#b92727")
-    .setAuthor(
-      `${currentSong.author.name}`,
-      `${currentSong.author.avatar}`,
-      `${currentSong.author.channel_url}${currentSong.player_response.videoDetails.channelId}`
-    )
+    .setAuthor(`${currentSong.author.name}`, `${currentSong.author.avatar}`, `${currentSong.author.channel_url}`)
     .setThumbnail(`${currentSong.player_response.videoDetails.thumbnail.thumbnails[0].url}`)
     .setDescription(
       `${
@@ -29,7 +25,8 @@ export function showCurrentSong(msg: Message, currentSong: videoInfo, mode = "pl
     .addField(
       `${stream ? "Live Stream" : "Duration"}`,
       `${stream ? `Thanks to ${currentSong.author.name}` : durationMin + " min"}  ${durationSec === 0 ? " " : durationSec + " seconds"} `
-    );
+    )
+    .setFooter(`Video URL: ${currentSong.video_url}`);
   msg.channel.send(embed);
 }
 
@@ -52,9 +49,8 @@ export async function awaitRadioChoose(message: Message, author: User) {
     .then(async msgs => {
       try {
         const embed = new Discord.MessageEmbed();
-        let msg = msgs.values().next().value;
+        const msg = msgs.values().next().value;
         embed.addField("Now starting...", `${config.radioList[parseInt(msg.content.split("#")[1]) - 1].name}`);
-
         embed.setThumbnail("http://www.modelradiolive.net/wp-content/uploads/2017/06/radio_mike.jpg");
         await message.reply(embed);
         sent = true;
@@ -68,7 +64,7 @@ export async function awaitRadioChoose(message: Message, author: User) {
       if (!sent) {
         const embed = new Discord.MessageEmbed();
         embed.setTitle("Due to inactivity");
-        let number = Math.floor(Math.random() * config.radioList.length);
+        const number = Math.floor(Math.random() * config.radioList.length);
         embed.addField("Now starting...", `${config.radioList[number].name}`);
         embed.setThumbnail("http://www.modelradiolive.net/wp-content/uploads/2017/06/radio_mike.jpg");
         message.reply(embed);
@@ -83,7 +79,6 @@ export async function showQueue(msg: Message, videos: any) {
   const queue = (await prepareQueue(videos)
     .then(video => {
       if (video.fields.length >= overflowEmbed) {
-        const client = require("../../utils/Client");
         client.queue = {
           onePage: new Discord.MessageEmbed(video)
         };
@@ -102,7 +97,7 @@ export async function showQueue(msg: Message, videos: any) {
       return video;
     })
     .catch(err => {
-      logger.error(err);
+      logger.error(err.message);
     })) as Discord.MessageEmbed;
   if (Array.isArray(queue.fields[0])) {
     const firstPage = new Discord.MessageEmbed(queue);
@@ -192,7 +187,7 @@ export function getYoutubePlaylist(options: any, youtubeApi: youtube_v3.Youtube)
       return list.data.items;
     })
     .catch(err => {
-      logger.log(err);
+      logger.error(err.message);
     });
 }
 

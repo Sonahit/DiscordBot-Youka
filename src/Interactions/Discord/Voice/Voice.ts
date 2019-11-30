@@ -75,38 +75,35 @@ class Voice implements VoiceHandler {
       embed.setColor("0x004444").setDescription(`Radio is on air!`);
       return msg.channel.send(embed);
     }
-    const url = msg.content.split(" ")[1];
+    const url = new URL(msg.content.split(" ")[1]);
     if (this.data.playing || this.data.queue.length > 0) {
-      this.data.queue.push(url);
-      const currentSong = await ytdlVideo.getInfo(url).catch(err => {
+      this.data.queue.push(url.href);
+      const currentSong = await ytdlVideo.getInfo(url.href).catch(err => {
         logger.error(err);
       });
       return Queuer.showCurrentSong(msg, currentSong as videoInfo, "queue");
     }
-    //Is user on channel?
-    if (msg.member!.voice.channel) {
-      this.data.queue.push(url);
-      msg
-        .member!.voice.channel.join()
-        .then(async connection => {
-          this.data.currentSong = (await ytdlVideo.getInfo(url).catch(err => {
-            logger.error(err);
-          })) as ytdlVideo.videoInfo;
-          this.startMusic(connection, msg);
-        })
-        .catch(err => {
-          logger.error(err);
-        });
-    } else {
+    //Is user not on channel?
+    if (!msg.member!.voice.channel) {
       embed.setColor("0xff0000").setDescription("You need to join a voice channel first!");
-      msg.reply(embed);
+      return msg.reply(embed);
     }
+    this.data.queue.push(url.href);
+    msg
+      .member!.voice.channel.join()
+      .then(async connection => {
+        this.data.currentSong = (await ytdlVideo.getInfo(url.href).catch(err => {
+          logger.error(err);
+        })) as ytdlVideo.videoInfo;
+        this.startMusic(connection, msg);
+      })
+      .catch(err => {
+        logger.error(err);
+      });
   }
 
   radio(msg: Message) {
-    if (!msg.member) {
-      return;
-    }
+    if (!msg.member) return;
     const embed = new Discord.MessageEmbed();
     if (msg.member.voice.channel && !Matcher.isPlayingMusic(this.data.onAir, this.data.playing)) {
       msg.member.voice.channel
@@ -123,7 +120,7 @@ class Voice implements VoiceHandler {
             });
           }
         })
-        .catch(err => logger.error(err));
+        .catch(err => logger.error(err.message));
     } else {
       if (!msg.member.voice.channel) {
         embed.setColor("0xff0000").setDescription("You need to join a voice channel first!");
@@ -137,7 +134,11 @@ class Voice implements VoiceHandler {
   }
 
   private playVoice(connection: StreamDispatcher | boolean, playing: boolean = false, onAir: boolean = false) {
-    this.data.dispatcher = connection;
+    if (connection === false && typeof this.data.dispatcher !== "boolean") {
+      this.data.dispatcher.emit("finish");
+    } else {
+      this.data.dispatcher = connection;
+    }
     this.data.playing = playing;
     this.data.onAir = onAir;
   }
@@ -156,17 +157,16 @@ class Voice implements VoiceHandler {
 
   stop(msg: Message, client: Client, mode = "force") {
     //Is user on channel?
-    if (!msg.member!.voice.channel) return;
-    if (!(typeof this.data.dispatcher !== "boolean")) return;
+    if (!msg.member!.voice.channel || typeof this.data.dispatcher === "boolean") return;
     if (this.data.playing) {
       if (mode === "force") {
         msg.reply(`Stopped playing songs`);
+        this.playVoice(false);
       }
       if (mode === "skip") {
         msg.reply(`Skipped song`);
       }
       this.data.dispatcher.emit("finish", mode);
-      this.playVoice(false);
       return;
     }
     if (this.data.onAir) {
@@ -206,7 +206,13 @@ class Voice implements VoiceHandler {
     if (!this.data.playing) return msg.reply(`No queue`);
     Queuer.showQueue(msg, this.data.queue);
   }
+  /*
 
+(node:20896) UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'player_response' of undefined
+    at Object.showCurrentSong (C:\Users\Ivan\git\Bot\src\Interactions\Discord\Voice\helpers\Queuer.ts:11:44)
+    at Voice.<anonymous> (C:\Users\Ivan\git\Bot\src\Interactions\Discord\Voice\Voice.ts:84:21)
+    at Generator.next (<anonymous>)
+*/
   rerun(msg: Message) {
     if (typeof this.data.dispatcher === "boolean") return msg.reply(`You didn't skip any song`);
     this.data.queue.unshift(this.data.skippedSong);
@@ -216,8 +222,9 @@ class Voice implements VoiceHandler {
 
   async playlist(msg: Message) {
     if (msg.content.includes(`${config.prefix}playlist play`)) return this["playlist play"](msg);
-    const playlistURL = msg.content.substring(config.prefix.length + "playlist".length + 1, msg.content.length);
-    const playlistId = Matcher.isListURL(playlistURL) ? Matcher.parseIntoId(playlistURL) : playlistURL;
+    const content = msg.content;
+    const playlistURL = new URL(content.split(`${config.prefix}playlist`)[1].trim());
+    const playlistId = playlistURL.searchParams.get("list");
     const embed = new Discord.MessageEmbed();
     embed.setColor("0x004444");
     const options = {
@@ -249,20 +256,19 @@ class Voice implements VoiceHandler {
     embed.setDescription(`Added to queue.\nRequested by ${msg.author.username}`);
     //Is user on channel?
     msg.reply("Collecting videos... Please wait!");
-    videos.forEach(async video => {
-      const url = `https://www.youtube.com/watch?v=${video.snippet!.resourceId!.videoId}`;
-      this.data.queue.push(url);
-      if (this.data.playing) return;
-      const connection = await msg.member!.voice.channel!.join();
-      this.startMusic(connection, msg);
+    this.data.queue = videos.map(video => {
+      const url = new URL(`watch?v=${video.snippet!.resourceId!.videoId}`, "https://www.youtube.com/");
+      return url.href;
     });
+    const connection = await msg.member!.voice.channel!.join();
+    this.startMusic(connection, msg);
   }
   async startMusic(connection: VoiceConnection, msg: Message) {
     this.data.currentSong = await ytdlVideo.getInfo(this.data.queue[0]);
     Queuer.showCurrentSong(msg, this.data.currentSong, "play");
-    const start = new URL(this.data.queue[0]).searchParams.get("t");
+    const start = parseInt(new URL(this.data.queue[0]).searchParams.get("t") || "0");
     try {
-      this.playVoice(connection.play(ytdlVideo(this.data.queue[0], { begin: start || 0 }), this.streamOptions), true, false);
+      this.playVoice(connection.play(ytdlVideo(this.data.queue[0], { filter: "audioonly", range: { start } }), this.streamOptions), true, false);
       logger.info("STARTED PLAYING SONG");
     } catch (err) {
       msg.reply("WRONG URL");

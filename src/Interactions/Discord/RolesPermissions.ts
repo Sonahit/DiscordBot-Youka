@@ -1,6 +1,6 @@
 import { PermissionsHandler, IPermissions } from "yooka-bot";
 import { Message, MessageEmbed } from "discord.js";
-import config from "../../../config/config";
+import config from "@config";
 import IO from "../../utils/IO";
 const io = new IO();
 

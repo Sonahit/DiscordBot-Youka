@@ -1,5 +1,5 @@
 import Discord, { Message, Client, GuildMember, GuildChannel, VoiceChannel, UserResolvable } from "discord.js";
-import config from "../../../config/config";
+import config from "@config";
 import { MovingHandler } from "typings";
 
 class Moving implements MovingHandler {

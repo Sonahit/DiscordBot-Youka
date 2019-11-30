@@ -9,7 +9,8 @@
     "noImplicitAny": true,
     "baseUrl": "./",
     "paths": {
-      "yooka-bot": ["typings/index"]
+      "yooka-bot": ["typings/index"],
+      "@config": ["config/config"]
     }
   },
   "include": ["src/**/*"],

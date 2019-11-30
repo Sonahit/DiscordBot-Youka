@@ -1,8 +1,6 @@
-import { Message, Client, User, GuildMember } from "discord.js";
+import Discord, { Message, Client, User, GuildMember } from "discord.js";
 import { YUser, AdminCommandsHandler } from "yooka-bot";
-
-import config from "../../../../config/config";
-import Discord from "discord.js";
+import config from "@config";
 
 class AdminCommands implements AdminCommandsHandler {
   mode: string;

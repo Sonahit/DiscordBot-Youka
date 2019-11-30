@@ -1,6 +1,6 @@
 import { MessageAttachment, Message, Client, MessageEmbed } from "discord.js";
 import Discord from "discord.js";
-import config from "../../../config/config";
+import config from "@config";
 import { RepliesHandler } from "typings";
 
 class Replies implements RepliesHandler {

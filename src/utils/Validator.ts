@@ -1,7 +1,8 @@
 import { YUser } from "yooka-bot";
-import { User, Message, UserResolvable, Role } from "discord.js";
-import config from "../../config/config";
+import { User, Message, UserResolvable } from "discord.js";
+import config from "@config";
 import { ValidationHandler } from "typings";
+
 const emojiSplitter = require("emoji-aware");
 
 class Validator implements ValidationHandler {

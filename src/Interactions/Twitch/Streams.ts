@@ -2,7 +2,7 @@ import IO from "../../utils/IO";
 import Requests from "./Requests";
 
 import Discord from "discord.js";
-import config from "../../../config/config";
+import config from "@config";
 import { StreamsHandler } from "typings";
 
 const requests = new Requests();

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "lib": ["es2017", "es2019"],
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "baseUrl": "./",
+    "paths": {
+      "yooka-bot": ["typings/index"],
+      "@utils": ["src/Utils"],
+      "@config": ["config/config"]
+    }
+  },
+  "exclude": ["node_modules"]
+}

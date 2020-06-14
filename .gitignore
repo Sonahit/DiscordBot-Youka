@@ -14,3 +14,6 @@ user_data
 
 #storage
 storage/logs/*
+
+#environment
+.env

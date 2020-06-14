@@ -1,5 +1,5 @@
 import winston from "winston";
-import { Middleware } from "src/Contracts/Middleware";
+import { Middleware } from "src/contracts/Middleware";
 
 declare global {
   namespace NodeJS {
@@ -37,10 +37,5 @@ declare module "yooka-bot" {
   export interface Config {
     token: string;
     prefix: string;
-    whitelist: Array<YUser>;
-    blacklist: Array<YUser>;
-    radioList: Array<Radio>;
-    middlewares: Array<Middleware>;
-    queueSize?: number;
   }
 }

@@ -11,7 +11,7 @@
     "baseUrl": "./",
     "paths": {
       "yooka-bot": ["typings/index"],
-      "@utils": ["src/Utils"],
+      "@utils": ["src/utils"],
       "@config": ["config/config"]
     }
   },

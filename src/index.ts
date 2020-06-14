@@ -1,15 +1,19 @@
-import { App } from "./Core/App";
-import config from "../config/config";
+import { App } from "./core/App";
+import dotenv from "dotenv";
 import path from "path";
-import { Logger } from "./Core/Logger";
-import Loader from "./Core/Loader";
+import { Logger } from "./core/Logger";
+import Loader from "./core/Loader";
+import rootPath from "./utils/rootPath";
+import config from "./utils/config";
 
-const app = new App(config);
+dotenv.config({ path: rootPath(".env") });
+
+const app = new App(config("config"));
 const loader = new Loader();
 
 global.logger = Logger.initLogger();
 loader
-  .loadDirectory(path.resolve(__dirname, "Commands"))
+  .loadDirectory(path.resolve(__dirname, "commands"))
   .then((commands) => {
     commands.forEach((command) => command && app.commandRegistrant.register(command));
   })

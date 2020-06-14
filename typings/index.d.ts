@@ -1,5 +1,5 @@
 import winston from "winston";
-import { Middleware } from "src/contracts/Middleware";
+import { Middleware } from "src/core/contracts/Middleware";
 
 declare global {
   namespace NodeJS {
@@ -8,7 +8,8 @@ declare global {
     }
   }
   var logger: winston.Logger;
-  interface IteratorYouka<T, TReturn, TNext> extends Iterator<T, TReturn, TNext> {
+  interface IteratorYouka<T, TReturn, TNext>
+    extends Iterator<T, TReturn, TNext> {
     hasNext(): boolean;
   }
 }
@@ -37,5 +38,8 @@ declare module "yooka-bot" {
   export interface Config {
     token: string;
     prefix: string;
+    redisHost: string;
+    redisPort: number;
+    redisPassword: string;
   }
 }

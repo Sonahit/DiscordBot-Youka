@@ -1,8 +1,8 @@
-import { Middleware } from "src/contracts/Middleware";
+import { Middleware } from "@core/contracts/Middleware";
 import { Message } from "discord.js";
-import { Client } from "src/core/Client";
-import { CommandException } from "src/exceptions/CommandException";
-import trans from "src/utils/trans";
+import { Client } from "@core/Client";
+import { CommandException } from "@core/exceptions/CommandException";
+import trans from "@core/utils/trans";
 
 export class CheckVoiceChannel implements Middleware {
   run(message: Message, client: Client): Message {

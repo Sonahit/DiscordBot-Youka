@@ -1,5 +1,5 @@
-import { CommandException } from "src/exceptions/CommandException";
-import { BotRuntimeException } from "src/exceptions/BotRuntimeException";
+import { CommandException } from "@core/exceptions/CommandException";
+import { BotRuntimeException } from "@core/exceptions/BotRuntimeException";
 import { Message } from "discord.js";
 import { ResponseEmoji } from "./enums/ResponseEmoji";
 

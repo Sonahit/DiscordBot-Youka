@@ -11,9 +11,5 @@ jsconfig
 #data
 user_data
 
-
-#storage
-storage/logs/*
-
 #environment
 .env

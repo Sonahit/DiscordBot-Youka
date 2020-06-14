@@ -1,12 +1,13 @@
-import { Client as Contract } from "../contracts/Client";
+import { Client as Contract } from "./contracts/Client";
 import { Client as BaseClient, Message, ClientOptions, VoiceConnection, StreamDispatcher } from "discord.js";
 import { Config } from "yooka-bot";
 import { App } from "./App";
-import { CommandException } from "src/exceptions/CommandException";
-import { Middleware } from "src/contracts/Middleware";
+import { CommandException } from "@core/exceptions/CommandException";
+import { Middleware } from "@core/contracts/Middleware";
 import { ErrorHandler } from "./ErrorHandler";
-import { MusicQueue } from "src/queues/MusicQueue";
-import config from "src/utils/config";
+import { MusicQueue } from "@core/queues/MusicQueue";
+import config from "@core/utils/config";
+import trans from "@utils/trans";
 
 export class Client extends BaseClient implements Contract {
   config: Config;
@@ -53,7 +54,12 @@ export class Client extends BaseClient implements Contract {
       message = this.runAgainstMiddlewares(message, config("app.middlewares"));
       const { command, args } = App.getInstance().getCommandHandler(message.content);
       if (typeof command === "boolean") {
-        throw new CommandException(message, `Command '**${message.content.substr(this.getPrefix().length)}**' does not exist`);
+        throw new CommandException(
+          message,
+          trans("commands.not_found", {
+            command: message.content.substr(this.getPrefix().length),
+          })
+        );
       }
       logger.info(`Handling ${command.commandName()}`);
       message = this.runAgainstMiddlewares(message, command.middlewares);

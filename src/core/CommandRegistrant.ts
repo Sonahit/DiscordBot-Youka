@@ -1,5 +1,5 @@
-import { Registrant as Contract } from "../contracts/Registrant";
-import { Command } from "../contracts/Command";
+import { Registrant as Contract } from "./contracts/Registrant";
+import { Command } from "./contracts/Command";
 
 export class CommandRegistrant implements Contract {
   private commands: Map<string, Command> = new Map<string, Command>();

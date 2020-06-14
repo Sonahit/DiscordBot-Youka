@@ -1,21 +1,29 @@
-import { Registrant } from "src/contracts/Registrant";
+import { Registrant } from "@core/contracts/Registrant";
 import { CommandRegistrant } from "./CommandRegistrant";
 import { Client } from "./Client";
 import { Config } from "yooka-bot";
-import { Command } from "src/contracts/Command";
-import trans from "src/utils/trans";
+import { Command } from "@core/contracts/Command";
+import trans from "@core/utils/trans";
+import Redis from "./storage/Redis";
 
 export class App {
   private static instance: App;
 
-  registrants: Registrant[] = [];
-  commandRegistrant: CommandRegistrant;
-  client: Client;
-  nodeProcess!: NodeJS.Process;
+  public registrants: Registrant[] = [];
+  public commandRegistrant: CommandRegistrant;
+  public client: Client;
+  public nodeProcess!: NodeJS.Process;
+  public redisConnection: Redis;
 
   constructor(config: Config) {
     this.commandRegistrant = new CommandRegistrant();
     this.client = new Client(config);
+    this.redisConnection = new Redis({
+      host: this.client.config.redisHost,
+      port: this.client.config.redisPort,
+      password: this.client.config.redisPassword,
+    });
+
     App.instance = this;
   }
 
@@ -56,10 +64,9 @@ export class App {
     this.client = new Client(config);
   }
 
-  start() {
-    this.client.login().then(() => {
-      logger.info(trans("bot.start", { bot: this.client.user?.username || "Bot" }));
-      this.client.on("message", this.client.handleMessage);
-    });
+  async start() {
+    await this.client.login();
+    logger.info(trans("bot.start", { bot: this.client.user?.username || "Bot" }));
+    this.client.on("message", this.client.handleMessage);
   }
 }

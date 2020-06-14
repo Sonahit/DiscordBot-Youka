@@ -1,7 +1,7 @@
-import { Command as Contract } from "src/contracts/Command";
+import { Command as Contract } from "@core/contracts/Command";
 import { Client } from "./Client";
 import { Message } from "discord.js";
-import { Middleware } from "src/contracts/Middleware";
+import { Middleware } from "@core/contracts/Middleware";
 import { ResponseEmoji } from "./enums/ResponseEmoji";
 
 export default class BaseCommand implements Contract {
@@ -17,6 +17,7 @@ export default class BaseCommand implements Contract {
     throw new Error("Method not implemented.");
   }
   beforeRun(args: string[], message: Message, client: Client): void {}
+
   afterRun(args: string[], message: Message, client: Client): void {
     message.react(ResponseEmoji.OK);
   }

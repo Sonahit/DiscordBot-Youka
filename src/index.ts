@@ -12,9 +12,9 @@ const app = new App(config("config"));
 const loader = new Loader();
 
 global.logger = Logger.initLogger();
-loader
-  .loadDirectory(path.resolve(__dirname, "commands"))
-  .then((commands) => {
-    commands.forEach((command) => command && app.commandRegistrant.register(command));
-  })
-  .then(() => app.start());
+
+(async () => {
+  const commands = await loader.loadDirectory(path.resolve(__dirname, "commands"));
+  commands.forEach((command) => command && app.commandRegistrant.register(command));
+  app.start();
+})();

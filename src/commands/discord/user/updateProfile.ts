@@ -1,13 +1,12 @@
-import { Command } from "@core/contracts/Command";
-import { Message } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 import BaseCommand from "@core/BaseCommand";
 import { Client } from "@core/Client";
 import { Middleware } from "@core/contracts/Middleware";
 import config from "@utils/config";
 
-export default class AboutCommand extends BaseCommand  {
+export default class UpdateProfileCommand extends BaseCommand  {
   middlewares?: Middleware[] | undefined;
-  run(args: string[], message: Message, client: Client) {
+  async run(args: string[], message: Message, client: Client) {
     //
   }
 

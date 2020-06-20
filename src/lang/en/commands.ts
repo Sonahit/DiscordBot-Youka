@@ -6,4 +6,6 @@ export default {
   VIDEO_NOT_FOUND: "Video at such url :video cant be found",
   USER_MUST_JOIN: "Join voice channel first",
   not_found: "Command **:command** not found",
+  no_args: 'Not enough args :args',
+  not_supported: 'Argument value :item is not supported'
 };

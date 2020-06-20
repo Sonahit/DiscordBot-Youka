@@ -5,6 +5,9 @@ import { Config } from "yooka-bot";
 import { Command } from "@core/contracts/Command";
 import trans from "@core/utils/trans";
 import Redis from "./storage/Redis";
+import config from "@utils/config";
+import Loader from "./Loader";
+import { Logger } from "./Logger";
 
 export class App {
   private static instance: App;
@@ -16,6 +19,7 @@ export class App {
   public redisConnection: Redis;
 
   constructor(config: Config) {
+    global.logger = Logger.initLogger();
     this.commandRegistrant = new CommandRegistrant();
     this.client = new Client(config);
     this.redisConnection = new Redis({
@@ -52,16 +56,24 @@ export class App {
   }
 
   restart() {
+    const conf = this.client.config;
     if (this.client) {
       this.stop();
+      this.commandRegistrant.getCommandStorage().clear();
     }
+    this.client = new Client(conf);
+    this.fetchCommands(config('commands.folder'));
     this.start();
   }
 
+  fetchCommands(folder: string) {
+    const loader = new Loader();
+    const commands = loader.loadDirectory(folder);
+    commands.forEach(c => this.commandRegistrant.register(c));
+  }
+
   stop() {
-    const config = this.client.config;
     this.client.destroy();
-    this.client = new Client(config);
   }
 
   async start() {

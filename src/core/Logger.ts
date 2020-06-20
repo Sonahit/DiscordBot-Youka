@@ -13,8 +13,7 @@ export class Logger {
           dirname: "./storage/logs",
           filename: `access.log`,
         })
-      )
-      .add(new logger.transports.Console({ format: combine(timestamp()) }));
+      );
     logger.level = "info";
     Logger.logger = logger;
     return logger;

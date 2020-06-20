@@ -17,6 +17,8 @@ RUN yarn install
 
 COPY --chown=node:node . .
 
+RUN mv .env.docker .env
+
 CMD [ "ready.sh" ]
 
 ENTRYPOINT [ "/bin/bash" ]

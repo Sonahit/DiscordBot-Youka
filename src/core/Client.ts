@@ -8,9 +8,23 @@ import { ErrorHandler } from "./ErrorHandler";
 import { MusicQueue } from "@core/queues/MusicQueue";
 import config from "@core/utils/config";
 import trans from "@utils/trans";
+import { OutgoingHttpHeaders } from "http2";
+import { Agent as Http } from "http";
+import { Agent as Https } from "https";
 
 export class Client extends BaseClient implements Contract {
   config: Config;
+  voiceOptions = {
+    volume: 0.05,
+  }
+  headers: OutgoingHttpHeaders = {
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    pragma: 'no-cache',
+    'accept-language': 'en-US,en;q=0.9,ru-RU;q=0.8,ru;q=0.7',
+    accept: '*/*',
+    'accept-encoding': 'gzip, deflate, br'
+  }
+  agent: Http | Https | null = null;
   musicQueue: MusicQueue;
   connection?: VoiceConnection;
   dispatcher?: StreamDispatcher;
@@ -47,7 +61,7 @@ export class Client extends BaseClient implements Contract {
     return message;
   }
 
-  handleMessage(message: Message): void {
+  async handleMessage(message: Message): Promise<void> {
     try {
       if (!message.content.startsWith(this.getPrefix())) return;
       if (message.author.bot) return;
@@ -63,9 +77,9 @@ export class Client extends BaseClient implements Contract {
       }
       logger.info(`Handling ${command.commandName()}`);
       message = this.runAgainstMiddlewares(message, command.middlewares);
-      command.beforeRun(args, message, this);
-      command.run(args, message, this);
-      command.afterRun(args, message, this);
+      await command.beforeRun(args, message, this);
+      await command.run(args, message, this);
+      await command.afterRun(args, message, this);
     } catch (e) {
       ErrorHandler.handle(message, e);
     }

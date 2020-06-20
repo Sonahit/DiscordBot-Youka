@@ -7,6 +7,7 @@ import { Middleware } from "@core/contracts/Middleware";
 import { ResponseEmoji } from "@core/enums/ResponseEmoji";
 import { CheckVoiceChannel } from "src/middlewares/CheckVoiceChannel";
 import config from "@utils/config";
+import trans from "@utils/trans";
 
 export default class JoinCommand extends BaseCommand  {
   middlewares: Middleware[] = [];
@@ -16,10 +17,13 @@ export default class JoinCommand extends BaseCommand  {
     this.middlewares.push(new CheckDjPermissions());
     this.middlewares.push(new CheckVoiceChannel());
   }
-  run(args: string[], message: Message, client: Client) {
-    if (!message.client.voice) {
-      message.channel.send("");
+  async run(args: string[], message: Message, client: Client) {
+    if (message.client.voice) {
+      return message.channel.send(trans('errors.in_voice'));
     }
+    const user = message.member;
+    const channel = user!.voice!.channel!;
+    client.connection = await channel.join();
   }
   description(): string {
     return "join to voice channel";

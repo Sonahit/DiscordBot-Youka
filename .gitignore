@@ -13,3 +13,4 @@ user_data
 
 #environment
 .env
+.env.docker
